@@ -1,0 +1,31 @@
+{
+  "giftCapsule": {
+    "level": [
+      1,
+      200,
+      500
+    ],
+    "duration": [
+      60000,
+      300000,
+      600000
+    ],
+    "maximum": 10,
+    "minMoney": 0.01
+  },
+  "chatMessage": {
+    "show": {
+      "join": false,
+      "follow": false,
+      "gift": false
+    }
+  },
+  "giftCard": {
+    "level": [
+      1,
+      200,
+      500
+    ],
+    "minMoney": 0.01
+  }
+}

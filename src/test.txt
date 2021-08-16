@@ -1,0 +1,119 @@
+礼物接口 get https://cotton.res.netease.com/buckets/2bQIVn/files/gamegift?v=5228
+
+登录消息格式
+2-2
+=======================
+1: "0"
+2: "352528056"
+4: "oep2jtwwbg8ec819dd11a453a97b68cd6a0348290b@wx.163.com"
+5: "5"
+6: "1"
+7: "rc_1044678209_20210112162441_99f5761f1298881a1459a9f32d28df7d"
+8: "273313183"
+9: "1044678209"
+12: "0"
+13: "冬冬Official"
+14: "2"
+15: "http://cc.fp.ps.netease.com/file/5ff35151a7f2525fec1f117cvkZ87tdI02"
+16: "win～win～win"
+17: "2001-03-31"
+18: "440000"
+19: "440100"
+20: "0"
+21: "0"
+23: "1044678209_20210112162441"
+24: "0"
+cccid: 2
+ccsid: 2
+eid: 1044678209
+reason: "login ok"
+result: 0
+uid: 273313183
+
+进房msg消息格式
+512-32784
+=======================
+anchor_mgr: 1
+clienttype: 4000
+gang: {flag_icon_18: "", flag_icon: ""}
+icon: 6
+labels: 0
+motive: ""
+name: "冬冬Official"
+noble: 0
+protect: 0
+restricted_gift_ids: []
+show_type: 0
+stealth: 0
+uid: 273313183
+userlevel: 6
+wealth: 1
+
+
+发言msg消息格式
+515-32785
+=======================
+1: "673939355"
+4: "欢迎@冬冬Official来捧场"
+5: "2021-01-12 01:09:09"
+7: {4: 0, 72: 4000, 128: 673939355, 129: 289584020, 130: 368061773, 131: 0, 141: 2, 142: 0, 143: 0, 144: 1, 146: 400, 149: 3, 150: 0, 151: 0, 152: 0, 197: "灵儿家的小场控—蛋蛋", 201: {…}, 209: "http://cc.fp.ps.netease.com/file/5fc118de7f9d2a21ac059f60RtVIcoWw02", 211: "灵儿家的小场控—蛋蛋", 212: "web"}
+9: "0"
+10: "http://cc.fp.ps.netease.com/file/5fc118de7f9d2a21ac059f60RtVIcoWw02"
+13: "400"
+17: "72"
+21: "宋体;-14;400;0;0;0;30;30;30;0"
+28: "2"
+29: "0"
+40: "0"
+41: "3"
+97: "-1"
+98: "0"
+99: "{"badgeInfo":{"level":2,"badgename":"灵儿~","anchor_uid":268158652,"anchor_nickname":"【任性】灵儿想叮当☣","purl":"http://cc.fp.ps.netease.com/file/5cdc4794143cfa7d53918487w7lOemwj02","ptype":2,"roomid":900,"subcid":6399714,"custom_info":{}},"privilegeInfo":{},"anchor_nick":"","active":{"level":3},"pretty_ccid_info":{"pretty_id_lv":0},"gang":{},"roleBarrage":{},"guard_level":0,"anchor_uid":268158652,"ccid":368061773,"atInfo":{},"channelInfo":{"type":"live"}}"
+197: "灵儿家的小场控—蛋蛋"
+
+
+礼物格式
+4-41016
+=======================
+active: {level: 38}
+badge: {privilegeInfo: {…}, badgeInfo: {…}}
+clienttype: 0
+combo: 1
+comboid: "c4f8913910394628aae8adff301289fc"
+fromid: 267791250
+fromnick: "🔱筱默默🔱"
+fromptype: 2
+frompurl: "http://cc.fp.ps.netease.com/file/5cc997042786fda1f87699959ZmVoeGr02"
+gametype: 65005
+iself_guard_level: 0
+iself_nobel_level: 100
+lampid: 105948
+num: 35
+position: "webBag"
+saleid: 2699
+sendby: 0
+sn_id: "5ffd5ee60ac84ac3a200368c110ae83e1"
+stealth: 0
+subcid: 5424925
+toid: 149636409
+tonick: "♪筱歌吖"
+topcid: 2220447
+wealth: 18
+
+
+
+排行榜信息格式
+5-41018
+============================
+
+
+房间数据信息格式
+10-6144
+============================
+cccid: 10
+ccsid: 6144
+hot_score: 211476
+reason: "success"
+result: 0
+roomId: 669
+usercount: 4056
