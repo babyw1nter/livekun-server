@@ -116,15 +116,19 @@ cclinkjs
     }, 1000)
   })
   .on('close', (code, desc) => {
-    status.isJoinRoom = false
-    status.roomInfo.liveId = ''
+    resetStatus()
     console.log('连接关闭:', code, desc)
   })
   .on('error', (error) => {
-    status.isJoinRoom = false
-    status.roomInfo.liveId = ''
+    resetStatus()
     console.error('连接错误:', error)
   })
+
+const resetStatus = () => {
+  status.isJoinRoom = false
+  status.roomInfo.liveId = ''
+  status.roomInfo.title = ''
+}
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const giftData: GiftInterface.IGiftListData = require('../../data/gamegift-7347.json')
@@ -215,7 +219,7 @@ cclinkjs
 //   })
 // )
 
-export default async function init(): Promise<void> {
+export default async function initHttpServer(): Promise<void> {
   app.get('/get-config', (req, res) => {
     readConfig()
     res.send({
@@ -260,6 +264,7 @@ export default async function init(): Promise<void> {
         const roomId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.room_id
         const channelId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.channel_id
         const gameType = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.gametype
+        const title = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.title
 
         if (!roomId || !channelId || !gameType) {
           res.send({
@@ -272,21 +277,20 @@ export default async function init(): Promise<void> {
         console.info('√ 获取房间信息成功！', roomId, channelId, gameType)
         console.info('* 正在进入房间...')
 
-        status.isJoinRoom = false
         cclinkjs
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
           .then((recvJsonData) => {
             status.isJoinRoom = true
             status.roomInfo.liveId = liveId
+            status.roomInfo.title = title || ''
             res.send({
               code: 10000,
               msg: 'ok',
             })
-            console.info('√ 进入房间成功！')
+            console.info('√ 进入房间成功！', title)
           })
           .catch((reason) => {
-            status.isJoinRoom = false
-            status.roomInfo.liveId = ''
+            resetStatus()
             res.send({
               code: 10002,
               msg: '进入房间失败！',
