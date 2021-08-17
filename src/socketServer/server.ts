@@ -58,4 +58,8 @@ const wrap = <T>(type: string, data: T): { type: string; data: T } => {
   }
 }
 
+export default async function initSocketServer(): Promise<void> {
+  //
+}
+
 export { connections, wrap }
