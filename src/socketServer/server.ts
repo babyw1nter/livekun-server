@@ -51,10 +51,11 @@ wsServer.on('connect', (connection) => {
   }
 })
 
-const wrap = <T>(type: string, data: T): { type: string; data: T } => {
+const wrap = <T>(wrapData: { code?: number; type: string; data: T }): { code: number; type: string; data: T } => {
   return {
-    type,
-    data,
+    code: wrapData.code || 0,
+    type: wrapData.type,
+    data: wrapData.data,
   }
 }
 

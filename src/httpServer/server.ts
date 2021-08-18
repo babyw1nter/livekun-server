@@ -9,17 +9,16 @@ import {
   RoomListener,
   RoomMethods,
 } from '@hhui64/cclinkjs-room-module/src/index'
-import { connections } from '../socketServer/server'
+import { connections, wrap } from '../socketServer/server'
 import fs from 'fs'
 import path from 'path'
+import ConfigManager, { IConfig } from '../configManager'
 
 const port = 39074
 
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-
-// 允许跨域
 app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization, Accept,X-Requested-With')
@@ -51,25 +50,30 @@ const cclinkjs = new CCLinkJS()
 cclinkjs.connect()
 cclinkjs
   .on('connect', (connection) => {
+    // if (!cclinkjs.socket.connection || !cclinkjs.socket.connection.connected) return
     console.info('√ 连接CC服务端成功！')
+    cclinkjsStatus.isReady = false
     setTimeout(async () => {
       console.info('* 发送客户端握手信息...')
       try {
         const response = await cclinkjs.send(ClientMethods.clientInfoProtocol(), 3000)
         if (response) {
           console.info('√ 服务端与客户端握手成功！')
+          cclinkjsStatus.isReady = true
         }
-      } catch (error) {
-        console.error(new Error(error))
+      } catch (error: unknown) {
+        console.error(error)
       }
     }, 1000)
   })
   .on('close', (code, desc) => {
     resetStatus()
+    cclinkjsStatus.isReady = false
     console.log('连接关闭:', code, desc)
   })
   .on('error', (error) => {
     resetStatus()
+    cclinkjsStatus.isReady = false
     console.error('连接错误:', error)
   })
 
@@ -90,12 +94,17 @@ cclinkjs
       if (connections.chatMessageConnection != null) {
         if (!ConfigManager.getConfig().chatMessage.show.join) return
         connections.chatMessageConnection.sendUTF(
-          JSON.stringify({
-            avatarUrl: '',
-            nickname: userJoinRoomMsg.name,
-            message: '进入了直播间',
-            uid: userJoinRoomMsg.uid,
-          })
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: {
+                avatarUrl: '',
+                nickname: userJoinRoomMsg.name,
+                message: '进入了直播间',
+                uid: userJoinRoomMsg.uid,
+              },
+            })
+          )
         )
       }
     })
@@ -107,12 +116,17 @@ cclinkjs
 
       if (connections.chatMessageConnection != null) {
         connections.chatMessageConnection.sendUTF(
-          JSON.stringify({
-            avatarUrl: chatMsg[10],
-            nickname: chatMsg[197],
-            message: chatMsg[4],
-            uid: chatMsg[1]?.toString(),
-          })
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: {
+                avatarUrl: chatMsg[10],
+                nickname: chatMsg[197],
+                message: chatMsg[4],
+                uid: chatMsg[1]?.toString(),
+              },
+            })
+          )
         )
       }
     })
@@ -135,28 +149,39 @@ cclinkjs
       if (connections.giftCapsuleConnection != null) {
         if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
         connections.giftCapsuleConnection.sendUTF(
-          JSON.stringify({
-            avatarUrl: giftMsg.frompurl,
-            nickname: giftMsg.fromnick,
-            uid: giftMsg.fromid.toString(),
-            money: giftMoney,
-            giftName: giftName,
-            giftCount: giftMsg.num,
-          })
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: {
+                avatarUrl: giftMsg.frompurl,
+                nickname: giftMsg.fromnick,
+                uid: giftMsg.fromid.toString(),
+                money: giftMoney,
+                giftName: giftName,
+                giftCount: giftMsg.num,
+              },
+            })
+          )
         )
       }
 
       if (connections.giftCardConnection != null) {
         if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
         connections.giftCardConnection.sendUTF(
-          JSON.stringify({
-            avatarUrl: giftMsg.frompurl,
-            nickname: giftMsg.fromnick,
-            uid: giftMsg.fromid.toString(),
-            money: giftMoney,
-            giftName: giftName,
-            giftCount: giftMsg.num,
-          })
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: {
+                avatarUrl: giftMsg.frompurl,
+                nickname: giftMsg.fromnick,
+                uid: giftMsg.fromid.toString(),
+                money: giftMoney,
+                giftName: giftName,
+                giftCount: giftMsg.num,
+                message: `赠送了${giftName} × ${giftMsg.num}`,
+              },
+            })
+          )
         )
       }
     })
@@ -188,6 +213,16 @@ export default async function initHttpServer(): Promise<void> {
     ConfigManager.setConfig(req.body as IConfig)
     ConfigManager.saveConfig()
     ConfigManager.readConfig()
+
+    if (connections.chatMessageConnection && connections.chatMessageConnection.connected) {
+      connections.chatMessageConnection.sendUTF(JSON.stringify(wrap({ type: 'update-config', data: {} })))
+    }
+    if (connections.giftCapsuleConnection && connections.giftCapsuleConnection.connected) {
+      connections.giftCapsuleConnection.sendUTF(JSON.stringify(wrap({ type: 'update-config', data: {} })))
+    }
+    if (connections.giftCardConnection && connections.giftCardConnection.connected) {
+      connections.giftCardConnection.sendUTF(JSON.stringify(wrap({ type: 'update-config', data: {} })))
+    }
 
     res.send({
       code: 200,
@@ -227,6 +262,13 @@ export default async function initHttpServer(): Promise<void> {
         console.info('√ 获取房间信息成功！', roomId, channelId, gameType)
         console.info('* 正在进入房间...')
 
+        // if (!cclinkjs.socket.connection || !cclinkjs.socket.connection.connected) {
+        //   res.send({
+        //     code: 10000,
+        //     msg: 'ok',
+        //   })
+        // }
+
         cclinkjs
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
           .then((recvJsonData) => {
@@ -259,11 +301,18 @@ export default async function initHttpServer(): Promise<void> {
 
   app.post('/leave', (req, res) => {
     cclinkjs.close()
-    cclinkjs.connect()
-    res.send({
-      code: 10000,
-      msg: 'ok',
-    })
+
+    setTimeout(() => cclinkjs.connect(), 1000)
+
+    const _t = setInterval(() => {
+      if (cclinkjs.socket.connection && cclinkjs.socket.connection.connected && cclinkjsStatus.isReady) {
+        res.send({
+          code: 10000,
+          msg: 'ok',
+        })
+        clearInterval(_t)
+      }
+    }, 500)
   })
 
   app.listen(port, () => {
