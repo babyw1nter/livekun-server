@@ -32,26 +32,6 @@ app.all('*', function (req, res, next) {
 
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
-export interface IConfig {
-  giftCapsule: {
-    level: Array<number>
-    duration: Array<number>
-    maximum: number
-    minMoney: number
-  }
-  chatMessage: {
-    show: {
-      join: boolean
-      follow: boolean
-      gift: boolean
-    }
-  }
-  giftCard: {
-    level: Array<number>
-    minMoney: number
-  }
-}
-
 const status = {
   isJoinRoom: false,
   roomInfo: {
@@ -60,40 +40,9 @@ const status = {
   },
 }
 
-let config: IConfig = {
-  giftCapsule: {
-    level: [1, 200, 500],
-    duration: [5, 15, 30],
-    maximum: 10,
-    minMoney: 0.01,
-  },
-  chatMessage: {
-    show: {
-      join: false,
-      follow: false,
-      gift: false,
-    },
-  },
-  giftCard: {
-    level: [1, 200, 500],
-    minMoney: 0.01,
-  },
+const cclinkjsStatus = {
+  isReady: false,
 }
-
-const configFilePath = path.join(__dirname, '../../', 'config', 'config.json')
-const getConfig = () => {
-  return JSON.parse(fs.readFileSync(configFilePath).toString()) as IConfig
-}
-
-const readConfig = () => {
-  config = getConfig()
-}
-
-const saveConfig = () => {
-  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2))
-}
-
-readConfig()
 
 /**
  * 创建并连接 cclinkjs 对象
@@ -139,7 +88,7 @@ cclinkjs
       console.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
 
       if (connections.chatMessageConnection != null) {
-        if (!config.chatMessage.show.join) return
+        if (!ConfigManager.getConfig().chatMessage.show.join) return
         connections.chatMessageConnection.sendUTF(
           JSON.stringify({
             avatarUrl: '',
@@ -184,7 +133,7 @@ cclinkjs
       )
 
       if (connections.giftCapsuleConnection != null) {
-        if (config.giftCapsule.minMoney > giftMoney) return
+        if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
         connections.giftCapsuleConnection.sendUTF(
           JSON.stringify({
             avatarUrl: giftMsg.frompurl,
@@ -198,7 +147,7 @@ cclinkjs
       }
 
       if (connections.giftCardConnection != null) {
-        if (config.giftCard.minMoney > giftMoney) return
+        if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
         connections.giftCardConnection.sendUTF(
           JSON.stringify({
             avatarUrl: giftMsg.frompurl,
@@ -221,10 +170,10 @@ cclinkjs
 
 export default async function initHttpServer(): Promise<void> {
   app.get('/get-config', (req, res) => {
-    readConfig()
+    ConfigManager.readConfig()
     res.send({
       code: 200,
-      data: config,
+      data: ConfigManager.getConfig(),
     })
   })
 
@@ -236,12 +185,13 @@ export default async function initHttpServer(): Promise<void> {
   })
 
   app.post('/update-config', (req, res) => {
-    config = req.body
-    saveConfig()
-    readConfig()
+    ConfigManager.setConfig(req.body as IConfig)
+    ConfigManager.saveConfig()
+    ConfigManager.readConfig()
+
     res.send({
       code: 200,
-      data: config,
+      data: ConfigManager.getConfig(),
     })
   })
 
