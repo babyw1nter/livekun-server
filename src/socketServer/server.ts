@@ -32,21 +32,18 @@ wsServer.on('connect', (connection) => {
   switch (connection.protocol) {
     case 'gift-capsule':
       connections.giftCapsuleConnection = connection
-      connections.giftCapsuleConnection?.on('close', (reasonCode, description) => {
-        connections.giftCapsuleConnection = null
-      })
+      connection.on('close', () => (connections.giftCapsuleConnection = null))
+      connection.on('error', () => (connections.giftCapsuleConnection = null))
       break
     case 'chat-message':
       connections.chatMessageConnection = connection
-      connections.chatMessageConnection?.on('close', (reasonCode, description) => {
-        connections.chatMessageConnection = null
-      })
+      connection.on('close', () => (connections.giftCapsuleConnection = null))
+      connection.on('error', () => (connections.giftCapsuleConnection = null))
       break
     case 'gift-card':
       connections.giftCardConnection = connection
-      connections.giftCardConnection?.on('close', (reasonCode, description) => {
-        connections.giftCardConnection = null
-      })
+      connection.on('close', () => (connections.giftCapsuleConnection = null))
+      connection.on('error', () => (connections.giftCapsuleConnection = null))
       break
   }
 })
