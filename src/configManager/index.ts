@@ -52,7 +52,11 @@ const defaultConfig: IConfig = {
 export default class ConfigManager {
   private static _config: IConfig = defaultConfig
   public static readConfig(): void {
-    ConfigManager._config = JSON.parse(fs.readFileSync(configFilePath).toString()) as IConfig
+    try {
+      ConfigManager._config = JSON.parse(fs.readFileSync(configFilePath).toString()) as IConfig
+    } catch (error) {
+      ConfigManager.resetConfig()
+    }
   }
 
   public static saveConfig(): void {
