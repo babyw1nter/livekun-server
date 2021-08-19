@@ -110,7 +110,7 @@ cclinkjs
   .on(
     ChatListener.EventName(),
     ChatListener.EventListener((chatMsg) => {
-      console.info('[💬] ', chatMsg[197] + '：' + chatMsg[4], chatMsg)
+      console.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
 
       if (connections.chatMessageConnection != null) {
         connections.chatMessageConnection.sendUTF(
