@@ -25,6 +25,7 @@
     "@hhui64/cclinkjs": "file:../cclinkjs",
     "@hhui64/cclinkjs-room-module": "file:../cclinkjs-room-module",
     "axios": "^0.21.1",
+    "consola": "^2.15.3",
     "express": "^4.17.1",
     "socket.io": "^4.1.3",
     "websocket": "^1.0.34"
