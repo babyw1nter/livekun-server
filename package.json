@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --respawn --transpile-only --rs --watch ./src ./src/cclinkjs-demo.ts"
+    "dev": "ts-node-dev --respawn --transpile-only --rs --watch ./src ./src/cclinkjs-demo.ts",
+    "ts-node": "ts-node ./src/cclinkjs-demo.ts",
+    "build:tsc": "tsc -p tsconfig.json"
   },
   "author": "hhui64",
   "license": "MIT",
