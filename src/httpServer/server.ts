@@ -11,7 +11,11 @@ import {
 } from '@hhui64/cclinkjs-room-module/src/index'
 import { connections, wrap } from '../socketServer/server'
 import path from 'path'
+import consola from 'consola'
 import ConfigManager, { IConfig } from '../configManager'
+
+const cclinkjsLog = consola.withTag('cclinkjs')
+const httpServerLog = consola.withTag('httpServer')
 
 const port = 39074
 
@@ -49,30 +53,30 @@ const cclinkjs = new CCLinkJS()
 cclinkjs.connect()
 cclinkjs
   .on('connect', (connection) => {
-    console.info('√ 连接CC服务端成功！')
+    cclinkjsLog.success('连接CC服务端成功！')
     cclinkjsStatus.isReady = false
     setTimeout(async () => {
-      console.info('* 发送客户端握手信息...')
+      cclinkjsLog.info('发送客户端握手信息...')
       try {
         const response = await cclinkjs.send(ClientMethods.clientInfoProtocol(), 3000)
         if (response) {
-          console.info('√ 服务端与客户端握手成功！')
+          cclinkjsLog.success('服务端与客户端握手成功！')
           cclinkjsStatus.isReady = true
         }
       } catch (error: unknown) {
-        console.error(error)
+        cclinkjsLog.error('服务端与客户端握手失败，请重试！', error)
       }
     }, 1000)
   })
   .on('close', (code, desc) => {
     resetStatus()
     cclinkjsStatus.isReady = false
-    console.log('连接关闭:', code, desc)
+    cclinkjsLog.log('连接关闭: ', code, desc)
   })
   .on('error', (error) => {
     resetStatus()
     cclinkjsStatus.isReady = false
-    console.error('连接错误:', error)
+    cclinkjsLog.error('连接错误: ', error)
   })
 
 const resetStatus = () => {
@@ -83,11 +87,12 @@ const resetStatus = () => {
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const giftData: GiftInterface.IGiftListData = require('../../data/gamegift-7347.json')
+
 cclinkjs
   .on(
     RoomListener.EventName(),
     RoomListener.EventListener((userJoinRoomMsg) => {
-      console.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
+      cclinkjsLog.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
 
       if (connections.chatMessageConnection != null) {
         if (!ConfigManager.getConfig().chatMessage.show.join) return
@@ -110,7 +115,7 @@ cclinkjs
   .on(
     ChatListener.EventName(),
     ChatListener.EventListener((chatMsg) => {
-      console.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
+      cclinkjsLog.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
 
       if (connections.chatMessageConnection != null) {
         connections.chatMessageConnection.sendUTF(
@@ -143,7 +148,7 @@ cclinkjs
       const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid
       const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
-      console.info(
+      cclinkjsLog.info(
         '[🎁] ',
         `${giftMsg.fromnick} 送出 ${giftMsg.num} 个 ${giftName}`,
         giftMsg.combo > 1 ? giftMsg.combo + ' 连击' : '',
@@ -193,7 +198,7 @@ cclinkjs
 // .on(
 //   HotScoreListener.EventName(),
 //   HotScoreListener.EventListener((hotScoreData) => {
-//     // console.log('[🔥] ', `热度：${hotScoreData.hot_score} 观众：${hotScoreData.usercount}`)
+//     // cclinkjsLog.log('[🔥] ', `热度：${hotScoreData.hot_score} 观众：${hotScoreData.usercount}`)
 //   })
 // )
 
@@ -244,7 +249,7 @@ export default async function initHttpServer(): Promise<void> {
     }
 
     if (!cclinkjs.socket.connection) {
-      console.log('* 尚未连接，正在连接中...')
+      cclinkjsLog.info('CC服务端尚未连接，正在连接中...')
       cclinkjs.connect()
     }
 
@@ -263,8 +268,8 @@ export default async function initHttpServer(): Promise<void> {
           return
         }
 
-        console.info('√ 获取房间信息成功！', roomId, channelId, gameType)
-        console.info('* 正在进入房间...')
+        cclinkjsLog.success('获取房间信息成功！', roomId, channelId, gameType)
+        cclinkjsLog.info('正在进入房间...')
 
         cclinkjs
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
@@ -276,7 +281,7 @@ export default async function initHttpServer(): Promise<void> {
               code: 10000,
               msg: 'ok',
             })
-            console.info('√ 进入房间成功！', title)
+            cclinkjsLog.success('进入房间成功！', title)
           })
           .catch((reason) => {
             resetStatus()
@@ -284,7 +289,7 @@ export default async function initHttpServer(): Promise<void> {
               code: 10002,
               msg: '进入房间失败！',
             })
-            console.error('× 进入房间失败！:', reason)
+            cclinkjsLog.error('进入房间失败！', reason)
           })
       })
       .catch((reason) => {
@@ -292,7 +297,7 @@ export default async function initHttpServer(): Promise<void> {
           code: 10001,
           msg: '获取房间信息失败！',
         })
-        console.error('× 获取房间信息失败！:', reason)
+        cclinkjsLog.error('获取房间信息失败！', reason)
       })
   })
 
@@ -313,6 +318,6 @@ export default async function initHttpServer(): Promise<void> {
   })
 
   app.listen(port, () => {
-    console.info(`[httpServer] HTTP 服务端启动完成！正在监听端口：${port}...`)
+    httpServerLog.success(`HTTP 服务端启动完成！正在监听端口：${port}...`)
   })
 }

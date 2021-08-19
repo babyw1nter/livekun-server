@@ -1,5 +1,8 @@
 import http from 'http'
 import WebSocket from 'websocket'
+import consola from 'consola'
+
+const socketServerLog = consola.withTag('socketServer')
 
 const port = 39073
 
@@ -8,7 +11,7 @@ const httpServer = http.createServer((request, response) => {
   response.end()
 })
 httpServer.listen(port, () => {
-  console.info(`[socketServer] WebSocket 服务端启动完成！正在监听端口：${port}...`)
+  socketServerLog.success(`WebSocket 服务端启动完成！正在监听端口：${port}...`)
 })
 
 const wsServer = new WebSocket.server({
