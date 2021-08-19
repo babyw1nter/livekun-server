@@ -9,6 +9,9 @@ export interface IConfig {
     minMoney: number
   }
   chatMessage: {
+    style: {
+      fontSize: number
+    }
     show: {
       join: boolean
       follow: boolean
@@ -31,6 +34,9 @@ const defaultConfig: IConfig = {
     minMoney: 0.01,
   },
   chatMessage: {
+    style: {
+      fontSize: 16,
+    },
     show: {
       join: false,
       follow: false,

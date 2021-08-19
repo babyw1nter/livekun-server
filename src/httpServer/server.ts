@@ -10,7 +10,6 @@ import {
   RoomMethods,
 } from '@hhui64/cclinkjs-room-module/src/index'
 import { connections, wrap } from '../socketServer/server'
-import fs from 'fs'
 import path from 'path'
 import ConfigManager, { IConfig } from '../configManager'
 
@@ -50,7 +49,6 @@ const cclinkjs = new CCLinkJS()
 cclinkjs.connect()
 cclinkjs
   .on('connect', (connection) => {
-    // if (!cclinkjs.socket.connection || !cclinkjs.socket.connection.connected) return
     console.info('√ 连接CC服务端成功！')
     cclinkjsStatus.isReady = false
     setTimeout(async () => {
@@ -261,13 +259,6 @@ export default async function initHttpServer(): Promise<void> {
 
         console.info('√ 获取房间信息成功！', roomId, channelId, gameType)
         console.info('* 正在进入房间...')
-
-        // if (!cclinkjs.socket.connection || !cclinkjs.socket.connection.connected) {
-        //   res.send({
-        //     code: 10000,
-        //     msg: 'ok',
-        //   })
-        // }
 
         cclinkjs
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
