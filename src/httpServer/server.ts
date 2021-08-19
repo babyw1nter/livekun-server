@@ -123,6 +123,11 @@ cclinkjs
                 message: chatMsg[4],
                 uid: chatMsg[1]?.toString(),
                 userInfo: chatMsg[7],
+                type: (() => {
+                  if (chatMsg[7][130].toString() === status.roomInfo.liveId) return 'anchor'
+                  if (chatMsg[39] === '1') return 'admin'
+                  return 'normal'
+                })(),
               },
             })
           )
