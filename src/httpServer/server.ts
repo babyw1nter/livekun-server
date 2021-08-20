@@ -240,7 +240,7 @@ export default async function initHttpServer(): Promise<void> {
   })
 
   app.post('/join', async (req, res) => {
-    const liveId = req.body.liveId as string
+    const liveId = (req.body.liveId as string).toString()
     if (!req.body.liveId) {
       res.send({
         code: 10003,
