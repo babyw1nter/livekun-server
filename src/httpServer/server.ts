@@ -20,6 +20,7 @@ import {
 import path from 'path'
 import consola from 'consola'
 import ConfigManager, { IConfig } from '../configManager'
+import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard, randomNum } from '../mock'
 
 const cclinkjsLog = consola.withTag('cclinkjs')
 const httpServerLog = consola.withTag('httpServer')
@@ -316,6 +317,57 @@ export default async function initHttpServer(): Promise<void> {
         clearInterval(_t)
       }
     }, 500)
+  })
+
+  app.post('/control', (req, res) => {
+    const method = req.body.method as string
+
+    switch (method) {
+      case 'sendMockDataToGiftCapsule':
+        sendToGiftCapsuleConnections(
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: getRandomGiftCapsule(),
+            })
+          )
+        )
+        break
+      case 'sendMockDataToChatMessage':
+        sendToChatMessageConnections(
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: getRandomChatMessage(),
+            })
+          )
+        )
+        break
+      case 'sendMockDataToGiftCard':
+        sendToGiftCardConnections(
+          JSON.stringify(
+            wrap({
+              type: 'data',
+              data: getRandomGiftCard(),
+            })
+          )
+        )
+        break
+      case 'clearGiftCapsule':
+        sendToGiftCapsuleConnections(JSON.stringify(wrap({ type: 'clear', data: {} })))
+        break
+      case 'clearChatMessage':
+        sendToChatMessageConnections(JSON.stringify(wrap({ type: 'clear', data: {} })))
+        break
+      case 'clearGiftCard':
+        sendToGiftCardConnections(JSON.stringify(wrap({ type: 'clear', data: {} })))
+        break
+    }
+
+    res.send({
+      code: 200,
+      msg: 'ok',
+    })
   })
 
   app.listen(port, () => {
