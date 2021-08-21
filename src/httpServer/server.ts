@@ -54,6 +54,13 @@ const cclinkjsStatus = {
   isReady: false,
 }
 
+interface IChatMsgCache {
+  uid: string
+  message: string
+  timestamp: number
+}
+const chatMsgCache: Array<IChatMsgCache> = []
+
 /**
  * 创建并连接 cclinkjs 对象
  */
@@ -91,6 +98,7 @@ const resetStatus = () => {
   status.isJoinRoom = false
   status.roomInfo.liveId = ''
   status.roomInfo.title = ''
+  chatMsgCache.splice(0, chatMsgCache.length - 1)
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -124,6 +132,31 @@ cclinkjs
     ChatListener.EventName(),
     ChatListener.EventListener((chatMsg) => {
       cclinkjsLog.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
+      const ccid = chatMsg[7][130].toString() || ''
+      const msg = chatMsg[4]
+
+      if (ConfigManager.getConfig().giftCard.comment.use) {
+        let _msg = chatMsg[4]
+
+        if (
+          msg.slice(0, ConfigManager.getConfig().giftCard.comment.prefix.length) ===
+          ConfigManager.getConfig().giftCard.comment.prefix
+        ) {
+          _msg = _msg.slice(ConfigManager.getConfig().giftCard.comment.prefix.length)
+
+          const cacheIndex = chatMsgCache.findIndex((i) => i.uid === ccid)
+          const data = {
+            uid: ccid,
+            message: _msg,
+            timestamp: Date.now(),
+          }
+          if (cacheIndex > -1) {
+            chatMsgCache[cacheIndex] = data
+          } else {
+            chatMsgCache.push(data)
+          }
+        }
+      }
 
       if (connections.chatMessageConnection != null) {
         sendToChatMessageConnections(
@@ -133,8 +166,8 @@ cclinkjs
               data: {
                 avatarUrl: chatMsg[10],
                 nickname: chatMsg[197],
-                message: chatMsg[4],
-                uid: chatMsg[1]?.toString(),
+                message: msg,
+                uid: ccid,
                 userInfo: chatMsg[7],
                 type: (() => {
                   if (chatMsg[7][130].toString() === status.roomInfo.liveId) return 'anchor'
@@ -153,12 +186,12 @@ cclinkjs
     GiftListener.EventListener((giftMsg) => {
       // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
       const gift = giftData.conf.find((item) => item.saleid === giftMsg.saleid)
-      const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid
+      const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
       const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
       cclinkjsLog.info(
         '[🎁] ',
-        `${giftMsg.fromnick} 送出 ${giftMsg.num} 个 ${giftName}`,
+        `${giftMsg.fromnick}(${giftMsg.fromid}) 送出 ${giftMsg.num} 个 ${giftName}`,
         giftMsg.combo > 1 ? giftMsg.combo + ' 连击' : '',
         giftMsg.combo > 1 ? giftMsg.comboid : ''
       )
@@ -184,6 +217,26 @@ cclinkjs
 
       if (connections.giftCardConnection != null) {
         if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
+
+        let msg = `赠送了${giftName} × ${giftMsg.num}`
+
+        // 判断是否留言礼物
+        if (
+          ConfigManager.getConfig().giftCard.comment.use &&
+          (ConfigManager.getConfig().giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
+            ConfigManager.getConfig().giftCard.comment.giftWhitelist === '') &&
+          giftMoney >= ConfigManager.getConfig().giftCard.comment.giftMinMoney
+        ) {
+          const commentIndex = chatMsgCache.findIndex(
+            (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
+          )
+
+          if (commentIndex > -1) {
+            msg = chatMsgCache[commentIndex].message
+            chatMsgCache.splice(commentIndex, 1)
+          }
+        }
+
         sendToGiftCardConnections(
           JSON.stringify(
             wrap({
@@ -195,7 +248,7 @@ cclinkjs
                 money: giftMoney,
                 giftName: giftName,
                 giftCount: giftMsg.num,
-                message: `赠送了${giftName} × ${giftMsg.num}`,
+                message: msg,
               },
             })
           )
