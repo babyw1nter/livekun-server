@@ -9,7 +9,14 @@ import {
   RoomListener,
   RoomMethods,
 } from '@hhui64/cclinkjs-room-module/src/index'
-import { connections, wrap } from '../socketServer/server'
+import {
+  connections,
+  wrap,
+  cleariIvalidConnections,
+  sendToGiftCapsuleConnections,
+  sendToChatMessageConnections,
+  sendToGiftCardConnections,
+} from '../socketServer/server'
 import path from 'path'
 import consola from 'consola'
 import ConfigManager, { IConfig } from '../configManager'
@@ -96,7 +103,7 @@ cclinkjs
 
       if (connections.chatMessageConnection != null) {
         if (!ConfigManager.getConfig().chatMessage.show.join) return
-        connections.chatMessageConnection.sendUTF(
+        sendToChatMessageConnections(
           JSON.stringify(
             wrap({
               type: 'data',
@@ -118,7 +125,7 @@ cclinkjs
       cclinkjsLog.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
 
       if (connections.chatMessageConnection != null) {
-        connections.chatMessageConnection.sendUTF(
+        sendToChatMessageConnections(
           JSON.stringify(
             wrap({
               type: 'data',
@@ -157,7 +164,7 @@ cclinkjs
 
       if (connections.giftCapsuleConnection != null) {
         if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
-        connections.giftCapsuleConnection.sendUTF(
+        sendToGiftCapsuleConnections(
           JSON.stringify(
             wrap({
               type: 'data',
@@ -176,7 +183,7 @@ cclinkjs
 
       if (connections.giftCardConnection != null) {
         if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
-        connections.giftCardConnection.sendUTF(
+        sendToGiftCardConnections(
           JSON.stringify(
             wrap({
               type: 'data',
@@ -223,15 +230,9 @@ export default async function initHttpServer(): Promise<void> {
     ConfigManager.saveConfig()
     ConfigManager.readConfig()
 
-    if (connections.chatMessageConnection && connections.chatMessageConnection.connected) {
-      connections.chatMessageConnection.sendUTF(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-    }
-    if (connections.giftCapsuleConnection && connections.giftCapsuleConnection.connected) {
-      connections.giftCapsuleConnection.sendUTF(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-    }
-    if (connections.giftCardConnection && connections.giftCardConnection.connected) {
-      connections.giftCardConnection.sendUTF(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-    }
+    sendToChatMessageConnections(JSON.stringify(wrap({ type: 'update-config', data: {} })))
+    sendToGiftCapsuleConnections(JSON.stringify(wrap({ type: 'update-config', data: {} })))
+    sendToGiftCardConnections(JSON.stringify(wrap({ type: 'update-config', data: {} })))
 
     res.send({
       code: 200,

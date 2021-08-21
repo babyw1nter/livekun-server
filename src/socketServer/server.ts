@@ -20,35 +20,54 @@ const wsServer = new WebSocket.server({
 })
 
 interface IConnections {
-  giftCapsuleConnection: WebSocket.connection | null
-  chatMessageConnection: WebSocket.connection | null
-  giftCardConnection: WebSocket.connection | null
+  giftCapsuleConnection: WebSocket.connection[]
+  chatMessageConnection: WebSocket.connection[]
+  giftCardConnection: WebSocket.connection[]
 }
 
 const connections: IConnections = {
-  giftCapsuleConnection: null,
-  chatMessageConnection: null,
-  giftCardConnection: null,
+  giftCapsuleConnection: [],
+  chatMessageConnection: [],
+  giftCardConnection: [],
+}
+
+const sendToGiftCapsuleConnections = (data: WebSocket.IStringified): void => {
+  connections.giftCapsuleConnection.map((value: WebSocket.connection) => value.connected && value.sendUTF(data))
+}
+const sendToChatMessageConnections = (data: WebSocket.IStringified): void => {
+  connections.chatMessageConnection.map((value: WebSocket.connection) => value.connected && value.sendUTF(data))
+}
+const sendToGiftCardConnections = (data: WebSocket.IStringified): void => {
+  connections.giftCardConnection.map((value: WebSocket.connection) => value.connected && value.sendUTF(data))
+}
+
+const cleariIvalidConnections = (): void => {
+  const _cb = (value: WebSocket.connection, index: number, array: Array<WebSocket.connection>) => {
+    !value.connected && array.splice(index, 1)
+  }
+  connections.giftCapsuleConnection.map(_cb)
+  connections.chatMessageConnection.map(_cb)
+  connections.giftCardConnection.map(_cb)
 }
 
 wsServer.on('connect', (connection) => {
   switch (connection.protocol) {
     case 'gift-capsule':
-      connections.giftCapsuleConnection = connection
-      connection.on('close', () => (connections.giftCapsuleConnection = null))
-      connection.on('error', () => (connections.giftCapsuleConnection = null))
+      connections.giftCapsuleConnection.push(connection)
       break
     case 'chat-message':
-      connections.chatMessageConnection = connection
-      connection.on('close', () => (connections.giftCapsuleConnection = null))
-      connection.on('error', () => (connections.giftCapsuleConnection = null))
+      connections.chatMessageConnection.push(connection)
       break
     case 'gift-card':
-      connections.giftCardConnection = connection
-      connection.on('close', () => (connections.giftCapsuleConnection = null))
-      connection.on('error', () => (connections.giftCapsuleConnection = null))
+      connections.giftCardConnection.push(connection)
       break
   }
+  connection.on('close', () => {
+    cleariIvalidConnections()
+  })
+  connection.on('error', () => {
+    cleariIvalidConnections()
+  })
 })
 
 const wrap = <T>(wrapData: { code?: number; type: string; data: T }): { code: number; type: string; data: T } => {
@@ -63,4 +82,11 @@ export default async function initSocketServer(): Promise<void> {
   //
 }
 
-export { connections, wrap }
+export {
+  connections,
+  wrap,
+  cleariIvalidConnections,
+  sendToGiftCapsuleConnections,
+  sendToChatMessageConnections,
+  sendToGiftCardConnections,
+}
