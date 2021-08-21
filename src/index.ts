@@ -4,5 +4,4 @@ import ConfigManager from './configManager'
 
 ConfigManager.readConfig()
 
-initSocketServer()
-initHttpServer()
+initSocketServer(initHttpServer())

@@ -9,18 +9,12 @@ import {
   RoomListener,
   RoomMethods,
 } from '@hhui64/cclinkjs-room-module/src/index'
-import {
-  connections,
-  wrap,
-  cleariIvalidConnections,
-  sendToGiftCapsuleConnections,
-  sendToChatMessageConnections,
-  sendToGiftCardConnections,
-} from '../socketServer/server'
+import { wrap, socketServer, sendToProtocol } from '../socketServer/server'
 import path from 'path'
 import consola from 'consola'
 import ConfigManager, { IConfig } from '../configManager'
 import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard, randomNum } from '../mock'
+import { Server } from 'http'
 
 const cclinkjsLog = consola.withTag('cclinkjs')
 const httpServerLog = consola.withTag('httpServer')
@@ -110,22 +104,21 @@ cclinkjs
     RoomListener.EventListener((userJoinRoomMsg) => {
       cclinkjsLog.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
 
-      if (connections.chatMessageConnection != null) {
-        if (!ConfigManager.getConfig().chatMessage.show.join) return
-        sendToChatMessageConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: {
-                avatarUrl: '',
-                nickname: userJoinRoomMsg.name,
-                message: '进入了直播间',
-                uid: userJoinRoomMsg.uid,
-              },
-            })
-          )
-        )
-      }
+      if (!ConfigManager.getConfig().chatMessage.show.join) return
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: {
+              avatarUrl: '',
+              nickname: userJoinRoomMsg.name,
+              message: '进入了直播间',
+              uid: userJoinRoomMsg.uid,
+            },
+          })
+        ),
+        'chat-message'
+      )
     })
   )
   .on(
@@ -158,27 +151,26 @@ cclinkjs
         }
       }
 
-      if (connections.chatMessageConnection != null) {
-        sendToChatMessageConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: {
-                avatarUrl: chatMsg[10],
-                nickname: chatMsg[197],
-                message: msg,
-                uid: ccid,
-                userInfo: chatMsg[7],
-                type: (() => {
-                  if (chatMsg[7][130].toString() === status.roomInfo.liveId) return 'anchor'
-                  if (chatMsg[39] === '1') return 'admin'
-                  return 'normal'
-                })(),
-              },
-            })
-          )
-        )
-      }
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: {
+              avatarUrl: chatMsg[10],
+              nickname: chatMsg[197],
+              message: msg,
+              uid: ccid,
+              userInfo: chatMsg[7],
+              type: (() => {
+                if (chatMsg[7][130].toString() === status.roomInfo.liveId) return 'anchor'
+                if (chatMsg[39] === '1') return 'admin'
+                return 'normal'
+              })(),
+            },
+          })
+        ),
+        'chat-message'
+      )
     })
   )
   .on(
@@ -196,64 +188,62 @@ cclinkjs
         giftMsg.combo > 1 ? giftMsg.comboid : ''
       )
 
-      if (connections.giftCapsuleConnection != null) {
-        if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
-        sendToGiftCapsuleConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: {
-                avatarUrl: giftMsg.frompurl,
-                nickname: giftMsg.fromnick,
-                uid: giftMsg.fromid.toString(),
-                money: giftMoney,
-                giftName: giftName,
-                giftCount: giftMsg.num,
-              },
-            })
-          )
+      if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: {
+              avatarUrl: giftMsg.frompurl,
+              nickname: giftMsg.fromnick,
+              uid: giftMsg.fromid.toString(),
+              money: giftMoney,
+              giftName: giftName,
+              giftCount: giftMsg.num,
+            },
+          })
+        ),
+        'gift-capsule'
+      )
+
+      if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
+
+      let msg = `赠送了${giftName} × ${giftMsg.num}`
+
+      // 判断是否留言礼物
+      if (
+        ConfigManager.getConfig().giftCard.comment.use &&
+        (ConfigManager.getConfig().giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
+          ConfigManager.getConfig().giftCard.comment.giftWhitelist === '') &&
+        giftMoney >= ConfigManager.getConfig().giftCard.comment.giftMinMoney
+      ) {
+        const commentIndex = chatMsgCache.findIndex(
+          (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
         )
-      }
 
-      if (connections.giftCardConnection != null) {
-        if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
-
-        let msg = `赠送了${giftName} × ${giftMsg.num}`
-
-        // 判断是否留言礼物
-        if (
-          ConfigManager.getConfig().giftCard.comment.use &&
-          (ConfigManager.getConfig().giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
-            ConfigManager.getConfig().giftCard.comment.giftWhitelist === '') &&
-          giftMoney >= ConfigManager.getConfig().giftCard.comment.giftMinMoney
-        ) {
-          const commentIndex = chatMsgCache.findIndex(
-            (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
-          )
-
-          if (commentIndex > -1) {
-            msg = chatMsgCache[commentIndex].message
-            chatMsgCache.splice(commentIndex, 1)
-          }
+        if (commentIndex > -1) {
+          msg = chatMsgCache[commentIndex].message
+          chatMsgCache.splice(commentIndex, 1)
         }
-
-        sendToGiftCardConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: {
-                avatarUrl: giftMsg.frompurl,
-                nickname: giftMsg.fromnick,
-                uid: giftMsg.fromid.toString(),
-                money: giftMoney,
-                giftName: giftName,
-                giftCount: giftMsg.num,
-                message: msg,
-              },
-            })
-          )
-        )
       }
+
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: {
+              avatarUrl: giftMsg.frompurl,
+              nickname: giftMsg.fromnick,
+              uid: giftMsg.fromid.toString(),
+              money: giftMoney,
+              giftName: giftName,
+              giftCount: giftMsg.num,
+              message: msg,
+            },
+          })
+        ),
+        'gift-card'
+      )
     })
   )
 // .on(
@@ -263,167 +253,176 @@ cclinkjs
 //   })
 // )
 
-export default async function initHttpServer(): Promise<void> {
-  app.get('/get-config', (req, res) => {
-    ConfigManager.readConfig()
+app.get('/get-config', (req, res) => {
+  ConfigManager.readConfig()
+  res.send({
+    code: 200,
+    data: ConfigManager.getConfig(),
+  })
+})
+
+app.get('/get-status', (req, res) => {
+  res.send({
+    code: 200,
+    data: status,
+  })
+})
+
+app.post('/update-config', (req, res) => {
+  ConfigManager.setConfig(req.body as IConfig)
+  ConfigManager.saveConfig()
+  ConfigManager.readConfig()
+
+  if (socketServer) {
+    sendToProtocol(JSON.stringify(wrap({ type: 'update-config', data: {} })))
     res.send({
       code: 200,
       data: ConfigManager.getConfig(),
     })
-  })
-
-  app.get('/get-status', (req, res) => {
+  } else {
     res.send({
-      code: 200,
-      data: status,
+      code: 20001,
+      msg: 'Socket 服务端未初始化！',
     })
-  })
+  }
+})
 
-  app.post('/update-config', (req, res) => {
-    ConfigManager.setConfig(req.body as IConfig)
-    ConfigManager.saveConfig()
-    ConfigManager.readConfig()
-
-    sendToChatMessageConnections(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-    sendToGiftCapsuleConnections(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-    sendToGiftCardConnections(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-
+app.post('/join', async (req, res) => {
+  const liveId = (req.body.liveId as string).toString()
+  if (!req.body.liveId) {
     res.send({
-      code: 200,
-      data: ConfigManager.getConfig(),
+      code: 10003,
+      msg: '直播间ID不能为空',
     })
-  })
+  }
 
-  app.post('/join', async (req, res) => {
-    const liveId = (req.body.liveId as string).toString()
-    if (!req.body.liveId) {
-      res.send({
-        code: 10003,
-        msg: '直播间ID不能为空',
-      })
-    }
+  if (!cclinkjs.socket.connection) {
+    cclinkjsLog.info('CC服务端尚未连接，正在连接中...')
+    cclinkjs.connect()
+  }
 
-    if (!cclinkjs.socket.connection) {
-      cclinkjsLog.info('CC服务端尚未连接，正在连接中...')
-      cclinkjs.connect()
-    }
+  RoomMethods.getLiveRoomInfoByCcId(liveId)
+    .then((ILiveRoomInfoByCcIdResponse) => {
+      const roomId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.room_id
+      const channelId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.channel_id
+      const gameType = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.gametype
+      const title = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.title
 
-    RoomMethods.getLiveRoomInfoByCcId(liveId)
-      .then((ILiveRoomInfoByCcIdResponse) => {
-        const roomId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.room_id
-        const channelId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.channel_id
-        const gameType = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.gametype
-        const title = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.title
-
-        if (!roomId || !channelId || !gameType) {
-          res.send({
-            code: 10001,
-            msg: '获取房间信息失败！',
-          })
-          return
-        }
-
-        cclinkjsLog.success('获取房间信息成功！', roomId, channelId, gameType)
-        cclinkjsLog.info('正在进入房间...')
-
-        cclinkjs
-          .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
-          .then((recvJsonData) => {
-            status.isJoinRoom = true
-            status.roomInfo.liveId = liveId
-            status.roomInfo.title = title || ''
-            res.send({
-              code: 10000,
-              msg: 'ok',
-            })
-            cclinkjsLog.success('进入房间成功！', title)
-          })
-          .catch((reason) => {
-            resetStatus()
-            res.send({
-              code: 10002,
-              msg: '进入房间失败！',
-            })
-            cclinkjsLog.error('进入房间失败！', reason)
-          })
-      })
-      .catch((reason) => {
+      if (!roomId || !channelId || !gameType) {
         res.send({
           code: 10001,
           msg: '获取房间信息失败！',
         })
-        cclinkjsLog.error('获取房间信息失败！', reason)
-      })
-  })
-
-  app.post('/leave', (req, res) => {
-    cclinkjs.close()
-
-    setTimeout(() => cclinkjs.connect(), 1000)
-
-    const _t = setInterval(() => {
-      if (cclinkjs.socket.connection && cclinkjs.socket.connection.connected && cclinkjsStatus.isReady) {
-        res.send({
-          code: 10000,
-          msg: 'ok',
-        })
-        clearInterval(_t)
+        return
       }
-    }, 500)
-  })
 
-  app.post('/control', (req, res) => {
-    const method = req.body.method as string
+      cclinkjsLog.success('获取房间信息成功！', roomId, channelId, gameType)
+      cclinkjsLog.info('正在进入房间...')
 
-    switch (method) {
-      case 'sendMockDataToGiftCapsule':
-        sendToGiftCapsuleConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: getRandomGiftCapsule(),
-            })
-          )
-        )
-        break
-      case 'sendMockDataToChatMessage':
-        sendToChatMessageConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: getRandomChatMessage(),
-            })
-          )
-        )
-        break
-      case 'sendMockDataToGiftCard':
-        sendToGiftCardConnections(
-          JSON.stringify(
-            wrap({
-              type: 'data',
-              data: getRandomGiftCard(),
-            })
-          )
-        )
-        break
-      case 'clearGiftCapsule':
-        sendToGiftCapsuleConnections(JSON.stringify(wrap({ type: 'clear', data: {} })))
-        break
-      case 'clearChatMessage':
-        sendToChatMessageConnections(JSON.stringify(wrap({ type: 'clear', data: {} })))
-        break
-      case 'clearGiftCard':
-        sendToGiftCardConnections(JSON.stringify(wrap({ type: 'clear', data: {} })))
-        break
-    }
-
-    res.send({
-      code: 200,
-      msg: 'ok',
+      cclinkjs
+        .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
+        .then((recvJsonData) => {
+          status.isJoinRoom = true
+          status.roomInfo.liveId = liveId
+          status.roomInfo.title = title || ''
+          res.send({
+            code: 10000,
+            msg: 'ok',
+          })
+          cclinkjsLog.success('进入房间成功！', title)
+        })
+        .catch((reason) => {
+          resetStatus()
+          res.send({
+            code: 10002,
+            msg: '进入房间失败！',
+          })
+          cclinkjsLog.error('进入房间失败！', reason)
+        })
     })
-  })
+    .catch((reason) => {
+      res.send({
+        code: 10001,
+        msg: '获取房间信息失败！',
+      })
+      cclinkjsLog.error('获取房间信息失败！', reason)
+    })
+})
 
-  app.listen(port, () => {
-    httpServerLog.success(`HTTP 服务端启动完成！正在监听端口：${port}...`)
+app.post('/leave', (req, res) => {
+  cclinkjs.close()
+
+  setTimeout(() => cclinkjs.connect(), 1000)
+
+  const _t = setInterval(() => {
+    if (cclinkjs.socket.connection && cclinkjs.socket.connection.connected && cclinkjsStatus.isReady) {
+      res.send({
+        code: 10000,
+        msg: 'ok',
+      })
+      clearInterval(_t)
+    }
+  }, 500)
+})
+
+app.post('/control', (req, res) => {
+  const method = req.body.method as string
+
+  switch (method) {
+    case 'sendMockDataToGiftCapsule':
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: getRandomGiftCapsule(),
+          })
+        ),
+        'gift-capsule'
+      )
+      break
+    case 'sendMockDataToChatMessage':
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: getRandomChatMessage(),
+          })
+        ),
+        'chat-message'
+      )
+      break
+    case 'sendMockDataToGiftCard':
+      sendToProtocol(
+        JSON.stringify(
+          wrap({
+            type: 'data',
+            data: getRandomGiftCard(),
+          })
+        ),
+        'gift-card'
+      )
+      break
+    case 'clearGiftCapsule':
+      sendToProtocol(JSON.stringify(wrap({ type: 'clear', data: {} })), 'gift-capsule')
+      break
+    case 'clearChatMessage':
+      sendToProtocol(JSON.stringify(wrap({ type: 'clear', data: {} })), 'chat-message')
+      break
+    case 'clearGiftCard':
+      sendToProtocol(JSON.stringify(wrap({ type: 'clear', data: {} })), 'gift-card')
+      break
+  }
+
+  res.send({
+    code: 200,
+    msg: 'ok',
+  })
+})
+
+export default function initHttpServer(): Server {
+  httpServerLog.info(`livekun 服务端正在启动中...`)
+
+  return app.listen(port, () => {
+    httpServerLog.success(`livekun 服务端启动完成！正在监听端口：${port}...`)
   })
 }
