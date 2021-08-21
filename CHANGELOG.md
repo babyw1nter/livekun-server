@@ -1,3 +1,15 @@
+# [0.1.0-alpha.1](https://github.com/hhui64/cclinkjs-demo/compare/v0.1.0-alpha.0...v0.1.0-alpha.1) (2021-08-21)
+
+
+### Features
+
+* 新增支持礼物卡片留言功能 ([292cea6](https://github.com/hhui64/cclinkjs-demo/commit/292cea6de30d99673a9e14f502b8535aac913983))
+* **httpServer:** 支持操作组件 ([3aac839](https://github.com/hhui64/cclinkjs-demo/commit/3aac839121ba456176e36f27719024774f68b93a))
+* **mock:** 添加 mock 数据 ([a33c3cc](https://github.com/hhui64/cclinkjs-demo/commit/a33c3ccbc350a9e53be28df22931823592ed0a79))
+* **socketServer:** 支持多客户端连接 ([a911877](https://github.com/hhui64/cclinkjs-demo/commit/a9118771e7b81059717ea38270f77066bc693fa2))
+
+
+
 # [0.1.0-alpha.0](https://github.com/hhui64/cclinkjs-demo/compare/e7bdce9ca23a97009b03b81ee7297952cb264866...v0.1.0-alpha.0) (2021-08-20)
 
 
