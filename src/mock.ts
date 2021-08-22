@@ -158,6 +158,7 @@ const giftCardListArray = [
     giftName: '奶罩',
     giftCount: 1,
     message: '赠送了奶罩 × 1',
+    comment: '我永远爱奶玲！',
     uid: 91330,
   },
   {
@@ -176,6 +177,7 @@ const giftCardListArray = [
     giftName: '圣旨降临',
     giftCount: 66,
     message: '赠送了圣旨降临 × 66',
+    comment: '圣旨66张，只为看奶玲白丝美腿！',
     uid: 3312,
   },
   {
@@ -203,7 +205,7 @@ const giftCardListArray = [
 const getRandomGiftCapsule = () => {
   return {
     ...giftCapsuleListArray[randomNum(0, giftCapsuleListArray.length - 1)],
-    money: randomNum(1, 100)
+    money: randomNum(1, 100),
   }
 }
 
