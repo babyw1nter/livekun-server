@@ -125,53 +125,29 @@ app.post('/join', async (req, res) => {
     cclinkjsLog.info('CC服务端尚未连接，正在连接中...')
     cclinkjs.connect()
   }
+  httpServerLog.info(uuid, '正在进入房间...')
 
-  RoomMethods.getLiveRoomInfoByCcId(liveId)
-    .then((ILiveRoomInfoByCcIdResponse) => {
-      const roomId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.room_id
-      const channelId = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.channel_id
-      const gameType = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.gametype
-      const title = ILiveRoomInfoByCcIdResponse.props.pageProps.roomInfoInitData.live?.title
-
-      if (!roomId || !channelId || !gameType) {
-        res.send({
-          code: 10001,
-          msg: '获取房间信息失败！',
-        })
-        return
-      }
+  CCLinkJSManager.joinLiveRoom(uuid, liveId)
+    .then((value) => {
       StatusManager.status.isJoinRoom = true
       StatusManager.status.roomInfo.liveId = liveId
       StatusManager.status.roomInfo.title = value.liveRoomInfo.props.pageProps.roomInfoInitData.live?.title || ''
 
-      cclinkjsLog.success('获取房间信息成功！', roomId, channelId, gameType)
-      cclinkjsLog.info('正在进入房间...')
+      res.send({
+        code: 10000,
+        msg: 'ok',
+      })
 
-      cclinkjs
-        .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
-        .then((recvJsonData) => {
-          res.send({
-            code: 10000,
-            msg: 'ok',
-          })
-          cclinkjsLog.success('进入房间成功！', title)
-        })
-        .catch((reason) => {
-          res.send({
-            code: 10002,
-            msg: '进入房间失败！',
-          })
-          cclinkjsLog.error('进入房间失败！', reason)
-        })
       httpServerLog.success(uuid, '进入房间成功！', StatusManager.status.roomInfo.title)
     })
-    .catch((reason) => {
+    .catch((reason: Error) => {
       res.send({
         code: 10001,
-        msg: '获取房间信息失败！',
+        msg: reason.message,
       })
-      cclinkjsLog.error('获取房间信息失败！', reason)
+
       StatusManager.resetStatus()
+      httpServerLog.error(uuid, '进入房间失败！', reason)
     })
 })
 
