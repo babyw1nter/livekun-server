@@ -1,3 +1,24 @@
+# [0.1.0-alpha.2](https://github.com/hhui64/cclinkjs-demo/compare/v0.1.0-alpha.1...v0.1.0-alpha.2) (2021-08-22)
+
+
+### Features
+
+* **cclinkjsManager:** 新增 cclinkjsManager 连接管理器 ([474364f](https://github.com/hhui64/cclinkjs-demo/commit/474364fb1357cdcfdd97af454ccc7118f2f14f82))
+* **emtsLoader:** 新增 emtsLoader 表情加载器 ([0f1dabd](https://github.com/hhui64/cclinkjs-demo/commit/0f1dabdfbbaa52822c1d12b4b882902af809ec23))
+* **modules/chatMessage:** 新增 chatMessage 事件处理模块 ([0af83d9](https://github.com/hhui64/cclinkjs-demo/commit/0af83d920680ad46152ae892fb14703b45f484c4))
+* **modules/giftCapsule:** 新增 giftCapsule 事件处理模块 ([6f4669a](https://github.com/hhui64/cclinkjs-demo/commit/6f4669aead85224c4becde324f42fcf2120ca046))
+* **modules/giftCard:** 新增 giftCard 事件处理模块 ([d7be6f1](https://github.com/hhui64/cclinkjs-demo/commit/d7be6f1dcfcb08d1d74de9943f64182ab7be3957))
+* **statusManager:** 新增 statusManager 状态管理器 ([23c55e8](https://github.com/hhui64/cclinkjs-demo/commit/23c55e87683a33034fbd5e9cda9f3db8d8b7753c))
+
+
+### Performance Improvements
+
+* **httpServer:** 优化进房接口的错误信息 ([bfe4fcf](https://github.com/hhui64/cclinkjs-demo/commit/bfe4fcf53591facde071f548c7c5480ba784082c))
+* **modules/chatMessage:** 优化聊天消息格式处理逻辑 ([7501aa1](https://github.com/hhui64/cclinkjs-demo/commit/7501aa1e5e98d3642969d561e1033be08edf4d9f))
+* **modules/giftCard:** 优化礼物卡片消息与留言属性分开发送 ([1ed0fe5](https://github.com/hhui64/cclinkjs-demo/commit/1ed0fe5fb003e5fc8ba7650d203c63188c66433e))
+
+
+
 # [0.1.0-alpha.1](https://github.com/hhui64/cclinkjs-demo/compare/v0.1.0-alpha.0...v0.1.0-alpha.1) (2021-08-21)
 
 
