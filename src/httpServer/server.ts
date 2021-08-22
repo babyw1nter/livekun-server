@@ -309,6 +309,9 @@ app.post('/join', async (req, res) => {
         })
         return
       }
+      StatusManager.status.isJoinRoom = true
+      StatusManager.status.roomInfo.liveId = liveId
+      StatusManager.status.roomInfo.title = value.liveRoomInfo.props.pageProps.roomInfoInitData.live?.title || ''
 
       cclinkjsLog.success('获取房间信息成功！', roomId, channelId, gameType)
       cclinkjsLog.info('正在进入房间...')
@@ -329,6 +332,7 @@ app.post('/join', async (req, res) => {
           })
           cclinkjsLog.error('进入房间失败！', reason)
         })
+      httpServerLog.success(uuid, '进入房间成功！', StatusManager.status.roomInfo.title)
     })
     .catch((reason) => {
       res.send({
@@ -336,6 +340,7 @@ app.post('/join', async (req, res) => {
         msg: '获取房间信息失败！',
       })
       cclinkjsLog.error('获取房间信息失败！', reason)
+      StatusManager.resetStatus()
     })
 })
 
