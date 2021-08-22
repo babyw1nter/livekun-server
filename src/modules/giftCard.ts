@@ -16,7 +16,8 @@ const giftCardModule = (giftMsg: IGiftMsg): void => {
 
   if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
 
-  let msg = `赠送了${giftName} × ${giftMsg.num}`
+  const msg = `赠送了${giftName} × ${giftMsg.num}`
+  let comment = ''
 
   // 判断是否留言礼物
   if (
@@ -30,7 +31,7 @@ const giftCardModule = (giftMsg: IGiftMsg): void => {
     )
 
     if (commentIndex > -1) {
-      msg = commentChatMsgCache[commentIndex].message
+      comment = commentChatMsgCache[commentIndex].message
       commentChatMsgCache.splice(commentIndex, 1)
     }
   }
@@ -47,6 +48,7 @@ const giftCardModule = (giftMsg: IGiftMsg): void => {
           giftName: giftName,
           giftCount: giftMsg.num,
           message: msg,
+          comment: comment,
         },
       })
     ),
