@@ -13,6 +13,7 @@ import { wrap, socketServer, sendToProtocol } from '../socketServer/server'
 import path from 'path'
 import consola from 'consola'
 import ConfigManager, { IConfig } from '../configManager'
+import StatusManager from '../statusManager'
 import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard, randomNum } from '../mock'
 import { Server } from 'http'
 
@@ -36,13 +37,6 @@ app.all('*', function (req, res, next) {
 
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
-const status = {
-  isJoinRoom: false,
-  roomInfo: {
-    liveId: '',
-    title: '',
-  },
-}
 
 const cclinkjsStatus = {
   isReady: false,
@@ -264,7 +258,7 @@ app.get('/get-config', (req, res) => {
 app.get('/get-status', (req, res) => {
   res.send({
     code: 200,
-    data: status,
+    data: StatusManager.getStatus(),
   })
 })
 
@@ -322,9 +316,6 @@ app.post('/join', async (req, res) => {
       cclinkjs
         .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
         .then((recvJsonData) => {
-          status.isJoinRoom = true
-          status.roomInfo.liveId = liveId
-          status.roomInfo.title = title || ''
           res.send({
             code: 10000,
             msg: 'ok',
@@ -332,7 +323,6 @@ app.post('/join', async (req, res) => {
           cclinkjsLog.success('进入房间成功！', title)
         })
         .catch((reason) => {
-          resetStatus()
           res.send({
             code: 10002,
             msg: '进入房间失败！',
