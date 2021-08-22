@@ -1,14 +1,4 @@
-import { CCLinkJS } from '@hhui64/cclinkjs/src'
 import express from 'express'
-import {
-  ChatListener,
-  ClientMethods,
-  GiftInterface,
-  GiftListener,
-  HotScoreListener,
-  RoomListener,
-  RoomMethods,
-} from '@hhui64/cclinkjs-room-module/src/index'
 import { wrap, socketServer, sendToProtocol } from '../socketServer/server'
 import path from 'path'
 import consola from 'consola'
@@ -16,8 +6,8 @@ import ConfigManager, { IConfig } from '../configManager'
 import StatusManager from '../statusManager'
 import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard, randomNum } from '../mock'
 import { Server } from 'http'
+import CCLinkJSManager, { ICCLinkJSInstance } from '../cclinkjsManager'
 
-const cclinkjsLog = consola.withTag('cclinkjs')
 const httpServerLog = consola.withTag('httpServer')
 
 const port = 39074
@@ -40,10 +30,6 @@ app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 const uuid = Date.now().toString()
 CCLinkJSManager.createCCLinkJS(uuid)
 const cclinkjsInstance = CCLinkJSManager.getCCLinkJSInstance(uuid) as ICCLinkJSInstance
-
-const cclinkjsStatus = {
-  isReady: false,
-}
 
 // cclinkjs
 //   .on(ChatListener.EventName(), ChatListener.EventListener(chatMessageModule))
@@ -114,6 +100,7 @@ app.post('/update-config', (req, res) => {
 
 app.post('/join', async (req, res) => {
   const liveId = (req.body.liveId as string).toString()
+
   if (!req.body.liveId) {
     res.send({
       code: 10003,
@@ -121,10 +108,6 @@ app.post('/join', async (req, res) => {
     })
   }
 
-  if (!cclinkjs.socket.connection) {
-    cclinkjsLog.info('CC服务端尚未连接，正在连接中...')
-    cclinkjs.connect()
-  }
   httpServerLog.info(uuid, '正在进入房间...')
 
   CCLinkJSManager.joinLiveRoom(uuid, liveId)
@@ -152,12 +135,16 @@ app.post('/join', async (req, res) => {
 })
 
 app.post('/leave', (req, res) => {
-  cclinkjs.close()
+  cclinkjsInstance.cclinkjs.close()
 
-  setTimeout(() => cclinkjs.connect(), 1000)
+  setTimeout(() => cclinkjsInstance.cclinkjs.connect(), 1000)
 
   const _t = setInterval(() => {
-    if (cclinkjs.socket.connection && cclinkjs.socket.connection.connected && cclinkjsStatus.isReady) {
+    if (
+      cclinkjsInstance.cclinkjs.socket.connection &&
+      cclinkjsInstance.cclinkjs.socket.connection.connected &&
+      cclinkjsInstance.status.isReady
+    ) {
       res.send({
         code: 10000,
         msg: 'ok',
