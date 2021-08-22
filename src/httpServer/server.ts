@@ -37,209 +37,40 @@ app.all('*', function (req, res, next) {
 
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
+const uuid = Date.now().toString()
+CCLinkJSManager.createCCLinkJS(uuid)
+const cclinkjsInstance = CCLinkJSManager.getCCLinkJSInstance(uuid) as ICCLinkJSInstance
 
 const cclinkjsStatus = {
   isReady: false,
 }
 
-interface IChatMsgCache {
-  uid: string
-  message: string
-  timestamp: number
-}
-const chatMsgCache: Array<IChatMsgCache> = []
+// cclinkjs
+//   .on(ChatListener.EventName(), ChatListener.EventListener(chatMessageModule))
+//   .on(GiftListener.EventName(), GiftListener.EventListener(giftCapsuleModule))
+//   .on(GiftListener.EventName(), GiftListener.EventListener(giftCardModule))
+// .on(
+//   RoomListener.EventName(),
+//   RoomListener.EventListener((userJoinRoomMsg) => {
+//     cclinkjsLog.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
 
-/**
- * 创建并连接 cclinkjs 对象
- */
-const cclinkjs = new CCLinkJS()
-cclinkjs.connect()
-cclinkjs
-  .on('connect', (connection) => {
-    cclinkjsLog.success('连接CC服务端成功！')
-    cclinkjsStatus.isReady = false
-    setTimeout(async () => {
-      cclinkjsLog.info('发送客户端握手信息...')
-      try {
-        const response = await cclinkjs.send(ClientMethods.clientInfoProtocol(), 3000)
-        if (response) {
-          cclinkjsLog.success('服务端与客户端握手成功！')
-          cclinkjsStatus.isReady = true
-        }
-      } catch (error: unknown) {
-        cclinkjsLog.error('服务端与客户端握手失败，请重试！', error)
-      }
-    }, 1000)
-  })
-  .on('close', (code, desc) => {
-    resetStatus()
-    cclinkjsStatus.isReady = false
-    cclinkjsLog.log('连接关闭: ', code, desc)
-  })
-  .on('error', (error) => {
-    resetStatus()
-    cclinkjsStatus.isReady = false
-    cclinkjsLog.error('连接错误: ', error)
-  })
-
-const resetStatus = () => {
-  status.isJoinRoom = false
-  status.roomInfo.liveId = ''
-  status.roomInfo.title = ''
-  chatMsgCache.splice(0, chatMsgCache.length - 1)
-}
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const giftData: GiftInterface.IGiftListData = require('../../data/gamegift-7347.json')
-
-cclinkjs
-  .on(
-    RoomListener.EventName(),
-    RoomListener.EventListener((userJoinRoomMsg) => {
-      cclinkjsLog.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
-
-      if (!ConfigManager.getConfig().chatMessage.show.join) return
-      sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: {
-              avatarUrl: '',
-              nickname: userJoinRoomMsg.name,
-              message: '进入了直播间',
-              uid: userJoinRoomMsg.uid,
-            },
-          })
-        ),
-        'chat-message'
-      )
-    })
-  )
-  .on(
-    ChatListener.EventName(),
-    ChatListener.EventListener((chatMsg) => {
-      cclinkjsLog.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
-      const ccid = chatMsg[7][130].toString() || ''
-      const msg = chatMsg[4]
-
-      if (ConfigManager.getConfig().giftCard.comment.use) {
-        let _msg = chatMsg[4]
-
-        if (
-          msg.slice(0, ConfigManager.getConfig().giftCard.comment.prefix.length) ===
-          ConfigManager.getConfig().giftCard.comment.prefix
-        ) {
-          _msg = _msg.slice(ConfigManager.getConfig().giftCard.comment.prefix.length)
-
-          const cacheIndex = chatMsgCache.findIndex((i) => i.uid === ccid)
-          const data = {
-            uid: ccid,
-            message: _msg,
-            timestamp: Date.now(),
-          }
-          if (cacheIndex > -1) {
-            chatMsgCache[cacheIndex] = data
-          } else {
-            chatMsgCache.push(data)
-          }
-        }
-      }
-
-      sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: {
-              avatarUrl: chatMsg[10],
-              nickname: chatMsg[197],
-              message: msg,
-              uid: ccid,
-              userInfo: chatMsg[7],
-              type: (() => {
-                if (chatMsg[7][130].toString() === status.roomInfo.liveId) return 'anchor'
-                if (chatMsg[39] === '1') return 'admin'
-                return 'normal'
-              })(),
-            },
-          })
-        ),
-        'chat-message'
-      )
-    })
-  )
-  .on(
-    GiftListener.EventName(),
-    GiftListener.EventListener((giftMsg) => {
-      // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
-      const gift = giftData.conf.find((item) => item.saleid === giftMsg.saleid)
-      const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
-      const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
-
-      cclinkjsLog.info(
-        '[🎁] ',
-        `${giftMsg.fromnick}(${giftMsg.fromid}) 送出 ${giftMsg.num} 个 ${giftName}`,
-        giftMsg.combo > 1 ? giftMsg.combo + ' 连击' : '',
-        giftMsg.combo > 1 ? giftMsg.comboid : ''
-      )
-
-      if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
-      sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: {
-              avatarUrl: giftMsg.frompurl,
-              nickname: giftMsg.fromnick,
-              uid: giftMsg.fromid.toString(),
-              money: giftMoney,
-              giftName: giftName,
-              giftCount: giftMsg.num,
-            },
-          })
-        ),
-        'gift-capsule'
-      )
-
-      if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
-
-      let msg = `赠送了${giftName} × ${giftMsg.num}`
-
-      // 判断是否留言礼物
-      if (
-        ConfigManager.getConfig().giftCard.comment.use &&
-        (ConfigManager.getConfig().giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
-          ConfigManager.getConfig().giftCard.comment.giftWhitelist === '') &&
-        giftMoney >= ConfigManager.getConfig().giftCard.comment.giftMinMoney
-      ) {
-        const commentIndex = chatMsgCache.findIndex(
-          (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
-        )
-
-        if (commentIndex > -1) {
-          msg = chatMsgCache[commentIndex].message
-          chatMsgCache.splice(commentIndex, 1)
-        }
-      }
-
-      sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: {
-              avatarUrl: giftMsg.frompurl,
-              nickname: giftMsg.fromnick,
-              uid: giftMsg.fromid.toString(),
-              money: giftMoney,
-              giftName: giftName,
-              giftCount: giftMsg.num,
-              message: msg,
-            },
-          })
-        ),
-        'gift-card'
-      )
-    })
-  )
+//     if (!ConfigManager.getConfig().chatMessage.show.join) return
+//     sendToProtocol(
+//       JSON.stringify(
+//         wrap({
+//           type: 'data',
+//           data: {
+//             avatarUrl: '',
+//             nickname: userJoinRoomMsg.name,
+//             message: '进入了直播间',
+//             uid: userJoinRoomMsg.uid,
+//           },
+//         })
+//       ),
+//       'chat-message'
+//     )
+//   })
+// )
 // .on(
 //   HotScoreListener.EventName(),
 //   HotScoreListener.EventListener((hotScoreData) => {
