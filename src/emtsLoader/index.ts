@@ -1,4 +1,4 @@
-interface IEmts {
+export interface IEmts {
   id: string
   tag: string
   text: string
@@ -7,15 +7,39 @@ interface IEmts {
   seeStr: string
   hide: number
 }
-interface IEmtsData {
+
+export interface IEmtsData {
   [propName: string]: IEmts
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const emtsData = require('../../data/emts.json') as IEmtsData
 
+const emtsDataArray = Object.values(emtsData)
+
 export default class EmtsLoader {
-  getEmts(real: string): IEmts {
-    return emtsData[real]
+  public static getEmts(code: string): IEmts | undefined {
+    return emtsDataArray.find(
+      (e) => e.real === code || e.id + e.text + e.tag === code || e.real === `[emts]${code}[/emts]`
+    )
+  }
+
+  public static replace(str: string, replaceValue?: string, showEmts?: boolean): string {
+    if (typeof showEmts === 'undefined') showEmts = true
+    const emtsArray = str.match(/(?<=\[emts\])(.*?)(?=\[\/emts\])/g)
+    // const emtsArray = str.match(/(\[emts\]).*?(\[\/emts\])/g)
+
+    let s = str
+    emtsArray?.forEach((e) => {
+      const emts = EmtsLoader.getEmts(e)
+
+      if (emts && showEmts) {
+        const regexp = new RegExp(`(\\[emts\\])(${emts.id}).*?(\\[\\/emts\\])`, 'g')
+        s = s.replace(regexp, replaceValue || emts.seeStr)
+      } else {
+        s = s.replace(/(\[emts\]).*?(\[\/emts\])/g, replaceValue || '[表情]')
+      }
+    })
+    return s
   }
 }
