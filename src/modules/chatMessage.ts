@@ -4,6 +4,7 @@ import StatusManager from '../statusManager'
 import { sendToProtocol } from '../socketServer/server'
 import { wrap } from '../socketServer/server'
 import consola from 'consola'
+import EmtsLoader from '../emtsLoader'
 
 const log = consola.withTag('modules/chatMessage')
 
@@ -15,13 +16,13 @@ interface ICommentChatMsgCache {
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
 const chatMessageModule = (chatMsg: IChatMsg): void => {
-  log.info('[💬] ', chatMsg[197] + '：' + chatMsg[4])
+  const ccid = chatMsg[7][130].toString() as string
+  const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
 
-  const ccid = chatMsg[7][130].toString() || ''
-  const msg = chatMsg[4]
+  log.info('[💬] ', chatMsg[197] + '：' + msg)
 
   if (ConfigManager.getConfig().giftCard.comment.use) {
-    let _msg = chatMsg[4]
+    let _msg = msg
 
     if (
       msg.slice(0, ConfigManager.getConfig().giftCard.comment.prefix.length) ===
