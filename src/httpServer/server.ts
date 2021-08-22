@@ -32,9 +32,6 @@ CCLinkJSManager.createCCLinkJS(uuid)
 const cclinkjsInstance = CCLinkJSManager.getCCLinkJSInstance(uuid) as ICCLinkJSInstance
 
 // cclinkjs
-//   .on(ChatListener.EventName(), ChatListener.EventListener(chatMessageModule))
-//   .on(GiftListener.EventName(), GiftListener.EventListener(giftCapsuleModule))
-//   .on(GiftListener.EventName(), GiftListener.EventListener(giftCardModule))
 // .on(
 //   RoomListener.EventName(),
 //   RoomListener.EventListener((userJoinRoomMsg) => {
