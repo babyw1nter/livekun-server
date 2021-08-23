@@ -1,19 +1,16 @@
 import ConfigManager from '../configManager'
 import { sendToProtocol } from '../socketServer/server'
 import { IGiftMsg } from '@hhui64/cclinkjs-room-module/src/lib/Gift/GiftInterface'
-import { GiftInterface } from '@hhui64/cclinkjs-room-module/src'
 import { commentChatMsgCache } from './chatMessage'
 import { wrap } from '../socketServer/server'
 import consola from 'consola'
+import GiftLoader from '../giftLoader'
 
 const log = consola.withTag('modules/giftCapsule')
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const giftData: GiftInterface.IGiftListData = require('../../data/gamegift-7347.json')
-
 const giftCapsuleModule = (giftMsg: IGiftMsg): void => {
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
-  const gift = giftData.conf.find((item) => item.saleid === giftMsg.saleid)
+  const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
   const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
@@ -36,6 +33,7 @@ const giftCapsuleModule = (giftMsg: IGiftMsg): void => {
           money: giftMoney,
           giftName: giftName,
           giftCount: giftMsg.num,
+          giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
         },
       })
     ),
@@ -82,4 +80,4 @@ const giftCapsuleModule = (giftMsg: IGiftMsg): void => {
   )
 }
 
-export { giftCapsuleModule, giftData }
+export { giftCapsuleModule }

@@ -4,13 +4,13 @@ import { IGiftMsg } from '@hhui64/cclinkjs-room-module/src/lib/Gift/GiftInterfac
 import { commentChatMsgCache } from './chatMessage'
 import { wrap } from '../socketServer/server'
 import consola from 'consola'
-import { giftData } from './giftCapsule'
+import GiftLoader from '../giftLoader'
 
 const log = consola.withTag('modules/giftCard')
 
 const giftCardModule = (giftMsg: IGiftMsg): void => {
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
-  const gift = giftData.conf.find((item) => item.saleid === giftMsg.saleid)
+  const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
   const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
@@ -47,6 +47,7 @@ const giftCardModule = (giftMsg: IGiftMsg): void => {
           money: giftMoney,
           giftName: giftName,
           giftCount: giftMsg.num,
+          giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
           message: msg,
           comment: comment,
         },
@@ -56,4 +57,4 @@ const giftCardModule = (giftMsg: IGiftMsg): void => {
   )
 }
 
-export { giftCardModule, giftData }
+export { giftCardModule }
