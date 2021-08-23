@@ -1,3 +1,5 @@
+import GiftLoader, { giftData } from './giftLoader'
+
 const randomNum = (minNum: number, maxNum: number): number => {
   return parseInt((Math.random() * (maxNum - minNum + 1) + minNum).toString(), 10)
 }
@@ -214,7 +216,12 @@ const getRandomChatMessage = () => {
 }
 
 const getRandomGiftCard = () => {
-  return giftCardListArray[randomNum(0, giftCardListArray.length - 1)]
+  const gift = giftData.conf[randomNum(0, giftData.conf.length - 1)]
+
+  return {
+    ...giftCardListArray[randomNum(0, giftCardListArray.length - 1)],
+    giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
+  }
 }
 
 export { randomNum, getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard }
