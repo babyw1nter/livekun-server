@@ -1,3 +1,13 @@
+# [0.1.0-alpha.3](https://github.com/hhui64/cclinkjs-demo/compare/v0.1.0-alpha.2...v0.1.0-alpha.3) (2021-08-23)
+
+
+### Performance Improvements
+
+* **cclinkjsManager:** 优化实例生命周期处理 ([e6b25ff](https://github.com/hhui64/cclinkjs-demo/commit/e6b25ff575427a58295bf03a432e1966a1fe4955))
+* **httpServer:** 优化进入房间失败时的错误信息 ([b1b0515](https://github.com/hhui64/cclinkjs-demo/commit/b1b05152d24ef1e442db613616e808880dd59dba))
+
+
+
 # [0.1.0-alpha.2](https://github.com/hhui64/cclinkjs-demo/compare/v0.1.0-alpha.1...v0.1.0-alpha.2) (2021-08-22)
 
 
