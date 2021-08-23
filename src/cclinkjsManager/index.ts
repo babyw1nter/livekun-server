@@ -12,9 +12,6 @@ const log = consola.withTag('modules/cclinkjsManager')
 export interface ICCLinkJSInstance {
   uuid: string
   cclinkjs: CCLinkJS
-  status: {
-    isReady: boolean
-  }
 }
 
 export default class CCLinkJSManager {
@@ -26,38 +23,15 @@ export default class CCLinkJSManager {
     cclinkjs
       .on('connect', () => {
         log.success(uuid, `连接CC服务端成功！`)
-
-        if (CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)])
-          CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)].status.isReady = false
-
-        setTimeout(async () => {
-          log.info(uuid, `发送客户端握手信息...`)
-          cclinkjs
-            .send(ClientMethods.clientInfoProtocol(), 3000)
-            .then(() => {
-              if (CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)])
-                CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)].status.isReady = true
-
-              log.success(uuid, `客户端服务端与握手成功！`)
-            })
-            .catch((reason: Error) => {
-              if (CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)])
-                CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)].status.isReady =
-                  false
-
-              log.error(uuid, `客户端与服务端握手失败，请重试！`, reason)
-            })
-        }, 1000)
       })
       .on('close', (code, desc) => {
-        if (CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)])
-          CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)].status.isReady = false
         log.warn(uuid, '连接关闭: ', code, desc)
       })
       .on('error', (error) => {
-        if (CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)])
-          CCLinkJSManager.cclinkjsInstances[CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)].status.isReady = false
         log.error(uuid, '连接错误: ', error)
+      })
+      .on('ready', () => {
+        log.success(uuid, '客户端与服务端握手成功！')
       })
 
     // 挂载事件处理器
@@ -99,9 +73,6 @@ export default class CCLinkJSManager {
     CCLinkJSManager.cclinkjsInstances.push({
       uuid,
       cclinkjs,
-      status: {
-        isReady: false,
-      },
     })
   }
 
@@ -146,8 +117,8 @@ export default class CCLinkJSManager {
 
       const instance = CCLinkJSManager.cclinkjsInstances.find((i) => i.uuid === uuid) as ICCLinkJSInstance
 
-      if (!instance.cclinkjs.socket.connection || !instance.cclinkjs.socket.connection.connected) {
-        reject(new Error(`${uuid} 连接未就绪！`))
+      if (!instance.cclinkjs.ready) {
+        reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
         return
       }
 

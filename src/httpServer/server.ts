@@ -106,19 +106,12 @@ app.post('/leave', (req, res) => {
 
   setTimeout(() => cclinkjsInstance.cclinkjs.connect(), 1000)
 
-  const _t = setInterval(() => {
-    if (
-      cclinkjsInstance.cclinkjs.socket.connection &&
-      cclinkjsInstance.cclinkjs.socket.connection.connected &&
-      cclinkjsInstance.status.isReady
-    ) {
-      res.send({
-        code: 10000,
-        msg: 'ok',
-      })
-      clearInterval(_t)
-    }
-  }, 500)
+  cclinkjsInstance.cclinkjs.once('ready', () => {
+    res.send({
+      code: 10000,
+      msg: 'ok',
+    })
+  })
 })
 
 app.post('/control', (req, res) => {
