@@ -65,6 +65,34 @@ export default class CCLinkJSManager {
       .on(ChatListener.EventName(), ChatListener.EventListener(chatMessageModule))
       .on(GiftListener.EventName(), GiftListener.EventListener(giftCapsuleModule))
       .on(GiftListener.EventName(), GiftListener.EventListener(giftCardModule))
+    // .on(
+    //   RoomListener.EventName(),
+    //   RoomListener.EventListener((userJoinRoomMsg) => {
+    //     cclinkjsLog.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
+
+    //     if (!ConfigManager.getConfig().chatMessage.show.join) return
+    //     sendToProtocol(
+    //       JSON.stringify(
+    //         wrap({
+    //           type: 'data',
+    //           data: {
+    //             avatarUrl: '',
+    //             nickname: userJoinRoomMsg.name,
+    //             message: '进入了直播间',
+    //             uid: userJoinRoomMsg.uid,
+    //           },
+    //         })
+    //       ),
+    //       'chat-message'
+    //     )
+    //   })
+    // )
+    // .on(
+    //   HotScoreListener.EventName(),
+    //   HotScoreListener.EventListener((hotScoreData) => {
+    //     // cclinkjsLog.log('[🔥] ', `热度：${hotScoreData.hot_score} 观众：${hotScoreData.usercount}`)
+    //   })
+    // )
 
     cclinkjs.connect()
 

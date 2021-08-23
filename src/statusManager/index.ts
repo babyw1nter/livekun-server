@@ -4,9 +4,6 @@ export interface IStatus {
     liveId: string
     title: string
   }
-  cclinkjs: {
-    isReady: boolean
-  }
 }
 
 const defaultStatus: IStatus = {
@@ -14,9 +11,6 @@ const defaultStatus: IStatus = {
   roomInfo: {
     liveId: '',
     title: '',
-  },
-  cclinkjs: {
-    isReady: false,
   },
 }
 
