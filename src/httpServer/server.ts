@@ -123,7 +123,7 @@ app.post('/join', async (req, res) => {
     .catch((reason: Error) => {
       res.send({
         code: 10001,
-        msg: '进入房间失败！',
+        msg: '进入房间失败！' + reason.message,
       })
 
       StatusManager.resetStatus()
