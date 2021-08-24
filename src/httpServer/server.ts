@@ -27,8 +27,7 @@ app.all('*', function (req, res, next) {
 
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
-const uuid = Date.now().toString()
-CCLinkJSManager.createCCLinkJS(uuid)
+const uuid = CCLinkJSManager.createCCLinkJS().uuid
 const cclinkjsInstance = CCLinkJSManager.getCCLinkJSInstance(uuid) as ICCLinkJSInstance
 
 app.get('/get-config', (req, res) => {

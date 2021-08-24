@@ -2,10 +2,11 @@ import { chatMessageModule } from '../modules/chatMessage'
 import { giftCapsuleModule } from '../modules/giftCapsule'
 import { giftCardModule } from '../modules/giftCard'
 import { CCLinkJS, ICCJsonData, ICCRecvJsonData } from '@hhui64/cclinkjs/src'
-import { ClientMethods, ChatListener, GiftListener, RoomMethods } from '@hhui64/cclinkjs-room-module/src'
+import { ChatListener, GiftListener, RoomMethods } from '@hhui64/cclinkjs-room-module/src'
 import StatusManager from '../statusManager'
 import consola from 'consola'
-import { ILiveRoomInfoByCcIdResponse } from '../../../cclinkjs-room-module/src/lib/Room/RoomInterface'
+import { ILiveRoomInfoByCcIdResponse } from '@hhui64/cclinkjs-room-module/src/lib/Room/RoomInterface'
+import { v4 as uuidv4 } from 'uuid'
 
 const log = consola.withTag('modules/cclinkjsManager')
 
@@ -14,31 +15,35 @@ export interface ICCLinkJSInstance {
   cclinkjs: CCLinkJS
 }
 
-export default class CCLinkJSManager {
-  public static cclinkjsInstances: Array<ICCLinkJSInstance> = []
+export class CCLinkJSInstance implements ICCLinkJSInstance {
+  uuid: string
+  cclinkjs: CCLinkJS
 
-  public static createCCLinkJS(uuid: string): void {
-    const cclinkjs = new CCLinkJS()
+  constructor(uuid?: string) {
+    this.uuid = uuid || uuidv4()
+    this.cclinkjs = new CCLinkJS()
 
-    cclinkjs
+    // 添加 socket event
+    this.cclinkjs
       .on('connect', () => {
-        log.success(uuid, `连接CC服务端成功！`)
+        log.success(this.uuid, `连接CC服务端成功！`)
       })
       .on('close', (code, desc) => {
-        log.warn(uuid, '连接关闭: ', code, desc)
+        log.warn(this.uuid, '连接关闭: ', code, desc)
       })
       .on('error', (error) => {
-        log.error(uuid, '连接错误: ', error)
+        log.error(this.uuid, '连接错误: ', error)
       })
       .on('ready', () => {
-        log.success(uuid, '客户端与服务端握手成功！')
+        log.success(this.uuid, '客户端与服务端握手成功！')
       })
 
-    // 挂载事件处理器
-    cclinkjs
+    // 添加事件处理器
+    this.cclinkjs
       .on(ChatListener.EventName(), ChatListener.EventListener(chatMessageModule))
       .on(GiftListener.EventName(), GiftListener.EventListener(giftCapsuleModule))
       .on(GiftListener.EventName(), GiftListener.EventListener(giftCardModule))
+      .connect()
     // .on(
     //   RoomListener.EventName(),
     //   RoomListener.EventListener((userJoinRoomMsg) => {
@@ -67,13 +72,17 @@ export default class CCLinkJSManager {
     //     // cclinkjsLog.log('[🔥] ', `热度：${hotScoreData.hot_score} 观众：${hotScoreData.usercount}`)
     //   })
     // )
+  }
+}
 
-    cclinkjs.connect()
+export default class CCLinkJSManager {
+  public static cclinkjsInstances: Array<ICCLinkJSInstance> = []
 
-    CCLinkJSManager.cclinkjsInstances.push({
-      uuid,
-      cclinkjs,
-    })
+  public static createCCLinkJS(uuid?: string): CCLinkJSInstance {
+    const cclinkjsInstances = new CCLinkJSInstance(uuid)
+    CCLinkJSManager.cclinkjsInstances.push(cclinkjsInstances)
+
+    return cclinkjsInstances
   }
 
   public static getCCLinkJSInstance(uuid: string): ICCLinkJSInstance | undefined {
@@ -81,7 +90,7 @@ export default class CCLinkJSManager {
   }
 
   public static destroyInstance(uuid: string): boolean {
-    const instanceIndex = CCLinkJSManager.cclinkjsInstances.findIndex((i) => i.uuid === uuid)
+    const instanceIndex = CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)
 
     if (instanceIndex > -1) {
       CCLinkJSManager.cclinkjsInstances[instanceIndex].cclinkjs.close()
