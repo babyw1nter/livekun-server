@@ -80,7 +80,7 @@ interface IGift {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const giftData: IGiftData = require('../../data/gamegift-7347.json')
+export const giftData: IGiftData = require('../../data/gamegift.json')
 
 export default class GiftLoader {
   public static getGiftBySaleId(saleId: number): IGift | undefined {
