@@ -96,16 +96,20 @@ app.post('/join', async (req, res) => {
 })
 
 app.post('/leave', (req, res) => {
-  cclinkjsInstance.cclinkjs.close()
-
-  setTimeout(() => cclinkjsInstance.cclinkjs.connect(), 1000)
-
-  cclinkjsInstance.cclinkjs.once('ready', () => {
-    res.send({
-      code: 10000,
-      msg: 'ok',
+  cclinkjsInstance
+    .reset()
+    .then(() => {
+      res.send({
+        code: 10000,
+        msg: 'ok',
+      })
     })
-  })
+    .catch((reason: Error) => {
+      res.send({
+        code: 10001,
+        msg: reason.message,
+      })
+    })
 })
 
 app.post('/control', (req, res) => {

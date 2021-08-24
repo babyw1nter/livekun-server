@@ -125,6 +125,22 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
     })
   }
 
+  public reset(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.cclinkjs.close()
+
+      setTimeout(() => this.cclinkjs.connect(), 500)
+      const timeout = setTimeout(() => reject(new Error('reset timeout')), 10000)
+
+      this.cclinkjs.once('ready', () => {
+        if (timeout) {
+          clearTimeout(timeout)
+          resolve()
+        }
+      })
+    })
+  }
+
   public joinLiveRoom(
     uuid: string,
     liveId: string
@@ -194,7 +210,7 @@ export default class CCLinkJSManager {
     return CCLinkJSManager.cclinkjsInstances.find((i) => i.uuid === uuid)
   }
 
-  public static destroyInstance(uuid: string): boolean {
+  public static destroyCCLinkJSInstance(uuid: string): boolean {
     const instanceIndex = CCLinkJSManager._getCCLinkJSInstanceIndex(uuid)
 
     if (instanceIndex > -1) {
