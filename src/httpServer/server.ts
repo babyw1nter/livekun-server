@@ -75,7 +75,8 @@ app.post('/join', async (req, res) => {
 
   httpServerLog.info(uuid, '正在进入房间...', liveId)
 
-  CCLinkJSManager.joinLiveRoom(uuid, liveId)
+  cclinkjsInstance
+    .joinLiveRoom(uuid, liveId)
     .then(() => {
       res.send({
         code: 10000,

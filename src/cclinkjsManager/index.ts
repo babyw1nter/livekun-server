@@ -124,6 +124,60 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
       },
     })
   }
+
+  public joinLiveRoom(
+    uuid: string,
+    liveId: string
+  ): Promise<{ liveRoomInfo: ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
+    return new Promise(async (resolve, reject) => {
+      if (!this.cclinkjs.ready) {
+        reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
+        return
+      }
+
+      if (!uuid || !liveId) {
+        reject(new ReferenceError('uuid 或 liveId 不可为空！'))
+        return
+      }
+
+      try {
+        const liveRoomInfo = await RoomMethods.getLiveRoomInfoByCcId(liveId)
+        const roomId = liveRoomInfo.props.pageProps.roomInfoInitData.live?.room_id
+        const channelId = liveRoomInfo.props.pageProps.roomInfoInitData.live?.channel_id
+        const gameType = liveRoomInfo.props.pageProps.roomInfoInitData.live?.gametype
+        const title = liveRoomInfo.props.pageProps.roomInfoInitData.live?.title
+
+        if (!roomId || !channelId || !gameType) {
+          reject(new Error(`${uuid} 获取房间信息失败！`))
+          return
+        }
+
+        this.cclinkjs
+          .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
+          .then((res) => {
+            this.setStatus({
+              isJoinRoom: true,
+              roomInfo: {
+                liveId,
+                title: title || ' 无标题',
+              },
+            })
+
+            resolve({
+              liveRoomInfo: liveRoomInfo,
+              recvJsonData: res,
+            })
+          })
+          .catch((reason: Error) => {
+            this.resetStatus()
+            reject(reason)
+          })
+      } catch (error: unknown) {
+        this.resetStatus()
+        reject(error)
+      }
+    })
+  }
 }
 
 export default class CCLinkJSManager {
@@ -163,61 +217,5 @@ export default class CCLinkJSManager {
     }
 
     return instance.cclinkjs.send(data, timeout)
-  }
-
-  public static joinLiveRoom(
-    uuid: string,
-    liveId: string
-  ): Promise<{ liveRoomInfo: ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
-    return new Promise(async (resolve, reject) => {
-      const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) as CCLinkJSInstance
-
-      if (!instance.cclinkjs.ready) {
-        reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
-        return
-      }
-
-      if (!uuid || !liveId) {
-        reject(new ReferenceError('uuid 或 liveId 不可为空！'))
-        return
-      }
-
-      try {
-        const liveRoomInfo = await RoomMethods.getLiveRoomInfoByCcId(liveId)
-        const roomId = liveRoomInfo.props.pageProps.roomInfoInitData.live?.room_id
-        const channelId = liveRoomInfo.props.pageProps.roomInfoInitData.live?.channel_id
-        const gameType = liveRoomInfo.props.pageProps.roomInfoInitData.live?.gametype
-        const title = liveRoomInfo.props.pageProps.roomInfoInitData.live?.title
-
-        if (!roomId || !channelId || !gameType) {
-          reject(new Error(`${uuid} 获取房间信息失败！`))
-          return
-        }
-
-        instance.cclinkjs
-          .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
-          .then((res) => {
-            instance.setStatus({
-              isJoinRoom: true,
-              roomInfo: {
-                liveId,
-                title: title || ' 无标题',
-              },
-            })
-
-            resolve({
-              liveRoomInfo: liveRoomInfo,
-              recvJsonData: res,
-            })
-          })
-          .catch((reason: Error) => {
-            instance.resetStatus()
-            reject(reason)
-          })
-      } catch (error: unknown) {
-        instance.resetStatus()
-        reject(error)
-      }
-    })
   }
 }
