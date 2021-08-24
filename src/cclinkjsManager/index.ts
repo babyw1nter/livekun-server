@@ -3,7 +3,6 @@ import { giftCapsuleModule } from '../modules/giftCapsule'
 import { giftCardModule } from '../modules/giftCard'
 import { CCLinkJS, ICCJsonData, ICCRecvJsonData } from '@hhui64/cclinkjs/src'
 import { ChatListener, GiftListener, RoomMethods } from '@hhui64/cclinkjs-room-module/src'
-import StatusManager from '../statusManager'
 import consola from 'consola'
 import { ILiveRoomInfoByCcIdResponse } from '@hhui64/cclinkjs-room-module/src/lib/Room/RoomInterface'
 import { v4 as uuidv4 } from 'uuid'
@@ -13,15 +12,32 @@ const log = consola.withTag('modules/cclinkjsManager')
 export interface ICCLinkJSInstance {
   uuid: string
   cclinkjs: CCLinkJS
+  status: ICCLinkJSInstanceStatus
+}
+
+export interface ICCLinkJSInstanceStatus {
+  isJoinRoom: boolean
+  roomInfo: {
+    liveId: string
+    title: string
+  }
 }
 
 export class CCLinkJSInstance implements ICCLinkJSInstance {
   uuid: string
   cclinkjs: CCLinkJS
+  status: ICCLinkJSInstanceStatus
 
   constructor(uuid?: string) {
     this.uuid = uuid || uuidv4()
     this.cclinkjs = new CCLinkJS()
+    this.status = {
+      isJoinRoom: false,
+      roomInfo: {
+        liveId: '',
+        title: '',
+      },
+    }
 
     // 添加 socket event
     this.cclinkjs
@@ -40,9 +56,24 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
 
     // 添加事件处理器
     this.cclinkjs
-      .on(ChatListener.EventName(), ChatListener.EventListener(chatMessageModule))
-      .on(GiftListener.EventName(), GiftListener.EventListener(giftCapsuleModule))
-      .on(GiftListener.EventName(), GiftListener.EventListener(giftCardModule))
+      .on(
+        ChatListener.EventName(),
+        ChatListener.EventListener((chatMsg) => {
+          chatMessageModule(chatMsg, this)
+        })
+      )
+      .on(
+        GiftListener.EventName(),
+        GiftListener.EventListener((giftMsg) => {
+          giftCapsuleModule(giftMsg, this)
+        })
+      )
+      .on(
+        GiftListener.EventName(),
+        GiftListener.EventListener((giftMsg) => {
+          giftCardModule(giftMsg, this)
+        })
+      )
       .connect()
     // .on(
     //   RoomListener.EventName(),
@@ -73,10 +104,28 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
     //   })
     // )
   }
+
+  public getStatus(): ICCLinkJSInstanceStatus {
+    return this.status
+  }
+
+  public setStatus(status: ICCLinkJSInstanceStatus): void {
+    this.status = status
+  }
+
+  public resetStatus(): void {
+    this.status = {
+      isJoinRoom: false,
+      roomInfo: {
+        liveId: '',
+        title: '',
+      },
+    }
+  }
 }
 
 export default class CCLinkJSManager {
-  public static cclinkjsInstances: Array<ICCLinkJSInstance> = []
+  public static cclinkjsInstances: Array<CCLinkJSInstance> = []
 
   public static createCCLinkJS(uuid?: string): CCLinkJSInstance {
     const cclinkjsInstances = new CCLinkJSInstance(uuid)
@@ -85,7 +134,7 @@ export default class CCLinkJSManager {
     return cclinkjsInstances
   }
 
-  public static getCCLinkJSInstance(uuid: string): ICCLinkJSInstance | undefined {
+  public static getCCLinkJSInstance(uuid: string): CCLinkJSInstance | undefined {
     return CCLinkJSManager.cclinkjsInstances.find((i) => i.uuid === uuid)
   }
 
@@ -105,7 +154,7 @@ export default class CCLinkJSManager {
   }
 
   public static send(uuid: string, data: ICCJsonData, timeout?: number): Promise<ICCRecvJsonData> {
-    const instance = CCLinkJSManager.cclinkjsInstances.find((i) => i.uuid === uuid) as ICCLinkJSInstance
+    const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) as CCLinkJSInstance
 
     if (!instance.cclinkjs.socket.connection || !instance.cclinkjs.socket.connection.connected) {
       instance.cclinkjs.connect()
@@ -119,15 +168,17 @@ export default class CCLinkJSManager {
     liveId: string
   ): Promise<{ liveRoomInfo: ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
     return new Promise(async (resolve, reject) => {
-      if (!uuid || !liveId) {
-        reject(new ReferenceError('uuid 或 liveId 不可为空！'))
+      const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) as CCLinkJSInstance
+
+      if (!instance.cclinkjs.ready) {
+        instance.resetStatus()
+        reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
         return
       }
 
-      const instance = CCLinkJSManager.cclinkjsInstances.find((i) => i.uuid === uuid) as ICCLinkJSInstance
-
-      if (!instance.cclinkjs.ready) {
-        reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
+      if (!uuid || !liveId) {
+        instance.resetStatus()
+        reject(new ReferenceError('uuid 或 liveId 不可为空！'))
         return
       }
 
@@ -139,6 +190,7 @@ export default class CCLinkJSManager {
         const title = liveRoomInfo.props.pageProps.roomInfoInitData.live?.title
 
         if (!roomId || !channelId || !gameType) {
+          instance.resetStatus()
           reject(new Error(`${uuid} 获取房间信息失败！`))
           return
         }
@@ -146,15 +198,25 @@ export default class CCLinkJSManager {
         instance.cclinkjs
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
           .then((res) => {
+            instance.status = {
+              isJoinRoom: true,
+              roomInfo: {
+                liveId,
+                title: title || ' 无标题',
+              },
+            }
+
             resolve({
               liveRoomInfo: liveRoomInfo,
               recvJsonData: res,
             })
           })
           .catch((reason: Error) => {
+            instance.resetStatus()
             reject(reason)
           })
       } catch (error: unknown) {
+        instance.resetStatus()
         reject(error)
       }
     })

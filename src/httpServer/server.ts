@@ -3,10 +3,9 @@ import { wrap, socketServer, sendToProtocol } from '../socketServer/server'
 import path from 'path'
 import consola from 'consola'
 import ConfigManager, { IConfig } from '../configManager'
-import StatusManager from '../statusManager'
-import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard, randomNum } from '../mock'
+import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard } from '../mock'
 import { Server } from 'http'
-import CCLinkJSManager, { ICCLinkJSInstance } from '../cclinkjsManager'
+import CCLinkJSManager, { CCLinkJSInstance } from '../cclinkjsManager'
 
 const httpServerLog = consola.withTag('httpServer')
 
@@ -28,7 +27,7 @@ app.all('*', function (req, res, next) {
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
 const uuid = CCLinkJSManager.createCCLinkJS().uuid
-const cclinkjsInstance = CCLinkJSManager.getCCLinkJSInstance(uuid) as ICCLinkJSInstance
+const cclinkjsInstance = CCLinkJSManager.getCCLinkJSInstance(uuid) as CCLinkJSInstance
 
 app.get('/get-config', (req, res) => {
   ConfigManager.readConfig()
@@ -41,7 +40,7 @@ app.get('/get-config', (req, res) => {
 app.get('/get-status', (req, res) => {
   res.send({
     code: 200,
-    data: StatusManager.getStatus(),
+    data: cclinkjsInstance.getStatus(),
   })
 })
 
@@ -74,20 +73,16 @@ app.post('/join', async (req, res) => {
     })
   }
 
-  httpServerLog.info(uuid, '正在进入房间...')
+  httpServerLog.info(uuid, '正在进入房间...', liveId)
 
   CCLinkJSManager.joinLiveRoom(uuid, liveId)
-    .then((value) => {
-      StatusManager.status.isJoinRoom = true
-      StatusManager.status.roomInfo.liveId = liveId
-      StatusManager.status.roomInfo.title = value.liveRoomInfo.props.pageProps.roomInfoInitData.live?.title || ''
-
+    .then(() => {
       res.send({
         code: 10000,
         msg: 'ok',
       })
 
-      httpServerLog.success(uuid, '进入房间成功！', StatusManager.status.roomInfo.title)
+      httpServerLog.success(uuid, '进入房间成功！', cclinkjsInstance.getStatus().roomInfo.title)
     })
     .catch((reason: Error) => {
       res.send({
@@ -95,7 +90,6 @@ app.post('/join', async (req, res) => {
         msg: '进入房间失败！' + reason.message,
       })
 
-      StatusManager.resetStatus()
       httpServerLog.error(uuid, '进入房间失败！', reason)
     })
 })

@@ -5,10 +5,11 @@ import { commentChatMsgCache } from './chatMessage'
 import { wrap } from '../socketServer/server'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
+import { CCLinkJSInstance } from '../cclinkjsManager'
 
 const log = consola.withTag('modules/giftCard')
 
-const giftCardModule = (giftMsg: IGiftMsg): void => {
+const giftCardModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => {
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
   const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()

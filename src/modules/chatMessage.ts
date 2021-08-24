@@ -1,10 +1,10 @@
 import { IChatMsg } from '@hhui64/cclinkjs-room-module/src/lib/Chat/ChatInterface'
 import ConfigManager from '../configManager'
-import StatusManager from '../statusManager'
 import { sendToProtocol } from '../socketServer/server'
 import { wrap } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
+import { CCLinkJSInstance } from '../cclinkjsManager'
 
 const log = consola.withTag('modules/chatMessage')
 
@@ -15,7 +15,7 @@ interface ICommentChatMsgCache {
 }
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
-const chatMessageModule = (chatMsg: IChatMsg): void => {
+const chatMessageModule = (chatMsg: IChatMsg, instance: CCLinkJSInstance): void => {
   const ccid = chatMsg[7][130].toString() as string
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
 
@@ -55,7 +55,7 @@ const chatMessageModule = (chatMsg: IChatMsg): void => {
           uid: ccid,
           userInfo: chatMsg[7],
           type: (() => {
-            if (chatMsg[7][130].toString() === StatusManager.status.roomInfo.liveId) return 'anchor'
+            if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
             if (chatMsg[39] === '1') return 'admin'
             return 'normal'
           })(),
