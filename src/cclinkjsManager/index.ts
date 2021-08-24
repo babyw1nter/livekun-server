@@ -45,9 +45,11 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
         log.success(this.uuid, `连接CC服务端成功！`)
       })
       .on('close', (code, desc) => {
+        this.resetStatus()
         log.warn(this.uuid, '连接关闭: ', code, desc)
       })
       .on('error', (error) => {
+        this.resetStatus()
         log.error(this.uuid, '连接错误: ', error)
       })
       .on('ready', () => {
@@ -114,13 +116,13 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
   }
 
   public resetStatus(): void {
-    this.status = {
+    this.setStatus({
       isJoinRoom: false,
       roomInfo: {
         liveId: '',
         title: '',
       },
-    }
+    })
   }
 }
 
@@ -171,13 +173,11 @@ export default class CCLinkJSManager {
       const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) as CCLinkJSInstance
 
       if (!instance.cclinkjs.ready) {
-        instance.resetStatus()
         reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
         return
       }
 
       if (!uuid || !liveId) {
-        instance.resetStatus()
         reject(new ReferenceError('uuid 或 liveId 不可为空！'))
         return
       }
@@ -190,7 +190,6 @@ export default class CCLinkJSManager {
         const title = liveRoomInfo.props.pageProps.roomInfoInitData.live?.title
 
         if (!roomId || !channelId || !gameType) {
-          instance.resetStatus()
           reject(new Error(`${uuid} 获取房间信息失败！`))
           return
         }
@@ -198,13 +197,13 @@ export default class CCLinkJSManager {
         instance.cclinkjs
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
           .then((res) => {
-            instance.status = {
+            instance.setStatus({
               isJoinRoom: true,
               roomInfo: {
                 liveId,
                 title: title || ' 无标题',
               },
-            }
+            })
 
             resolve({
               liveRoomInfo: liveRoomInfo,
