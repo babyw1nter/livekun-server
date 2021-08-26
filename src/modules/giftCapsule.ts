@@ -38,46 +38,6 @@ const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void 
         },
       })
     ),
-    'gift-capsule'
-  )
-
-  if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
-
-  let msg = `赠送了${giftName} × ${giftMsg.num}`
-
-  // 判断是否留言礼物
-  if (
-    ConfigManager.getConfig().giftCard.comment.use &&
-    (ConfigManager.getConfig().giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
-      ConfigManager.getConfig().giftCard.comment.giftWhitelist === '') &&
-    giftMoney >= ConfigManager.getConfig().giftCard.comment.giftMinMoney
-  ) {
-    const commentIndex = commentChatMsgCache.findIndex(
-      (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
-    )
-
-    if (commentIndex > -1) {
-      msg = commentChatMsgCache[commentIndex].message
-      commentChatMsgCache.splice(commentIndex, 1)
-    }
-  }
-
-  sendToProtocol(
-    JSON.stringify(
-      wrap({
-        type: 'data',
-        data: {
-          avatarUrl: giftMsg.frompurl,
-          nickname: giftMsg.fromnick,
-          uid: giftMsg.fromid.toString(),
-          money: giftMoney,
-          giftName: giftName,
-          giftCount: giftMsg.num,
-          message: msg,
-        },
-      })
-    ),
-    'gift-card'
   )
 }
 
