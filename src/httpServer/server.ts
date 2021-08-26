@@ -6,7 +6,7 @@ import session from 'express-session'
 import userRouter from './user'
 import apiRouter from './api'
 
-const httpServerLog = consola.withTag('httpServer')
+const log = consola.withTag('httpServer')
 
 const port = 39074
 
@@ -40,9 +40,9 @@ app.use('/api', apiRouter)
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
 export default function initHttpServer(): Server {
-  httpServerLog.info(`livekun 服务端正在启动中...`)
+  log.info(`livekun 服务端正在启动中...`)
 
   return app.listen(port, () => {
-    httpServerLog.success(`livekun 服务端启动完成！正在监听端口：${port}...`)
+    log.success(`livekun 服务端启动完成！正在监听端口：${port}...`)
   })
 }

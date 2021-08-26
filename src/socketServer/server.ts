@@ -2,7 +2,7 @@ import { Server } from 'http'
 import WebSocket from 'websocket'
 import consola from 'consola'
 
-const socketServerLog = consola.withTag('socketServer')
+const log = consola.withTag('socketServer')
 
 let socketServer: WebSocket.server | null = null
 
