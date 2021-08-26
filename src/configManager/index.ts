@@ -30,8 +30,6 @@ export interface IConfig {
   }
 }
 
-const configFilePath = path.join(__dirname, '../../', 'config', 'config.json')
-
 const defaultConfig: IConfig = {
   giftCapsule: {
     level: [0, 200, 500],
@@ -56,26 +54,32 @@ const defaultConfig: IConfig = {
       use: false,
       prefix: '留言：',
       giftMinMoney: 0.01,
-      giftWhitelist: ''
+      giftWhitelist: '',
     },
   },
 }
 
 export default class ConfigManager {
   private static _config: IConfig = defaultConfig
-  public static readConfig(): void {
+  public static readConfig(uuid: string): void {
+    if (!uuid) return
+    const configFilePath = path.join(__dirname, '../../', 'config', `${uuid}.json`)
     try {
       ConfigManager._config = JSON.parse(fs.readFileSync(configFilePath).toString()) as IConfig
     } catch (error) {
       ConfigManager.resetConfig()
+      ConfigManager.saveConfig(uuid)
     }
   }
 
-  public static saveConfig(): void {
+  public static saveConfig(uuid: string): void {
+    if (!uuid) return
+    const configFilePath = path.join(__dirname, '../../', 'config', `${uuid}.json`)
     fs.writeFileSync(configFilePath, JSON.stringify(ConfigManager._config, null, 2))
   }
 
-  public static getConfig(): IConfig {
+  public static getConfig(uuid: string): IConfig {
+    ConfigManager.readConfig(uuid)
     return ConfigManager._config
   }
 
