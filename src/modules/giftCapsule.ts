@@ -22,7 +22,7 @@ const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void 
     giftMsg.combo > 1 ? giftMsg.comboid : ''
   )
 
-  if (ConfigManager.getConfig().giftCapsule.minMoney > giftMoney) return
+  if (ConfigManager.getConfig(instance.uuid).giftCapsule.minMoney > giftMoney) return
   sendToProtocol(
     JSON.stringify(
       wrap({
@@ -38,6 +38,8 @@ const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void 
         },
       })
     ),
+    'gift-capsule',
+    instance.uuid
   )
 }
 

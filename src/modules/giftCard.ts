@@ -15,17 +15,17 @@ const giftCardModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => 
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
   const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
-  if (ConfigManager.getConfig().giftCard.minMoney > giftMoney) return
+  if (ConfigManager.getConfig(instance.uuid).giftCard.minMoney > giftMoney) return
 
   const msg = `赠送了${giftName} × ${giftMsg.num}`
   let comment = ''
 
   // 判断是否留言礼物
   if (
-    ConfigManager.getConfig().giftCard.comment.use &&
-    (ConfigManager.getConfig().giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
-      ConfigManager.getConfig().giftCard.comment.giftWhitelist === '') &&
-    giftMoney >= ConfigManager.getConfig().giftCard.comment.giftMinMoney
+    ConfigManager.getConfig(instance.uuid).giftCard.comment.use &&
+    (ConfigManager.getConfig(instance.uuid).giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
+      ConfigManager.getConfig(instance.uuid).giftCard.comment.giftWhitelist === '') &&
+    giftMoney >= ConfigManager.getConfig(instance.uuid).giftCard.comment.giftMinMoney
   ) {
     const commentIndex = commentChatMsgCache.findIndex(
       (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
@@ -54,7 +54,8 @@ const giftCardModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => 
         },
       })
     ),
-    'gift-card'
+    'gift-card',
+    instance.uuid
   )
 }
 

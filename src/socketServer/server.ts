@@ -8,14 +8,22 @@ let socketServer: WebSocket.server | null = null
 
 const sendToProtocol = (
   data: WebSocket.IStringified,
-  protocol?: 'gift-capsule' | 'chat-message' | 'gift-card' | string
+  protocol?: 'gift-capsule' | 'chat-message' | 'gift-card' | string,
+  uuid?: string
 ): void => {
   if (socketServer) {
-    if (!protocol) {
+    let p = ''
+    if (uuid) {
+      p = (protocol || '') + '-' + (uuid || '')
+    } else {
+      p = protocol || ''
+    }
+
+    if (p === '') {
       socketServer.broadcastUTF(data)
     } else {
       socketServer.connections.forEach((connection) => {
-        if (connection.protocol === protocol) {
+        if (connection.protocol === p) {
           connection.sendUTF(data)
         }
       })

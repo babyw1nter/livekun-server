@@ -21,14 +21,14 @@ const chatMessageModule = (chatMsg: IChatMsg, instance: CCLinkJSInstance): void 
 
   log.info('[💬] ', chatMsg[197] + '：' + msg)
 
-  if (ConfigManager.getConfig().giftCard.comment.use) {
+  if (ConfigManager.getConfig(instance.uuid).giftCard.comment.use) {
     let _msg = msg
 
     if (
-      msg.slice(0, ConfigManager.getConfig().giftCard.comment.prefix.length) ===
-      ConfigManager.getConfig().giftCard.comment.prefix
+      msg.slice(0, ConfigManager.getConfig(instance.uuid).giftCard.comment.prefix.length) ===
+      ConfigManager.getConfig(instance.uuid).giftCard.comment.prefix
     ) {
-      _msg = _msg.slice(ConfigManager.getConfig().giftCard.comment.prefix.length)
+      _msg = _msg.slice(ConfigManager.getConfig(instance.uuid).giftCard.comment.prefix.length)
 
       const cacheIndex = commentChatMsgCache.findIndex((i) => i.uid === ccid)
       const data = {
@@ -62,7 +62,8 @@ const chatMessageModule = (chatMsg: IChatMsg, instance: CCLinkJSInstance): void 
         },
       })
     ),
-    'chat-message'
+    'chat-message',
+    instance.uuid
   )
 }
 
