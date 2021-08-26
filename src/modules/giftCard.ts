@@ -48,7 +48,7 @@ const giftCardModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => 
           money: giftMoney,
           giftName: giftName,
           giftCount: giftMsg.num,
-          giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
+          giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
           message: msg,
           comment: comment,
         },
