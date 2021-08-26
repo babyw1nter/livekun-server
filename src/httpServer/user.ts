@@ -2,6 +2,8 @@ import { user } from '../mock'
 import express from 'express'
 import session from 'express-session'
 import CCLinkJSManager from '../cclinkjsManager'
+import ConfigManager, { IConfig } from '../configManager'
+import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
 
 const userRouter = express.Router()
 
@@ -100,6 +102,54 @@ userRouter.get('/test', (req, res) => {
     res.send({
       code: 200,
       message: 'ok',
+    })
+  }
+})
+
+userRouter.get('/get-config', (req, res) => {
+  const uuid = req.session.user?.uuid || (req.query.uuid as string)
+
+  if (uuid !== '') {
+    res.send({
+      code: 200,
+      data: {
+        uuid,
+        ...ConfigManager.getConfig(uuid),
+      },
+    })
+  } else {
+    res.send({
+      code: 404,
+      message: 'UUID not found.',
+    })
+  }
+})
+
+userRouter.post('/update-config', (req, res) => {
+  if (!req.session.user) {
+    res.send({
+      code: 530,
+      message: 'Not logged in.',
+    })
+    return
+  }
+
+  const uuid = req.session.user.uuid as string
+
+  ConfigManager.setConfig(req.body as IConfig)
+  ConfigManager.saveConfig(uuid)
+  ConfigManager.readConfig(uuid)
+
+  if (socketServer) {
+    sendToProtocol(JSON.stringify(wrap({ type: 'update-config', data: {} })))
+    res.send({
+      code: 200,
+      data: ConfigManager.getConfig(uuid),
+    })
+  } else {
+    res.send({
+      code: 20001,
+      message: 'Socket 服务端未初始化！',
     })
   }
 })
