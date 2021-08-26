@@ -1,3 +1,31 @@
+# [1.0.0-alpha.0](https://github.com/hhui64/livekun-server/compare/v0.1.0-alpha.3...v1.0.0-alpha.0) (2021-08-26)
+
+
+### Features
+
+* **cclinkjsManager:** 合并 statusManager 相关功能至 cclinkjsManager ([58dd7b8](https://github.com/hhui64/livekun-server/commit/58dd7b88f61cb1c555a4fa365868a2f5513c4235))
+* **cclinkjsManager:** 新增 CCLinkJSInstance 类的 reset() 方法 ([e2d56d4](https://github.com/hhui64/livekun-server/commit/e2d56d407a3a8c7a900031db951037738461b1d7))
+* **cclinkjsManager:** 新增 CCLinkJSInstance 实例类 ([005227d](https://github.com/hhui64/livekun-server/commit/005227d73e24bef640a5f1fa7b47bedcd74c506b))
+* **giftLoader:** 新增 giftLoader 礼物加载器 ([db5881a](https://github.com/hhui64/livekun-server/commit/db5881a2daefbe0f69d9a5a3a68be9e27bda8ac1))
+* **httpServer/api:** 新增 api 接口模块 ([48f21d0](https://github.com/hhui64/livekun-server/commit/48f21d07f795e56b3be4814a9a3acf286bdeabf8))
+* **httpServer/server:** 新增多种操作接口的鉴权功能 ([0a077e5](https://github.com/hhui64/livekun-server/commit/0a077e563b62e6eb0df326f948dc56ca10b06d1c))
+* **httpServer/user:** 新增用户登陆模块 ([e8c28fe](https://github.com/hhui64/livekun-server/commit/e8c28feb56fcebbed22442889f916c65d94b184d))
+* **httpServer:** 新增 session 登录功能 ([8165e1c](https://github.com/hhui64/livekun-server/commit/8165e1c408e6c60556b372c348aeee15934076d7))
+* **modules/*:** 新增支持通过实例 UUID 发送至指定的 socket 客户端 ([7761f64](https://github.com/hhui64/livekun-server/commit/7761f64db70860a2577d302de89849cfdde61460))
+
+
+### Performance Improvements
+
+* **cclinkjsManager:** 移动 joinLiveRoom() 方法至 CCLinkJSInstance 类 ([1c577d2](https://github.com/hhui64/livekun-server/commit/1c577d2be4cc23aa79809fc9e346cf1e8bdc323d))
+* **cclinkjsManager:** 优化 CCLinkJSInstance 的状态管理机制 ([6bdcb11](https://github.com/hhui64/livekun-server/commit/6bdcb110449fe251386da911d9466444a8ce8a90))
+* **cclinkjsManager:** 优化实例管理器的重复创建实例判断 ([31b13f2](https://github.com/hhui64/livekun-server/commit/31b13f2a7271b6d0fd573a03abf4b6f561def6c4))
+* **configManager:** 新增配置管理器的指定 UUID 获取 ([3f27008](https://github.com/hhui64/livekun-server/commit/3f27008d580a0de97eee9bf90bc89fe93a90b06d))
+* **mock:** 优化 mock 数据随机返回礼物卡片 ([1b77994](https://github.com/hhui64/livekun-server/commit/1b77994523d570d4ac1459caee932d8f6ef1ccb9))
+* **modules/*:** 优化礼物数据的加载逻辑 ([f7cf41d](https://github.com/hhui64/livekun-server/commit/f7cf41dbde2c4832a24a3dd0ab99d490af41c62f))
+* **modules/giftCard:** 优化礼物图标 Url 的获取顺序 ([538436e](https://github.com/hhui64/livekun-server/commit/538436e266ca59fd6258ee643064d3ec963edc0c))
+
+
+
 # [0.1.0-alpha.3](https://github.com/hhui64/livekun-server/compare/v0.1.0-alpha.2...v0.1.0-alpha.3) (2021-08-23)
 
 
