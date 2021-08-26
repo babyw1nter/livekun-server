@@ -1,7 +1,6 @@
 import ConfigManager from '../configManager'
 import { sendToProtocol } from '../socketServer/server'
 import { IGiftMsg } from '@hhui64/cclinkjs-room-module/src/lib/Gift/GiftInterface'
-import { commentChatMsgCache } from './chatMessage'
 import { wrap } from '../socketServer/server'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
