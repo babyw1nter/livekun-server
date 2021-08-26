@@ -6,6 +6,7 @@ import ConfigManager, { IConfig } from '../configManager'
 import { getRandomChatMessage, getRandomGiftCapsule, getRandomGiftCard } from '../mock'
 import { Server } from 'http'
 import CCLinkJSManager, { CCLinkJSInstance } from '../cclinkjsManager'
+import session from 'express-session'
 
 const httpServerLog = consola.withTag('httpServer')
 
@@ -16,6 +17,18 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*')
+app.use(
+  session({
+    secret: 'hhui64',
+    name: 'session',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      // secure: true,
+      httpOnly: true,
+    },
+  })
+)
   res.header('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization, Accept,X-Requested-With')
   res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
   res.header('Access-Control-Allow-Credentials', 'true')
