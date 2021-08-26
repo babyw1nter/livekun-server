@@ -199,11 +199,17 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
 export default class CCLinkJSManager {
   public static cclinkjsInstances: Array<CCLinkJSInstance> = []
 
-  public static createCCLinkJS(uuid?: string): CCLinkJSInstance {
-    const cclinkjsInstances = new CCLinkJSInstance(uuid)
-    CCLinkJSManager.cclinkjsInstances.push(cclinkjsInstances)
+  public static createCCLinkJS(uuid: string): CCLinkJSInstance {
+    let instance = this.getCCLinkJSInstance(uuid)
 
-    return cclinkjsInstances
+    if (instance) {
+      return instance
+    } else {
+      instance = new CCLinkJSInstance(uuid)
+      CCLinkJSManager.cclinkjsInstances.push(instance)
+    }
+
+    return instance
   }
 
   public static getCCLinkJSInstance(uuid: string): CCLinkJSInstance | undefined {
