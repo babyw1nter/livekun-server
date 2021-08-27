@@ -2,6 +2,8 @@ import express from 'express'
 import path from 'path'
 import consola from 'consola'
 import { Server } from 'http'
+import redis from 'redis'
+import RedisStore from 'connect-redis'
 import session from 'express-session'
 import userRouter from './user'
 import apiRouter from './api'
@@ -11,15 +13,24 @@ const log = consola.withTag('httpServer')
 const port = 39074
 
 const app = express()
+const Store = RedisStore(session)
+const redisClient = redis.createClient({
+  host: '127.0.0.1',
+  port: 6379,
+})
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(
   session({
+    store: new Store({
+      client: redisClient,
+    }),
     secret: 'hhui64',
     name: 'session',
     resave: false,
     saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
       // secure: true,
       httpOnly: true,
