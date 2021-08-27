@@ -2,7 +2,6 @@ import { getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard } from '.
 import { sendToProtocol, wrap } from '../socketServer/server'
 import consola from 'consola'
 import express from 'express'
-import session from 'express-session'
 import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
 
@@ -22,6 +21,7 @@ apiRouter.get('/get-status', (req, res) => {
 })
 
 apiRouter.post('/join', async (req, res) => {
+  const uuid = req.session.user?.uuid as string
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (uuid === '' || !instance) {
@@ -50,6 +50,7 @@ apiRouter.post('/join', async (req, res) => {
 })
 
 apiRouter.post('/reset', (req, res) => {
+  const uuid = req.session.user?.uuid as string
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (!instance) {
@@ -68,6 +69,7 @@ apiRouter.post('/reset', (req, res) => {
 })
 
 apiRouter.post('/control', (req, res) => {
+  const uuid = req.session.user?.uuid as string
   const method = req.body.method as string
 
   switch (method) {
@@ -79,7 +81,7 @@ apiRouter.post('/control', (req, res) => {
             data: getRandomGiftCapsule(),
           })
         ),
-        `gift-capsule`,
+        'gift-capsule',
         uuid
       )
       break
@@ -91,7 +93,7 @@ apiRouter.post('/control', (req, res) => {
             data: getRandomChatMessage(),
           })
         ),
-        `chat-message`,
+        'chat-message',
         uuid
       )
       break
@@ -103,7 +105,7 @@ apiRouter.post('/control', (req, res) => {
             data: getRandomGiftCard(),
           })
         ),
-        `gift-card`,
+        'gift-card',
         uuid
       )
       break
