@@ -13,10 +13,7 @@ userRouter.post('/login', (req, res) => {
   const autologin = req.body.autologin as boolean
 
   if (!username || !password) {
-    res.send({
-      code: 10002,
-      message: '参数不正确',
-    })
+    res.json(resWrap(10002, '参数不正确'))
     return
   }
 
@@ -28,26 +25,16 @@ userRouter.post('/login', (req, res) => {
       req.session.cookie.maxAge = 1296000000
     }
     req.session.user = {
-      username: u.username,
-      uuid: u.uuid,
+      username: user.username,
+      uuid: user.uuid,
     }
 
     // 登陆成功时，为其创建 cclinkjs 实例
-    CCLinkJSManager.createCCLinkJS(u.uuid)
+    CCLinkJSManager.createCCLinkJS(user.uuid)
 
-    res.send({
-      code: 200,
-      message: '登录成功！',
-      data: {
-        ...req.session.user,
-        timestamp: Date.now(),
-      },
-    })
+    res.json(resWrap(200, '登录成功', req.session.user))
   } else {
-    res.send({
-      code: 10001,
-      message: '用户名或密码不正确',
-    })
+    res.json(resWrap(10001, '用户名或密码不正确'))
     return
   }
 })
@@ -56,14 +43,6 @@ userRouter.post('/autologin', (req, res) => {
   if (req.session.user) {
     CCLinkJSManager.createCCLinkJS(req.session.user.uuid)
 
-    res.send({
-      code: 200,
-      message: 'session 登录成功！',
-      data: {
-        ...req.session.user,
-        timestamp: Date.now(),
-      },
-    })
     return
   } else {
     res.send({
@@ -78,16 +57,13 @@ userRouter.get('/logout', (req, res) => {
     CCLinkJSManager.destroyCCLinkJSInstance(req.session.user.uuid)
 
     req.session.destroy(() => null)
-    res.send({
-      code: 200,
-      message: 'Logout success.',
-    })
   } else {
     res.send({
       code: 530,
       message: 'Not logged in.',
     })
   }
+  res.json(resWrap(200, 'session 登录成功', req.session.user))
 })
 
 userRouter.get('/test', (req, res) => {
@@ -99,29 +75,17 @@ userRouter.get('/test', (req, res) => {
   } else {
     console.log(req.session.user)
 
-    res.send({
-      code: 200,
-      message: 'ok',
-    })
-  }
+  req.session.destroy(() => null)
+  res.json(resWrap(200, '注销成功'))
 })
 
 userRouter.get('/get-config', (req, res) => {
-  const uuid = req.session.user?.uuid || (req.query.uuid as string)
+  const uuid = req.session.user?.uuid || (req.query.uuid as string) || ''
 
-  if (uuid !== '') {
-    res.send({
-      code: 200,
-      data: {
-        uuid,
-        ...ConfigManager.getConfig(uuid),
-      },
-    })
+  if (uuid !== '' && uuid.length < 64) {
+    res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
   } else {
-    res.send({
-      code: 404,
-      message: 'UUID not found.',
-    })
+    res.json(resWrap(404, 'UUID not found.'))
   }
 })
 
@@ -141,16 +105,13 @@ userRouter.post('/update-config', (req, res) => {
   ConfigManager.readConfig(uuid)
 
   if (socketServer) {
-    sendToProtocol(JSON.stringify(wrap({ type: 'update-config', data: {} })))
-    res.send({
-      code: 200,
-      data: ConfigManager.getConfig(uuid),
-    })
+    res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
   } else {
     res.send({
       code: 20001,
       message: 'Socket 服务端未初始化！',
     })
+    res.json(resWrap(20001, 'socket 未初始化'))
   }
 })
 

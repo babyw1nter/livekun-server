@@ -4,6 +4,7 @@ import consola from 'consola'
 import express from 'express'
 import session from 'express-session'
 import CCLinkJSManager from '../cclinkjsManager'
+import { resWrap } from './server'
 
 const log = consola.withTag('httpserver/api')
 
@@ -14,15 +15,9 @@ apiRouter.get('/get-status', (req, res) => {
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (uuid !== '' && instance) {
-    res.send({
-      code: 200,
-      data: instance.getStatus(),
-    })
+    res.json(resWrap(200, 'ok', instance.getStatus()))
   } else {
-    res.send({
-      code: 404,
-      message: 'UUID not found.',
-    })
+    res.json(resWrap(10008, 'Instance not found.'))
   }
 })
 
@@ -38,21 +33,15 @@ apiRouter.post('/join', async (req, res) => {
   const uuid = req.session.user.uuid as string
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
-  if (!instance) {
-    res.send({
-      code: 10008,
-      message: 'Instance not found.',
-    })
+  if (uuid === '' || !instance) {
+    res.json(resWrap(10008, 'Instance not found.'))
     return
   }
 
   const liveId = (req.body.liveId as string).toString()
 
   if (!req.body.liveId) {
-    res.send({
-      code: 10003,
-      message: '直播间ID不能为空',
-    })
+    res.json(resWrap(10003, '未指定直播间ID'))
   }
 
   log.info(uuid, '正在进入房间...', liveId)
@@ -60,19 +49,11 @@ apiRouter.post('/join', async (req, res) => {
   instance
     .joinLiveRoom(uuid, liveId)
     .then(() => {
-      res.send({
-        code: 200,
-        message: 'ok',
-      })
-
+      res.json(resWrap())
       log.success(uuid, '进入房间成功！', instance.getStatus().roomInfo.title)
     })
     .catch((reason: Error) => {
-      res.send({
-        code: 10001,
-        message: '进入房间失败！' + reason.message,
-      })
-
+      res.json(resWrap(10001, '进入房间失败！' + reason.message))
       log.error(uuid, '进入房间失败！', reason)
     })
 })
@@ -90,26 +71,17 @@ apiRouter.post('/reset', (req, res) => {
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (!instance) {
-    res.send({
-      code: 10008,
-      message: 'Instance not found.',
-    })
+    res.json(resWrap(10008, 'Instance not found.'))
     return
   }
 
   instance
     .reset()
     .then(() => {
-      res.send({
-        code: 200,
-        message: 'ok',
-      })
+      res.json(resWrap())
     })
     .catch((reason: Error) => {
-      res.send({
-        code: 10001,
-        message: reason.message,
-      })
+      res.json(resWrap(30001, '重置失败！' + reason.message))
     })
 })
 
@@ -173,10 +145,12 @@ apiRouter.post('/control', (req, res) => {
       break
   }
 
-  res.send({
-    code: 200,
-    message: 'ok',
-  })
+  res.json(
+    resWrap(200, 'ok', {
+      uuid,
+      method,
+    })
+  )
 })
 
 export default apiRouter
