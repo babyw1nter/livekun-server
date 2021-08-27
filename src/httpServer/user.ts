@@ -43,37 +43,9 @@ userRouter.post('/autologin', (req, res) => {
   if (req.session.user) {
     CCLinkJSManager.createCCLinkJS(req.session.user.uuid)
 
-    return
-  } else {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-  }
-})
-
-userRouter.get('/logout', (req, res) => {
-  if (req.session.user) {
-    CCLinkJSManager.destroyCCLinkJSInstance(req.session.user.uuid)
-
-    req.session.destroy(() => null)
-  } else {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-  }
   res.json(resWrap(200, 'session 登录成功', req.session.user))
 })
 
-userRouter.get('/test', (req, res) => {
-  if (!req.session.user) {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-  } else {
-    console.log(req.session.user)
 
   req.session.destroy(() => null)
   res.json(resWrap(200, '注销成功'))
@@ -90,13 +62,6 @@ userRouter.get('/get-config', (req, res) => {
 })
 
 userRouter.post('/update-config', (req, res) => {
-  if (!req.session.user) {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-    return
-  }
 
   const uuid = req.session.user.uuid as string
 
@@ -107,10 +72,6 @@ userRouter.post('/update-config', (req, res) => {
   if (socketServer) {
     res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
   } else {
-    res.send({
-      code: 20001,
-      message: 'Socket 服务端未初始化！',
-    })
     res.json(resWrap(20001, 'socket 未初始化'))
   }
 })

@@ -22,15 +22,6 @@ apiRouter.get('/get-status', (req, res) => {
 })
 
 apiRouter.post('/join', async (req, res) => {
-  if (!req.session.user) {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-    return
-  }
-
-  const uuid = req.session.user.uuid as string
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (uuid === '' || !instance) {
@@ -59,15 +50,6 @@ apiRouter.post('/join', async (req, res) => {
 })
 
 apiRouter.post('/reset', (req, res) => {
-  if (!req.session.user) {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-    return
-  }
-
-  const uuid = req.session.user.uuid as string
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (!instance) {
@@ -86,15 +68,6 @@ apiRouter.post('/reset', (req, res) => {
 })
 
 apiRouter.post('/control', (req, res) => {
-  if (!req.session.user) {
-    res.send({
-      code: 530,
-      message: 'Not logged in.',
-    })
-    return
-  }
-
-  const uuid = req.session.user.uuid as string
   const method = req.body.method as string
 
   switch (method) {
