@@ -1,3 +1,24 @@
+# [1.0.0-alpha.1](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2021-08-27)
+
+
+### Features
+
+* **httpServer/server:** 新增请求拦截鉴权中间件 ([996c6f5](https://github.com/hhui64/livekun-server/commit/996c6f56d20aa4f4d5a85c6ad6fb1297fc91d10a))
+* **httpServer/server:** 新增响应数据包装方法 ([1b5988c](https://github.com/hhui64/livekun-server/commit/1b5988c0b4a3805a7c2645a1fda9feb6250dda62))
+* **httpServer/user:** 新增 UserManager 用户管理器类 ([d51d3ef](https://github.com/hhui64/livekun-server/commit/d51d3efe8fc288ce15a4a35d9ad9410d88507a9e))
+* **socketServer/server:** 新增 connection 合法验证机制 ([be1365a](https://github.com/hhui64/livekun-server/commit/be1365a723a952a9d6684b25f4c8a2ba9a5a583c))
+
+
+### Performance Improvements
+
+* **httpServer/*:** 优化请求的响应数据使用响应包数据包装方法 ([84d171f](https://github.com/hhui64/livekun-server/commit/84d171fe54c57b279c2157361ff391d1f6764d59))
+* **httpServer/api:** 优化控制接口的协议格式 ([4c447bc](https://github.com/hhui64/livekun-server/commit/4c447bcc42766e4021d563f78a00af650943e521))
+* **httpServer/server:** 优化 session 储存机制 ([6deaaad](https://github.com/hhui64/livekun-server/commit/6deaaad4f85d6a196ac3cea5c144143e83cd0b37))
+* **httpServer/server:** 优化响应头的配置 ([59f1bfb](https://github.com/hhui64/livekun-server/commit/59f1bfb99338699b71c06536396b87559df61ec2))
+* **socketServer/server:** 优化数据包装方法添加时间戳 ([26e7667](https://github.com/hhui64/livekun-server/commit/26e76672d141076ba11b18a6f5764c331a2c2f99))
+
+
+
 # [1.0.0-alpha.0](https://github.com/hhui64/livekun-server/compare/v0.1.0-alpha.3...v1.0.0-alpha.0) (2021-08-26)
 
 
