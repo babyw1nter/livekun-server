@@ -50,6 +50,23 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
     autoAcceptConnections: true,
   })
 
+  wsServer.on('connect', (connection) => {
+    if (connection.protocol === '' || connection.protocol.length > 128) {
+      connection.drop(1002)
+    } else {
+      connection.sendUTF(
+        JSON.stringify({
+          code: 200,
+          message: 'ok',
+          data: {
+            serverVersion: '1.0.0',
+          },
+          timestamp: Date.now(),
+        })
+      )
+    }
+  })
+
   socketServer = wsServer
 
   return wsServer
