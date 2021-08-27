@@ -29,7 +29,6 @@ app.use(
     secret: 'hhui64',
     name: 'session',
     resave: false,
-    saveUninitialized: true,
     saveUninitialized: false,
     cookie: {
       // secure: true,
@@ -72,6 +71,19 @@ app.use((req, res, next) => {
 app.use('/user', userRouter)
 app.use('/api', apiRouter)
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
+
+export const resWrap = <T>(
+  code?: number,
+  message?: string,
+  data?: T
+): { code: number; message: string; data?: T; timestamp: number } => {
+  return {
+    code: code || 200,
+    message: message || 'ok',
+    data,
+    timestamp: Date.now(),
+  }
+}
 
 export default function initHttpServer(): Server {
   log.info(`livekun 服务端正在启动中...`)
