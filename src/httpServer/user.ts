@@ -4,6 +4,47 @@ import session from 'express-session'
 import CCLinkJSManager from '../cclinkjsManager'
 import ConfigManager, { IConfig } from '../configManager'
 import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
+import { readFileSync } from 'fs'
+import path from 'path'
+
+interface IUser {
+  uuid: string
+  username: string
+  password: string
+  isBan: boolean
+}
+
+interface UserData {
+  users: Array<IUser>
+}
+
+class UserManager {
+  static userData: UserData
+
+  static read(): void {
+    try {
+      UserManager.userData = JSON.parse(readFileSync(path.join(__dirname, '../../', 'data', 'users.json')).toString())
+    } catch (error) {
+      UserManager.userData = {
+        users: [],
+      }
+    }
+  }
+
+  static login(username: string, password: string): IUser | null {
+    UserManager.read()
+
+    const user = UserManager.userData.users.find((u) => u.username === username)
+
+    if (user) {
+      if (user.username === username && user.password === password) {
+        return user
+      }
+    }
+
+    return null
+  }
+}
 
 const userRouter = express.Router()
 
@@ -17,9 +58,9 @@ userRouter.post('/login', (req, res) => {
     return
   }
 
-  const u = user.find((_) => _.username === username)
+  const user = UserManager.login(username, password)
 
-  if (u && u.username === username && u.password === password) {
+  if (user) {
     // 设置 session
     if (autologin) {
       req.session.cookie.maxAge = 1296000000
