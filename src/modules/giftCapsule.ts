@@ -9,6 +9,8 @@ import { CCLinkJSInstance } from '../cclinkjsManager'
 const log = consola.withTag('modules/giftCapsule')
 
 const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => {
+  const config = ConfigManager.get(instance.uuid)
+
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
   const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
@@ -21,7 +23,7 @@ const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void 
     giftMsg.combo > 1 ? giftMsg.comboid : ''
   )
 
-  if (ConfigManager.getConfig(instance.uuid).giftCapsule.minMoney > giftMoney) return
+  if (config.giftCapsule.minMoney > giftMoney) return
   sendToProtocol(
     JSON.stringify(
       wrap({

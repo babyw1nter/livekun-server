@@ -16,19 +16,18 @@ interface ICommentChatMsgCache {
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
 const chatMessageModule = (chatMsg: IChatMsg, instance: CCLinkJSInstance): void => {
+  const config = ConfigManager.get(instance.uuid)
+
   const ccid = chatMsg[7][130].toString() as string
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
 
   log.info('[💬] ', chatMsg[197] + '：' + msg)
 
-  if (ConfigManager.getConfig(instance.uuid).giftCard.comment.use) {
+  if (config.giftCard.comment.use) {
     let _msg = msg
 
-    if (
-      msg.slice(0, ConfigManager.getConfig(instance.uuid).giftCard.comment.prefix.length) ===
-      ConfigManager.getConfig(instance.uuid).giftCard.comment.prefix
-    ) {
-      _msg = _msg.slice(ConfigManager.getConfig(instance.uuid).giftCard.comment.prefix.length)
+    if (msg.slice(0, config.giftCard.comment.prefix.length) === config.giftCard.comment.prefix) {
+      _msg = _msg.slice(config.giftCard.comment.prefix.length)
 
       const cacheIndex = commentChatMsgCache.findIndex((i) => i.uid === ccid)
       const data = {
