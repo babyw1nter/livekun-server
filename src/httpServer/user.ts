@@ -1,9 +1,8 @@
-import { user } from '../mock'
 import express from 'express'
-import session from 'express-session'
 import CCLinkJSManager from '../cclinkjsManager'
 import ConfigManager, { IConfig } from '../configManager'
 import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
+import { resWrap } from './server'
 import { readFileSync } from 'fs'
 import path from 'path'
 
@@ -81,12 +80,13 @@ userRouter.post('/login', (req, res) => {
 })
 
 userRouter.post('/autologin', (req, res) => {
-  if (req.session.user) {
-    CCLinkJSManager.createCCLinkJS(req.session.user.uuid)
+  CCLinkJSManager.createCCLinkJS(req.session.user?.uuid as string)
 
   res.json(resWrap(200, 'session 登录成功', req.session.user))
 })
 
+userRouter.get('/logout', (req, res) => {
+  CCLinkJSManager.destroyCCLinkJSInstance(req.session.user?.uuid as string)
 
   req.session.destroy(() => null)
   res.json(resWrap(200, '注销成功'))
@@ -103,14 +103,15 @@ userRouter.get('/get-config', (req, res) => {
 })
 
 userRouter.post('/update-config', (req, res) => {
+  const uuid = req.session.user?.uuid as string
+  const newConfig = req.body as IConfig
 
-  const uuid = req.session.user.uuid as string
+  const config = ConfigManager.get(uuid)
 
-  ConfigManager.setConfig(req.body as IConfig)
-  ConfigManager.saveConfig(uuid)
-  ConfigManager.readConfig(uuid)
+  config.update(newConfig).save().read()
 
   if (socketServer) {
+    sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'get-config' } })))
     res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
   } else {
     res.json(resWrap(20001, 'socket 未初始化'))
