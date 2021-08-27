@@ -108,13 +108,22 @@ apiRouter.post('/control', (req, res) => {
       )
       break
     case 'clearGiftCapsule':
-      sendToProtocol(JSON.stringify(wrap({ type: 'clear', data: {} })), `gift-capsule`, uuid)
+      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'clear' } })), 'gift-capsule', uuid)
       break
     case 'clearChatMessage':
-      sendToProtocol(JSON.stringify(wrap({ type: 'clear', data: {} })), `chat-message`, uuid)
+      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'clear' } })), 'chat-message', uuid)
       break
     case 'clearGiftCard':
-      sendToProtocol(JSON.stringify(wrap({ type: 'clear', data: {} })), `gift-card`, uuid)
+      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'clear' } })), 'gift-card', uuid)
+      break
+    case 'refreshGiftCapsule':
+      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'refresh' } })), 'gift-capsule', uuid)
+      break
+    case 'refreshChatMessage':
+      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'refresh' } })), 'chat-message', uuid)
+      break
+    case 'refreshGiftCard':
+      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'refresh' } })), 'gift-card', uuid)
       break
   }
 
