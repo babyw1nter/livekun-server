@@ -5,19 +5,6 @@ const randomNum = (minNum: number, maxNum: number): number => {
   return parseInt((Math.random() * (maxNum - minNum + 1) + minNum).toString(), 10)
 }
 
-interface User {
-  uuid: string
-  username: string
-  password: string
-  isBan: boolean
-}
-
-const user: Array<User> = [
-  { uuid: '4c7cc45f-9176-43e5-a05a-485c1a97f1aa', username: '690', password: '690', isBan: false },
-  { uuid: 'e53ddcb4-efce-4dd4-822f-a4d426b77917', username: 'hhui64', password: 'asd123', isBan: false },
-  { uuid: '00d594e2-8b61-4f57-a1b3-bf7e72f33558', username: 'test', password: 'test', isBan: false },
-]
-
 const giftCapsuleListArray = [
   {
     nickname: '91王先生',
@@ -238,4 +225,4 @@ const getRandomGiftCard = () => {
   }
 }
 
-export { randomNum, getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard, user }
+export { randomNum, getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard }
