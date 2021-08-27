@@ -47,6 +47,28 @@ app.all('*', (req, res, next) => {
   if (req.method === 'OPTIONS') res.sendStatus(200)
   else next()
 })
+app.use((req, res, next) => {
+  // 需要鉴权的接口列表
+  const requiresAuth = [
+    '/user/autologin',
+    '/user/logout',
+    '/user/get-status',
+    '/user/update-config',
+    '/api/join',
+    '/api/reset',
+    '/api/control',
+    '/api/get-status',
+  ]
+
+  if (requiresAuth.includes(req.path)) {
+    if (!req.session.user) {
+      res.json(resWrap(530, 'Not logged in.'))
+      return
+    }
+  }
+
+  next()
+})
 app.use('/user', userRouter)
 app.use('/api', apiRouter)
 app.use('/', express.static(path.join(__dirname, '../../', 'web')))
