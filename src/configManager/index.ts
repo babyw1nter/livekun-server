@@ -1,5 +1,8 @@
+import consola from 'consola'
 import fs from 'fs'
 import path from 'path'
+
+const log = consola.withTag('configmanager')
 
 export interface IConfig {
   giftCapsule: {
@@ -59,35 +62,98 @@ const defaultConfig: IConfig = {
   },
 }
 
-export default class ConfigManager {
-  private static _config: IConfig = defaultConfig
-  public static readConfig(uuid: string): void {
-    if (!uuid) return
-    const configFilePath = path.join(__dirname, '../../', 'config', `${uuid}.json`)
-    try {
-      ConfigManager._config = JSON.parse(fs.readFileSync(configFilePath).toString()) as IConfig
-    } catch (error) {
-      ConfigManager.resetConfig()
-      ConfigManager.saveConfig(uuid)
+class Config implements IConfig {
+  uuid: string
+  giftCapsule: {
+    level: number[]
+    duration: number[]
+    maximum: number
+    minMoney: number
+  }
+  chatMessage: {
+    style: {
+      fontSize: number
+    }
+    show: {
+      join: boolean
+      follow: boolean
+      gift: boolean
+    }
+  }
+  giftCard: {
+    level: number[]
+    minMoney: number
+    comment: {
+      use: boolean
+      prefix: string
+      giftMinMoney: number
+      giftWhitelist: string
     }
   }
 
-  public static saveConfig(uuid: string): void {
-    if (!uuid) return
-    const configFilePath = path.join(__dirname, '../../', 'config', `${uuid}.json`)
-    fs.writeFileSync(configFilePath, JSON.stringify(ConfigManager._config, null, 2))
+  constructor(uuid: string) {
+    this.uuid = uuid
+    this.giftCapsule = defaultConfig.giftCapsule
+    this.chatMessage = defaultConfig.chatMessage
+    this.giftCard = defaultConfig.giftCard
+
+    try {
+      this.read()
+    } catch (error) {
+      this.reset()
+    }
   }
 
-  public static getConfig(uuid: string): IConfig {
-    ConfigManager.readConfig(uuid)
-    return ConfigManager._config
+  getFilePath(): string {
+    return path.join(__dirname, '../../', 'config', `${this.uuid}.json`)
   }
 
-  public static resetConfig(): void {
-    ConfigManager._config = defaultConfig
+  read(): this {
+    const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IConfig
+    this.giftCapsule = configData.giftCapsule
+    this.chatMessage = configData.chatMessage
+    this.giftCard = configData.giftCard
+    return this
   }
 
-  public static setConfig(config: IConfig): void {
-    ConfigManager._config = config
+  save(): this {
+    try {
+      fs.writeFileSync(this.getFilePath(), JSON.stringify(this, null, 2))
+    } catch (error) {
+      log.error(error)
+    }
+    return this
+  }
+
+  reset(): this {
+    this.giftCapsule = defaultConfig.giftCapsule
+    this.chatMessage = defaultConfig.chatMessage
+    this.giftCard = defaultConfig.giftCard
+    return this
+  }
+
+  setGiftCapsule(config: IConfig['giftCapsule']) {
+    this.giftCapsule = config
+  }
+
+  setChatMessage(config: IConfig['chatMessage']) {
+    this.chatMessage = config
+  }
+
+  setGiftCard(config: IConfig['giftCard']) {
+    this.giftCard = config
+  }
+
+  update(config: IConfig): this {
+    this.giftCapsule = config.giftCapsule
+    this.chatMessage = config.chatMessage
+    this.giftCard = config.giftCard
+    return this
+  }
+}
+
+export default class ConfigManager {
+  public static get(uuid: string): Config {
+    return new Config(uuid)
   }
 }
