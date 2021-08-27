@@ -31,11 +31,16 @@ const sendToProtocol = (
   }
 }
 
-const wrap = <T>(wrapData: { code?: number; type: string; data: T }): { code: number; type: string; data: T } => {
+const wrap = <T>(wrapData: {
+  code?: number
+  type: string
+  data: T
+}): { code: number; type: string; data: T; timestamp: number } => {
   return {
     code: wrapData.code || 0,
     type: wrapData.type,
     data: wrapData.data,
+    timestamp: Date.now(),
   }
 }
 
