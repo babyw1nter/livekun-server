@@ -111,7 +111,7 @@ userRouter.post('/update-config', (req, res) => {
   config.update(newConfig).save().read()
 
   if (socketServer) {
-    sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'get-config' } })))
+    sendToProtocol({ type: 'method', data: { method: 'get-config' } })
     res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
   } else {
     res.json(resWrap(20001, 'socket 未初始化'))

@@ -44,23 +44,21 @@ const chatMessageModule = (chatMsg: IChatMsg, instance: CCLinkJSInstance): void 
   }
 
   sendToProtocol(
-    JSON.stringify(
-      wrap({
-        type: 'data',
-        data: {
-          avatarUrl: chatMsg[10],
-          nickname: chatMsg[197],
-          message: msg,
-          uid: ccid,
-          userInfo: chatMsg[7],
-          type: (() => {
-            if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
-            if (chatMsg[39] === '1') return 'admin'
-            return 'normal'
-          })(),
-        },
-      })
-    ),
+    {
+      type: 'data',
+      data: {
+        avatarUrl: chatMsg[10],
+        nickname: chatMsg[197],
+        message: msg,
+        uid: ccid,
+        userInfo: chatMsg[7],
+        type: (() => {
+          if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
+          if (chatMsg[39] === '1') return 'admin'
+          return 'normal'
+        })(),
+      },
+    },
     'chat-message',
     instance.uuid
   )

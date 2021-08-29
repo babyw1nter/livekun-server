@@ -40,22 +40,20 @@ const giftCardModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => 
   }
 
   sendToProtocol(
-    JSON.stringify(
-      wrap({
-        type: 'data',
-        data: {
-          avatarUrl: giftMsg.frompurl,
-          nickname: giftMsg.fromnick,
-          uid: giftMsg.fromid.toString(),
-          money: giftMoney,
-          giftName: giftName,
-          giftCount: giftMsg.num,
-          giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
-          message: msg,
-          comment: comment,
-        },
-      })
-    ),
+    {
+      type: 'data',
+      data: {
+        avatarUrl: giftMsg.frompurl,
+        nickname: giftMsg.fromnick,
+        uid: giftMsg.fromid.toString(),
+        money: giftMoney,
+        giftName: giftName,
+        giftCount: giftMsg.num,
+        giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
+        message: msg,
+        comment: comment,
+      },
+    },
     'gift-card',
     instance.uuid
   )

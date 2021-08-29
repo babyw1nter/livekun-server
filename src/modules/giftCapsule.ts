@@ -25,20 +25,18 @@ const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void 
 
   if (config.giftCapsule.minMoney > giftMoney) return
   sendToProtocol(
-    JSON.stringify(
-      wrap({
-        type: 'data',
-        data: {
-          avatarUrl: giftMsg.frompurl,
-          nickname: giftMsg.fromnick,
-          uid: giftMsg.fromid.toString(),
-          money: giftMoney,
-          giftName: giftName,
-          giftCount: giftMsg.num,
-          giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
-        },
-      })
-    ),
+    {
+      type: 'data',
+      data: {
+        avatarUrl: giftMsg.frompurl,
+        nickname: giftMsg.fromnick,
+        uid: giftMsg.fromid.toString(),
+        money: giftMoney,
+        giftName: giftName,
+        giftCount: giftMsg.num,
+        giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
+      },
+    },
     'gift-capsule',
     instance.uuid
   )

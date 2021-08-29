@@ -6,8 +6,15 @@ const log = consola.withTag('socketServer')
 
 let socketServer: WebSocket.server | null = null
 
-const sendToProtocol = (
-  data: WebSocket.IStringified,
+interface IWrapData<T> {
+  code?: number
+  type: string
+  data: T
+  timestamp?: number
+}
+
+const sendToProtocol = <T>(
+  data: IWrapData<T>,
   protocol?: 'gift-capsule' | 'chat-message' | 'gift-card' | string,
   uuid?: string
 ): void => {
@@ -20,24 +27,28 @@ const sendToProtocol = (
     }
 
     if (p === '') {
-      socketServer.broadcastUTF(data)
+      socketServer.broadcastBytes(encode(JSON.stringify(wrap(data))))
     } else {
       socketServer.connections.forEach((connection) => {
         if (connection.protocol === p) {
-          connection.sendUTF(data)
+          connection.sendBytes(encode(JSON.stringify(wrap(data))))
         }
       })
     }
   }
 }
 
-const wrap = <T>(wrapData: {
-  code?: number
-  type: string
-  data: T
-}): { code: number; type: string; data: T; timestamp: number } => {
+const encode = (data: string): Buffer => {
+  return Buffer.from(data)
+}
+
+const decode = (data: Buffer): string => {
+  return data.toString('utf-8')
+}
+
+const wrap = <T>(wrapData: IWrapData<T>): IWrapData<T> => {
   return {
-    code: wrapData.code || 0,
+    code: wrapData.code || 200,
     type: wrapData.type,
     data: wrapData.data,
     timestamp: Date.now(),
@@ -54,15 +65,18 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
     if (connection.protocol === '' || connection.protocol.length > 128) {
       connection.drop(1002)
     } else {
-      connection.sendUTF(
-        JSON.stringify({
-          code: 200,
-          message: 'ok',
-          data: {
-            serverVersion: '1.0.0',
-          },
-          timestamp: Date.now(),
-        })
+      connection.sendBytes(
+        Buffer.from(
+          JSON.stringify({
+            code: 200,
+            type: 'connect-response',
+            data: {
+              serverVersion: '1.0.0',
+              protocol: connection.protocol,
+            },
+            timestamp: Date.now(),
+          })
+        )
       )
     }
   })

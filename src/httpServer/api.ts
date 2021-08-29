@@ -75,57 +75,51 @@ apiRouter.post('/control', (req, res) => {
   switch (method) {
     case 'sendMockDataToGiftCapsule':
       sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: getRandomGiftCapsule(),
-          })
-        ),
+        {
+          type: 'data',
+          data: getRandomGiftCapsule(),
+        },
         'gift-capsule',
         uuid
       )
       break
     case 'sendMockDataToChatMessage':
       sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: getRandomChatMessage(),
-          })
-        ),
+        {
+          type: 'data',
+          data: getRandomChatMessage(),
+        },
         'chat-message',
         uuid
       )
       break
     case 'sendMockDataToGiftCard':
       sendToProtocol(
-        JSON.stringify(
-          wrap({
-            type: 'data',
-            data: getRandomGiftCard(),
-          })
-        ),
+        {
+          type: 'data',
+          data: getRandomGiftCard(),
+        },
         'gift-card',
         uuid
       )
       break
     case 'clearGiftCapsule':
-      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'clear' } })), 'gift-capsule', uuid)
+      sendToProtocol({ type: 'method', data: { method: 'clear' } }, 'gift-capsule', uuid)
       break
     case 'clearChatMessage':
-      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'clear' } })), 'chat-message', uuid)
+      sendToProtocol({ type: 'method', data: { method: 'clear' } }, 'chat-message', uuid)
       break
     case 'clearGiftCard':
-      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'clear' } })), 'gift-card', uuid)
+      sendToProtocol({ type: 'method', data: { method: 'clear' } }, 'gift-card', uuid)
       break
     case 'refreshGiftCapsule':
-      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'refresh' } })), 'gift-capsule', uuid)
+      sendToProtocol({ type: 'method', data: { method: 'refresh' } }, 'gift-capsule', uuid)
       break
     case 'refreshChatMessage':
-      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'refresh' } })), 'chat-message', uuid)
+      sendToProtocol({ type: 'method', data: { method: 'refresh' } }, 'chat-message', uuid)
       break
     case 'refreshGiftCard':
-      sendToProtocol(JSON.stringify(wrap({ type: 'method', data: { method: 'refresh' } })), 'gift-card', uuid)
+      sendToProtocol({ type: 'method', data: { method: 'refresh' } }, 'gift-card', uuid)
       break
   }
 
