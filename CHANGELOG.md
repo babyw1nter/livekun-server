@@ -1,3 +1,17 @@
+# [1.0.0-alpha.2](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2021-08-29)
+
+
+### Bug Fixes
+
+* **httpServer/server:** 修复因响应头类型错误引起的前端页面无法加载的问题 ([1a46217](https://github.com/hhui64/livekun-server/commit/1a4621769fc05b3a805841ba0135ecb6c34f0424))
+
+
+### Features
+
+* 新增支持 ArrayBuffer 传输 WS 数据 ([08006a4](https://github.com/hhui64/livekun-server/commit/08006a41335bccc4a17179230a42c365c8423c82))
+
+
+
 # [1.0.0-alpha.1](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2021-08-27)
 
 
