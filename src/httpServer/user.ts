@@ -64,15 +64,23 @@ userRouter.post('/login', (req, res) => {
     if (autologin) {
       req.session.cookie.maxAge = 1296000000
     }
+
     req.session.user = {
       username: user.username,
       uuid: user.uuid,
     }
 
     // 登陆成功时，为其创建 cclinkjs 实例
-    CCLinkJSManager.createCCLinkJS(user.uuid)
+    const instance = CCLinkJSManager.createCCLinkJS(user.uuid)
+    const config = ConfigManager.get(user.uuid)
 
-    res.json(resWrap(200, '登录成功', req.session.user))
+    res.json(
+      resWrap(200, '登录成功', {
+        user: req.session.user,
+        status: instance.getStatus(),
+        config,
+      })
+    )
   } else {
     res.json(resWrap(10001, '用户名或密码不正确'))
     return
@@ -80,13 +88,26 @@ userRouter.post('/login', (req, res) => {
 })
 
 userRouter.post('/autologin', (req, res) => {
-  CCLinkJSManager.createCCLinkJS(req.session.user?.uuid as string)
+  const uuid = req.session.user?.uuid as string
+  const config = ConfigManager.get(uuid)
+  let instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
-  res.json(resWrap(200, 'session 登录成功', req.session.user))
+  if (!instance) {
+    instance = CCLinkJSManager.createCCLinkJS(uuid)
+  }
+
+  res.json(
+    resWrap(200, 'session 登录成功', {
+      user: req.session.user,
+      status: instance.getStatus(),
+      config,
+    })
+  )
 })
 
 userRouter.get('/logout', (req, res) => {
-  CCLinkJSManager.destroyCCLinkJSInstance(req.session.user?.uuid as string)
+  const uuid = req.session.user?.uuid as string
+  CCLinkJSManager.destroyCCLinkJSInstance(uuid)
 
   req.session.destroy(() => null)
   res.json(resWrap(200, '注销成功'))

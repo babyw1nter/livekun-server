@@ -31,7 +31,7 @@ apiRouter.post('/join', async (req, res) => {
 
   const liveId = (req.body.liveId as string).toString()
 
-  if (!req.body.liveId) {
+  if (!liveId) {
     res.json(resWrap(10003, '未指定直播间ID'))
   }
 
@@ -40,11 +40,19 @@ apiRouter.post('/join', async (req, res) => {
   instance
     .joinLiveRoom(uuid, liveId)
     .then(() => {
-      res.json(resWrap())
+      res.json(
+        resWrap(200, 'ok', {
+          status: instance.getStatus(),
+        })
+      )
       log.success(uuid, '进入房间成功！', instance.getStatus().roomInfo.title)
     })
     .catch((reason: Error) => {
-      res.json(resWrap(10001, '进入房间失败！' + reason.message))
+      res.json(
+        resWrap(10001, '进入房间失败！' + reason.message, {
+          status: instance.getStatus(),
+        })
+      )
       log.error(uuid, '进入房间失败！', reason)
     })
 })
@@ -61,10 +69,18 @@ apiRouter.post('/reset', (req, res) => {
   instance
     .reset()
     .then(() => {
-      res.json(resWrap())
+      res.json(
+        resWrap(200, 'ok', {
+          instatus: instance.getStatus(),
+        })
+      )
     })
     .catch((reason: Error) => {
-      res.json(resWrap(30001, '重置失败！' + reason.message))
+      res.json(
+        resWrap(30001, '重置失败！' + reason.message, {
+          status: instance.getStatus(),
+        })
+      )
     })
 })
 
