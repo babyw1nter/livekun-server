@@ -4,10 +4,32 @@ import consola from 'consola'
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
+import { readFileSync } from 'fs'
+import path from 'path'
 
 const log = consola.withTag('httpserver/api')
 
 const apiRouter = express.Router()
+
+apiRouter.get('/get-broadcasts', (req, res) => {
+  interface Broadcasts {
+    broadcasts: Array<string>
+  }
+
+  try {
+    const broadcasts = JSON.parse(
+      readFileSync(path.join(__dirname, '../../', 'data', 'broadcasts.json')).toString()
+    ) as Broadcasts
+
+    res.json(
+      resWrap(200, 'ok', {
+        broadcasts: broadcasts.broadcasts,
+      })
+    )
+  } catch (error: unknown) {
+    res.json(resWrap(20001, '获取公告失败！'))
+  }
+})
 
 apiRouter.get('/get-status', (req, res) => {
   const uuid = req.session.user?.uuid || (req.query.uuid as string)
