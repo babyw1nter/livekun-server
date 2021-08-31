@@ -147,7 +147,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
   ): Promise<{ liveRoomInfo: ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
     return new Promise(async (resolve, reject) => {
       if (!this.cclinkjs.ready) {
-        reject(new Error(`${uuid} 连接未就绪，请稍后再试！`))
+        reject(new Error(`连接未就绪，请稍后再试！`))
         return
       }
 
@@ -164,7 +164,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
         const title = liveRoomInfo.props.pageProps.roomInfoInitData.live?.title
 
         if (!roomId || !channelId || !gameType) {
-          reject(new Error(`${uuid} 获取房间信息失败！`))
+          reject(new Error(`获取房间信息失败！`))
           return
         }
 
