@@ -1,5 +1,5 @@
 import { getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard } from '../mock'
-import { sendToProtocol, wrap } from '../socketServer/server'
+import { sendToProtocol } from '../socketServer/server'
 import consola from 'consola'
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
@@ -35,6 +35,8 @@ apiRouter.get('/get-status', (req, res) => {
   const uuid = req.session.user?.uuid || (req.query.uuid as string)
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
+  // 这里因为是公开接口，UUID 并不确定存在 session 中
+  // 所以当实例不存在时直接返回错误消息就可以了
   if (uuid !== '' && instance) {
     res.json(resWrap(200, 'ok', instance.getStatus()))
   } else {
@@ -44,66 +46,79 @@ apiRouter.get('/get-status', (req, res) => {
 
 apiRouter.post('/join', async (req, res) => {
   const uuid = req.session.user?.uuid as string
-  const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
-
-  if (uuid === '' || !instance) {
-    res.json(resWrap(10008, 'Instance not found.'))
-    return
-  }
-
   const liveId = (req.body.liveId as string).toString()
 
   if (!liveId) {
     res.json(resWrap(10003, '未指定直播间ID'))
+    return
   }
+
+  const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) || CCLinkJSManager.createCCLinkJS(uuid)
 
   log.info(uuid, '正在进入房间...', liveId)
 
-  instance
-    .joinLiveRoom(uuid, liveId)
-    .then(() => {
-      res.json(
-        resWrap(200, 'ok', {
-          status: instance.getStatus(),
-        })
-      )
-      log.success(uuid, '进入房间成功！', instance.getStatus().roomInfo.title)
-    })
-    .catch((reason: Error) => {
-      res.json(
-        resWrap(10001, '进入房间失败！' + reason.message, {
-          status: instance.getStatus(),
-        })
-      )
-      log.error(uuid, '进入房间失败！', reason)
-    })
+  const j = () => {
+    instance
+      .joinLiveRoom(uuid, liveId)
+      .then(() => {
+        res.json(
+          resWrap(200, 'ok', {
+            status: instance.getStatus(),
+          })
+        )
+        log.success(uuid, '进入房间成功！', instance.getStatus().roomInfo.title)
+      })
+      .catch((reason: Error) => {
+        res.json(
+          resWrap(10001, '进入房间失败！' + reason.message, {
+            status: instance.getStatus(),
+          })
+        )
+        log.error(uuid, '进入房间失败！', reason)
+      })
+  }
+
+  // 实例未就绪时，添加一个监听器等待实例就绪，然后再执行进房请求
+  if (!instance.cclinkjs.ready) {
+    instance.cclinkjs.once('ready', () => j())
+  } else {
+    j()
+  }
 })
 
 apiRouter.post('/reset', (req, res) => {
   const uuid = req.session.user?.uuid as string
-  const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
+  const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) || CCLinkJSManager.createCCLinkJS(uuid)
 
-  if (!instance) {
-    res.json(resWrap(10008, 'Instance not found.'))
-    return
-  }
-
-  instance
-    .reset()
-    .then(() => {
+  // 实例未就绪时，添加一个监听器等待实例就绪，然后直接返回创建的实例
+  // 否则重置已存在的实例
+  if (!instance.cclinkjs.ready) {
+    instance.cclinkjs.once('ready', () => {
       res.json(
         resWrap(200, 'ok', {
           instatus: instance.getStatus(),
         })
       )
     })
-    .catch((reason: Error) => {
-      res.json(
-        resWrap(30001, '重置失败！' + reason.message, {
-          status: instance.getStatus(),
-        })
-      )
-    })
+    return
+  } else {
+    instance
+      .reset()
+      .then(() => {
+        res.json(
+          resWrap(200, 'ok', {
+            instatus: instance.getStatus(),
+          })
+        )
+      })
+      .catch((reason: Error) => {
+        res.json(
+          resWrap(30001, '重置失败！' + reason.message, {
+            status: instance.getStatus(),
+          })
+        )
+      })
+  }
 })
 
 apiRouter.post('/control', (req, res) => {
