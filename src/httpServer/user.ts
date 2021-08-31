@@ -106,8 +106,8 @@ userRouter.post('/autologin', (req, res) => {
 })
 
 userRouter.get('/logout', (req, res) => {
-  const uuid = req.session.user?.uuid as string
-  CCLinkJSManager.destroyCCLinkJSInstance(uuid)
+  // const uuid = req.session.user?.uuid as string
+  // CCLinkJSManager.destroyCCLinkJSInstance(uuid)
 
   req.session.destroy(() => null)
   res.json(resWrap(200, '注销成功'))
