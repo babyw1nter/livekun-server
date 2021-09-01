@@ -1,11 +1,10 @@
 import { chatMessageModule } from '../modules/chatMessage'
 import { giftCapsuleModule } from '../modules/giftCapsule'
 import { giftCardModule } from '../modules/giftCard'
-import { CCLinkJS, ICCJsonData, ICCRecvJsonData } from '@hhui64/cclinkjs/src'
-import { ChatListener, GiftListener, RoomMethods } from '@hhui64/cclinkjs-room-module/src'
-import consola from 'consola'
-import { ILiveRoomInfoByCcIdResponse } from '@hhui64/cclinkjs-room-module/src/lib/Room/RoomInterface'
+import { CCLinkJS, ICCJsonData, ICCRecvJsonData } from '@hhui64/cclinkjs'
+import { ChatListener, GiftListener, RoomMethods, RoomInterface } from '@hhui64/cclinkjs-room-module'
 import { v4 as uuidv4 } from 'uuid'
+import consola from 'consola'
 
 const log = consola.withTag('modules/cclinkjsManager')
 
@@ -144,7 +143,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
   public joinLiveRoom(
     uuid: string,
     liveId: string
-  ): Promise<{ liveRoomInfo: ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
+  ): Promise<{ liveRoomInfo: RoomInterface.ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
     return new Promise(async (resolve, reject) => {
       if (!this.cclinkjs.ready) {
         reject(new Error(`连接未就绪，请稍后再试！`))

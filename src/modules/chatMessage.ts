@@ -1,7 +1,6 @@
-import { IChatMsg } from '@hhui64/cclinkjs-room-module/src/lib/Chat/ChatInterface'
+import { ChatInterface } from '@hhui64/cclinkjs-room-module'
 import ConfigManager from '../configManager'
 import { sendToProtocol } from '../socketServer/server'
-import { wrap } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
@@ -15,7 +14,7 @@ interface ICommentChatMsgCache {
 }
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
-const chatMessageModule = (chatMsg: IChatMsg, instance: CCLinkJSInstance): void => {
+const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSInstance): void => {
   const config = ConfigManager.get(instance.uuid)
 
   const ccid = chatMsg[7][130].toString() as string

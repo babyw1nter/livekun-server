@@ -1,14 +1,13 @@
 import ConfigManager from '../configManager'
 import { sendToProtocol } from '../socketServer/server'
-import { IGiftMsg } from '@hhui64/cclinkjs-room-module/src/lib/Gift/GiftInterface'
-import { wrap } from '../socketServer/server'
+import { GiftInterface } from '@hhui64/cclinkjs-room-module'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 
 const log = consola.withTag('modules/giftCapsule')
 
-const giftCapsuleModule = (giftMsg: IGiftMsg, instance: CCLinkJSInstance): void => {
+const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
   const config = ConfigManager.get(instance.uuid)
 
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
