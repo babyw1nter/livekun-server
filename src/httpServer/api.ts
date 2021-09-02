@@ -57,7 +57,7 @@ apiRouter.post('/join', async (req, res) => {
 
   log.info(uuid, '正在进入房间...', liveId)
 
-  const j = () => {
+  const join = () => {
     instance
       .joinLiveRoom(uuid, liveId)
       .then(() => {
@@ -78,11 +78,20 @@ apiRouter.post('/join', async (req, res) => {
       })
   }
 
-  // 实例未就绪时，添加一个监听器等待实例就绪，然后再执行进房请求
+  // 实例未就绪时，直接执行 reset 方法重置实例，待重置完成后再执行后续操作
   if (!instance.cclinkjs.ready) {
-    instance.cclinkjs.once('ready', () => j())
+    instance
+      .reset()
+      .then(() => join())
+      .catch((reason: Error) => {
+        res.json(
+          resWrap(10004, '进入房间失败，等待实例就绪错误！' + reason.message, {
+            status: instance.getStatus(),
+          })
+        )
+      })
   } else {
-    j()
+    join()
   }
 })
 
@@ -90,35 +99,22 @@ apiRouter.post('/reset', (req, res) => {
   const uuid = req.session.user?.uuid as string
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) || CCLinkJSManager.createCCLinkJS(uuid)
 
-  // 实例未就绪时，添加一个监听器等待实例就绪，然后直接返回创建的实例
-  // 否则重置已存在的实例
-  if (!instance.cclinkjs.ready) {
-    instance.cclinkjs.once('ready', () => {
+  instance
+    .reset()
+    .then(() => {
       res.json(
         resWrap(200, 'ok', {
           instatus: instance.getStatus(),
         })
       )
     })
-    return
-  } else {
-    instance
-      .reset()
-      .then(() => {
-        res.json(
-          resWrap(200, 'ok', {
-            instatus: instance.getStatus(),
-          })
-        )
-      })
-      .catch((reason: Error) => {
-        res.json(
-          resWrap(30001, '重置失败！' + reason.message, {
-            status: instance.getStatus(),
-          })
-        )
-      })
-  }
+    .catch((reason: Error) => {
+      res.json(
+        resWrap(30001, '重置失败！' + reason.message, {
+          status: instance.getStatus(),
+        })
+      )
+    })
 })
 
 apiRouter.post('/control', (req, res) => {
