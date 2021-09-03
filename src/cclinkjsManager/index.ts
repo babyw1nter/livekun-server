@@ -1,7 +1,7 @@
 import { chatMessageModule } from '../modules/chatMessage'
 import { giftCapsuleModule } from '../modules/giftCapsule'
 import { giftCardModule } from '../modules/giftCard'
-import { CCLinkJS, ICCJsonData, ICCRecvJsonData } from '@hhui64/cclinkjs'
+import { CCLinkJS, ICCRecvJsonData } from '@hhui64/cclinkjs'
 import { ChatListener, GiftListener, RoomMethods, RoomInterface } from '@hhui64/cclinkjs-room-module'
 import { v4 as uuidv4 } from 'uuid'
 import consola from 'consola'
@@ -228,15 +228,5 @@ export default class CCLinkJSManager {
 
   private static _getCCLinkJSInstanceIndex(uuid: string): number {
     return CCLinkJSManager.cclinkjsInstances.findIndex((i) => i.uuid === uuid)
-  }
-
-  public static send(uuid: string, data: ICCJsonData, timeout?: number): Promise<ICCRecvJsonData> {
-    const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) as CCLinkJSInstance
-
-    if (!instance.cclinkjs.socket.connection || !instance.cclinkjs.socket.connection.connected) {
-      instance.cclinkjs.connect()
-    }
-
-    return instance.cclinkjs.send(data, timeout)
   }
 }
