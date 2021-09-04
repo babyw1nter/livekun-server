@@ -49,6 +49,7 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
         giftName: giftName,
         giftCount: giftMsg.num,
         giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
+        giftIcon: gift?.icon,
         message: msg,
         comment: comment,
       },
