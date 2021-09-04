@@ -1,4 +1,3 @@
-import { getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard } from '../mock'
 import { sendToProtocol } from '../socketServer/server'
 import consola from 'consola'
 import express from 'express'
@@ -6,6 +5,14 @@ import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
 import { readFileSync } from 'fs'
 import path from 'path'
+import {
+  getRandomGiftCapsule,
+  getRandomChatMessage,
+  getRandomGiftCard,
+  giftCapsuleListArray,
+  chatMessageListArray,
+  giftCardListArray,
+} from '../mock'
 
 const log = consola.withTag('httpserver/api')
 
@@ -29,6 +36,16 @@ apiRouter.get('/get-broadcasts', (req, res) => {
   } catch (error: unknown) {
     res.json(resWrap(20001, '获取公告失败！'))
   }
+})
+
+apiRouter.get('/get-mockdata', (req, res) => {
+  res.json(
+    resWrap(200, 'ok', {
+      giftCapsuleMockData: giftCapsuleListArray,
+      chatMessageMockData: chatMessageListArray,
+      giftCardMockData: giftCardListArray,
+    })
+  )
 })
 
 apiRouter.get('/get-status', (req, res) => {

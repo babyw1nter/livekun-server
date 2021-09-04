@@ -225,4 +225,12 @@ const getRandomGiftCard = () => {
   }
 }
 
-export { randomNum, getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard }
+export {
+  randomNum,
+  getRandomGiftCapsule,
+  getRandomChatMessage,
+  getRandomGiftCard,
+  giftCapsuleListArray,
+  chatMessageListArray,
+  giftCardListArray,
+}
