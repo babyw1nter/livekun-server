@@ -160,6 +160,7 @@ const giftCardListArray = [
     money: 30,
     giftName: '奶罩',
     giftCount: 1,
+    giftImage: 'http://cc.fp.ps.netease.com/file/5e00c4dc8b74271a603efa2f7buKHOXy02',
     message: '赠送了奶罩 × 1',
     comment: '我永远爱奶玲！',
     uid: 91330,
@@ -170,6 +171,7 @@ const giftCardListArray = [
     money: 69,
     giftName: '火箭',
     giftCount: 1,
+    giftImage: 'http://cc.fp.ps.netease.com/file/5f8cec0d5e60274c35d5ac2bP6i4f3OR02',
     message: '赠送了火箭 × 1',
     uid: 66690,
   },
@@ -179,6 +181,7 @@ const giftCardListArray = [
     money: 264000,
     giftName: '圣旨降临',
     giftCount: 66,
+    giftImage: 'http://cc.fp.ps.netease.com/file/5e00b61f143cfac22118ec30ibJDLBaO02',
     message: '赠送了圣旨降临 × 66',
     comment: '圣旨66张，只为看奶玲白丝美腿！',
     uid: 3312,
@@ -222,6 +225,7 @@ const getRandomGiftCard = () => {
   return {
     ...giftCardListArray[randomNum(0, giftCardListArray.length - 1)],
     giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
+    giftIcon: gift?.icon,
   }
 }
 
