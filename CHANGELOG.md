@@ -1,3 +1,27 @@
+# [1.0.0-alpha.3](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2021-09-11)
+
+
+### Bug Fixes
+
+* **httpServer/api:** 修复 join 和 reset 接口的逻辑问题 ([8fe1baf](https://github.com/hhui64/livekun-server/commit/8fe1baf638a56a353bfc8e7d7518c45abb7aead6))
+
+
+### Features
+
+* **httpServer/api:** 新增获取 mock 数据接口 ([a7fd406](https://github.com/hhui64/livekun-server/commit/a7fd406f292528615cd6ab6c8ff9da8450d1bb57))
+* **httpServer/api:** 新增获取公告接口 ([822aca5](https://github.com/hhui64/livekun-server/commit/822aca566c2890db44dc28ec51b6c73a890c7f66))
+* **modules/giftCard:** 新增礼物图标 url 属性 ([8e23244](https://github.com/hhui64/livekun-server/commit/8e23244f34f15c7626d086fa1967724ac82f4583))
+
+
+### Performance Improvements
+
+* 优化导入模块 ([6dd4100](https://github.com/hhui64/livekun-server/commit/6dd410072369b4ca72e72965e524e013702532f8))
+* 优化接口数据合并以减少请求数量 ([eff194e](https://github.com/hhui64/livekun-server/commit/eff194ee3b887b0ce866c0112b974fa2cb976b9d))
+* 优化退出登录时的实例销毁逻辑 ([9db0428](https://github.com/hhui64/livekun-server/commit/9db0428017d6dad91ca65bd3ec76b2abf31e4742))
+* **httpServer/api:** 优化 join 和 reset 接口的实例管理逻辑 ([17ac131](https://github.com/hhui64/livekun-server/commit/17ac131065d7b5251f4d5ece1e78ce6942a45175))
+
+
+
 # [1.0.0-alpha.2](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2021-08-29)
 
 
