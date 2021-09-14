@@ -1,7 +1,7 @@
 import { chatMessageModule } from '../modules/chatMessage'
 import { giftCapsuleModule } from '../modules/giftCapsule'
 import { giftCardModule } from '../modules/giftCard'
-import { CCLinkJS, ICCRecvJsonData } from '@hhui64/cclinkjs'
+import { CCLinkJS, ICCLinkJSOptions, ICCRecvJsonData } from '@hhui64/cclinkjs'
 import { ChatListener, GiftListener, RoomMethods, RoomInterface } from '@hhui64/cclinkjs-room-module'
 import { v4 as uuidv4 } from 'uuid'
 import consola from 'consola'
@@ -27,9 +27,9 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
   cclinkjs: CCLinkJS
   status: ICCLinkJSInstanceStatus
 
-  constructor(uuid?: string) {
+  constructor(uuid?: string, options?: ICCLinkJSOptions) {
     this.uuid = uuid || uuidv4()
-    this.cclinkjs = new CCLinkJS()
+    this.cclinkjs = new CCLinkJS(options)
     this.status = {
       isJoinRoom: false,
       roomInfo: {
@@ -198,13 +198,13 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
 export default class CCLinkJSManager {
   public static cclinkjsInstances: Array<CCLinkJSInstance> = []
 
-  public static createCCLinkJS(uuid: string): CCLinkJSInstance {
+  public static createCCLinkJS(uuid: string, options?: ICCLinkJSOptions): CCLinkJSInstance {
     let instance = this.getCCLinkJSInstance(uuid)
 
     if (instance) {
       return instance
     } else {
-      instance = new CCLinkJSInstance(uuid)
+      instance = new CCLinkJSInstance(uuid, options)
       CCLinkJSManager.cclinkjsInstances.push(instance)
     }
 
