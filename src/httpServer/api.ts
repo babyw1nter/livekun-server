@@ -96,7 +96,7 @@ apiRouter.post('/join', async (req, res) => {
   }
 
   // 实例未就绪时，直接执行 reset 方法重置实例，待重置完成后再执行后续操作
-  if (!instance.cclinkjs.ready) {
+  if (!instance.cclinkjs.isReady()) {
     instance
       .reset()
       .then(() => join())

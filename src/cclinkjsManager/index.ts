@@ -145,7 +145,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
     liveId: string
   ): Promise<{ liveRoomInfo: RoomInterface.ILiveRoomInfoByCcIdResponse; recvJsonData: ICCRecvJsonData }> {
     return new Promise(async (resolve, reject) => {
-      if (!this.cclinkjs.ready) {
+      if (!this.cclinkjs.isReady()) {
         reject(new Error(`连接未就绪，请稍后再试！`))
         return
       }
