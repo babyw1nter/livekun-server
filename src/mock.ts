@@ -120,7 +120,7 @@ const chatMessageListArray = [
   {
     nickname: 'Pornhub大波妹',
     avatarUrl: 'https://img2.baidu.com/it/u=222120700,1745793916&fm=26&fmt=auto&gp=0.jpg',
-    message: '我爱奶玲一生一世',
+    message: '我爱奶玲一生一世，啊啊啊奶玲',
     uid: 91330,
     messageType: 'chat',
   },
@@ -157,6 +157,7 @@ const chatMessageListArray = [
     avatarUrl: 'https://img1.baidu.com/it/u=3254254623,2492769581&fm=26&fmt=auto&gp=0.jpg',
     message: '本人男20岁，985本科，目前在国企上班，现寻求一位女士与我共度后半生，要求年龄50岁以上。',
     uid: 888333,
+    type: 'guard-monthly',
     messageType: 'chat',
   },
   {
@@ -164,6 +165,15 @@ const chatMessageListArray = [
     avatarUrl: 'https://img1.baidu.com/it/u=3254254623,2492769581&fm=26&fmt=auto&gp=0.jpg',
     message: '坐等有人找我谈恋爱😬',
     uid: 888333,
+    type: 'guard-monthly',
+    messageType: 'chat',
+  },
+  {
+    nickname: '奶灵の裸足控',
+    avatarUrl: 'https://img0.baidu.com/it/u=1942253063,3807598283&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
+    message: '说到灵儿那双jio，脚底粉嫩粉嫩的，皮肤非常光滑软嫩，每次一轻轻用手触她那粉嫩的脚底，碰她便会痒得呵呵笑……',
+    uid: 23434347,
+    type: 'guard-annual',
     messageType: 'chat',
   },
 ]
