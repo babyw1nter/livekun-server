@@ -38,25 +38,25 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
     }
   }
 
-  sendToProtocol(
-    {
-      type: 'data',
-      data: {
-        avatarUrl: giftMsg.frompurl,
-        nickname: giftMsg.fromnick,
-        uid: giftMsg.fromid.toString(),
-        money: giftMoney,
-        giftName: giftName,
-        giftCount: giftMsg.num,
-        giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
-        giftIcon: gift?.icon,
-        message: msg,
-        comment: comment,
-      },
+  const data = {
+    type: 'data',
+    data: {
+      avatarUrl: giftMsg.frompurl,
+      nickname: giftMsg.fromnick,
+      message: msg,
+      uid: giftMsg.fromid.toString(),
+      messageType: 'gift',
+      money: giftMoney,
+      giftName: giftName,
+      giftCount: giftMsg.num,
+      giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
+      giftIcon: gift?.icon,
+      comment: comment,
     },
-    'gift-card',
-    instance.uuid
-  )
+  }
+
+  sendToProtocol(data, 'chat-message', instance.uuid)
+  sendToProtocol(data, 'gift-card', instance.uuid)
 }
 
 export { giftCardModule }

@@ -42,25 +42,24 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     }
   }
 
-  sendToProtocol(
-    {
-      type: 'data',
-      data: {
-        avatarUrl: chatMsg[10],
-        nickname: chatMsg[197],
-        message: msg,
-        uid: ccid,
-        userInfo: chatMsg[7],
-        type: (() => {
-          if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
-          if (chatMsg[39] === '1') return 'admin'
-          return 'normal'
-        })(),
-      },
+  const data = {
+    type: 'data',
+    data: {
+      avatarUrl: chatMsg[10],
+      nickname: chatMsg[197],
+      message: msg,
+      uid: ccid,
+      messageType: 'chat',
+      userInfo: chatMsg[7],
+      type: (() => {
+        if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
+        if (chatMsg[39] === '1') return 'admin'
+        return 'normal'
+      })(),
     },
-    'chat-message',
-    instance.uuid
-  )
+  }
+
+  sendToProtocol(data, 'chat-message', instance.uuid)
 }
 
 const clearChatMessageCache = (): void => {
