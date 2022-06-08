@@ -4,8 +4,18 @@ import { sendToProtocol } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
+import { readFileSync } from 'fs'
+import path from 'path'
 
 const log = consola.withTag('modules/chatMessage')
+
+interface Blacklist {
+  users: Array<string>
+}
+
+const blacklist = JSON.parse(
+  readFileSync(path.join(__dirname, '../../', 'data', 'blacklist.json')).toString()
+) as Blacklist
 
 interface ICommentChatMsgCache {
   uid: string
@@ -41,6 +51,8 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
       }
     }
   }
+
+  if (blacklist.users.includes(ccid)) return
 
   const exInfo = JSON.parse(chatMsg[99])
 
