@@ -18,7 +18,7 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
 
   if (config.giftCard.minMoney > giftMoney) return
 
-  const msg = `赠送了${giftName} × ${giftMsg.num}`
+  const msg = `投喂 ${giftName}x${giftMsg.num}`
   let comment = ''
 
   // 判断是否留言礼物
