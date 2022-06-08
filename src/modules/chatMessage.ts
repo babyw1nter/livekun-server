@@ -69,8 +69,8 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
       type: (() => {
         try {
           if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
-          if (exInfo.badgeInfo.guard_level === '1') return 'guard-monthly'
-          if (exInfo.badgeInfo.guard_level === '2') return 'guard-annual'
+          if (exInfo.guard_level === 1) return 'guard-monthly'
+          if (exInfo.guard_level === 2) return 'guard-annual'
           if (chatMsg[39] === '1') return 'admin'
           return 'normal'
         } catch (err) {
