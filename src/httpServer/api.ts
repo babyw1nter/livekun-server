@@ -5,14 +5,7 @@ import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
 import { readFileSync } from 'fs'
 import path from 'path'
-import {
-  getRandomGiftCapsule,
-  getRandomChatMessage,
-  getRandomGiftCard,
-  giftCapsuleListArray,
-  chatMessageListArray,
-  giftCardListArray,
-} from '../mock'
+import { getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard, mockData } from '../mock'
 
 const log = consola.withTag('httpserver/api')
 
@@ -20,6 +13,8 @@ const apiRouter = express.Router()
 
 apiRouter.get('/get-broadcasts', (req, res) => {
   interface Broadcasts {
+    banner: string
+    broadcastsToptips: string
     broadcasts: Array<string>
   }
 
@@ -30,6 +25,8 @@ apiRouter.get('/get-broadcasts', (req, res) => {
 
     res.json(
       resWrap(200, 'ok', {
+        banner: broadcasts.banner,
+        broadcastsToptips: broadcasts.broadcastsToptips,
         broadcasts: broadcasts.broadcasts,
       })
     )
@@ -41,9 +38,9 @@ apiRouter.get('/get-broadcasts', (req, res) => {
 apiRouter.get('/get-mockdata', (req, res) => {
   res.json(
     resWrap(200, 'ok', {
-      giftCapsuleMockData: giftCapsuleListArray,
-      chatMessageMockData: chatMessageListArray,
-      giftCardMockData: giftCardListArray,
+      giftCapsuleMockData: mockData.giftCapsuleList,
+      chatMessageMockData: mockData.chatMessageList,
+      giftCardMockData: mockData.giftCardList,
     })
   )
 })
