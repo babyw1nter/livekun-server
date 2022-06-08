@@ -3,6 +3,9 @@
     { "uuid": "4c7cc45f-9176-43e5-a05a-485c1a97f1aa", "username": "690。", "password": "1072380622", "isBan": false },
     { "uuid": "e53ddcb4-efce-4dd4-822f-a4d426b77917", "username": "hhui64", "password": "asd123", "isBan": false },
     { "uuid": "00d594e2-8b61-4f57-a1b3-bf7e72f33558", "username": "test", "password": "test", "isBan": false },
-    { "uuid": "66666666-6666-6666-6666-666666666666", "username": "vip", "password": "123456", "isBan": false }
+    { "uuid": "66666666-6666-6666-6666-666666666666", "username": "vip", "password": "123456", "isBan": false },
+    { "uuid": "88888888-6666-6666-6666-666666666666", "username": "test1", "password": "test1", "isBan": false },
+    { "uuid": "88888888-6666-6666-6666-666666666667", "username": "test2", "password": "test2", "isBan": false },
+    { "uuid": "88888888-6666-6666-6666-666666666668", "username": "test3", "password": "test3", "isBan": false }
   ]
 }
