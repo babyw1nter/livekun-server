@@ -1,3 +1,28 @@
+# [1.0.0-alpha.4](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2022-06-08)
+
+
+### Bug Fixes
+
+* **modules/chatMessage:** 修复获取某些信息失败时崩溃的问题 ([6b69cae](https://github.com/hhui64/livekun-server/commit/6b69cae4191dbb6d67777cea12aa8a3bba0dc74d))
+* **modules/chatMessage:** 修复无法获取用户守护信息的问题 ([89f2080](https://github.com/hhui64/livekun-server/commit/89f2080ff96af35e846de120b59625fc385192cd))
+
+
+### Features
+
+* 新增消息列表支持显示礼物 ([0aab5ea](https://github.com/hhui64/livekun-server/commit/0aab5ea4dbe3d841f1b21028848be54a6c7c0278))
+* **mock:** mock 模块支持导入 json 数据 ([b6f1340](https://github.com/hhui64/livekun-server/commit/b6f134070153f8dcf6377e71d81a7b9b41ccfda7))
+* **modules/chatMessage:** 新增过滤指定 ccid 的消息 ([61a0e50](https://github.com/hhui64/livekun-server/commit/61a0e50bff6fa2238cfdb8cd750b711ff4e806d6))
+* **modules/chatMessage:** 新增支持守护特殊昵称样式 ([3542ed7](https://github.com/hhui64/livekun-server/commit/3542ed7c659c8546249b352afbc62b2138788fe5))
+
+
+### Performance Improvements
+
+* 优化获取实例就绪状态的方法 ([e38c6ce](https://github.com/hhui64/livekun-server/commit/e38c6ce07f41cdd01bf9ff9d749c2342adc076d3))
+* **cclinkjsManager:** 优化创建实例时支持传入实例 options ([8d51754](https://github.com/hhui64/livekun-server/commit/8d51754366da1a1af4a88a0d9fd773018a6c8f59))
+* **modules/giftCard:** 调整文案 ([9caca6a](https://github.com/hhui64/livekun-server/commit/9caca6abd20b27bc8995f1d300fd84c9ce92cefa))
+
+
+
 # [1.0.0-alpha.3](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2021-09-11)
 
 
