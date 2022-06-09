@@ -54,8 +54,6 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
 
   if (blacklist.users.includes(ccid)) return
 
-  const exInfo = JSON.parse(chatMsg[99])
-
   const data = {
     type: 'data',
     data: {
@@ -65,9 +63,9 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
       uid: ccid,
       messageType: 'chat',
       userInfo: chatMsg[7],
-      exInfo,
       type: (() => {
         try {
+          const exInfo = JSON.parse(chatMsg[99])
           if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
           if (exInfo.guard_level === 1) return 'guard-monthly'
           if (exInfo.guard_level === 2) return 'guard-annual'
