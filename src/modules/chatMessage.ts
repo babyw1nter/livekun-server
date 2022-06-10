@@ -9,13 +9,13 @@ import path from 'path'
 
 const log = consola.withTag('modules/chatMessage')
 
-interface Blacklist {
+interface GlobalBlacklist {
   users: Array<string>
 }
 
-const blacklist = JSON.parse(
+const globalBlacklist = JSON.parse(
   readFileSync(path.join(__dirname, '../../', 'data', 'blacklist.json')).toString()
-) as Blacklist
+) as GlobalBlacklist
 
 interface ICommentChatMsgCache {
   uid: string
@@ -54,6 +54,8 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   }
 
   if (blacklist.users.includes(ccid)) return
+  // 若存在全站黑名单和用户插件配置黑名单中，则过滤
+  if (globalBlacklist.users.includes(ccid) || config.chatMessage.blacklist.includes(ccid)) return
 
   const data = {
     type: 'data',

@@ -20,6 +20,7 @@ export interface IConfig {
       follow: boolean
       gift: boolean
     }
+    blacklist: Array<string>
   }
   giftCard: {
     level: Array<number>
@@ -49,6 +50,7 @@ const defaultConfig: IConfig = {
       follow: false,
       gift: false,
     },
+    blacklist: [],
   },
   giftCard: {
     level: [1, 200, 500],
@@ -79,6 +81,7 @@ class Config implements IConfig {
       follow: boolean
       gift: boolean
     }
+    blacklist: string[]
   }
   giftCard: {
     level: number[]
