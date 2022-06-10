@@ -69,19 +69,24 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
 
   try {
     exInfo = JSON.parse(chatMsg[99])
+  } catch (err) {
+    type = 'normal'
+  }
+
+  if (exInfo) {
     if (ccid === instance.getStatus().roomInfo.liveId) type = 'anchor'
     if (exInfo.guard_level === 1) type = 'guard-monthly'
     if (exInfo.guard_level === 2) type = 'guard-annual'
     if (chatMsg[39] === '1') type = 'admin'
 
-    ext.admin = chatMsg[39] === '1'
-    ext.guard = Number(exInfo.guard_level)
-    ext.badgeInfo.badgename = exInfo.badgeInfo.badgename
-    ext.badgeInfo.level = Number(exInfo.badgeInfo.level)
-
-    type = 'normal'
-  } catch (err) {
-    type = 'normal'
+    try {
+      ext.admin = chatMsg[39] === '1'
+      ext.guard = Number(exInfo?.guard_level || 0)
+      ext.badgeInfo.badgename = exInfo?.badgeInfo.badgename || ''
+      ext.badgeInfo.level = Number(exInfo?.badgeInfo.level || 0)
+    } catch (err) {
+      //
+    }
   }
 
   const data = {
