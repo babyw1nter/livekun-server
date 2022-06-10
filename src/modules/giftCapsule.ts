@@ -10,6 +10,7 @@ const log = consola.withTag('modules/giftCapsule')
 const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
   const config = ConfigManager.get(instance.uuid)
 
+  const ccid = giftMsg.fromid.toString()
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
   const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
@@ -23,22 +24,22 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
   // )
 
   if (config.giftCapsule.minMoney > giftMoney) return
-  sendToProtocol(
-    {
-      type: 'data',
-      data: {
-        avatarUrl: giftMsg.frompurl,
-        nickname: giftMsg.fromnick,
-        uid: giftMsg.fromid.toString(),
-        money: giftMoney,
-        giftName: giftName,
-        giftCount: giftMsg.num,
-        giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
-      },
+
+  const data = {
+    type: 'data',
+    data: {
+      uid: ccid,
+      avatarUrl: giftMsg.frompurl,
+      nickname: giftMsg.fromnick,
+      messageType: 'gift-capsule',
+      money: giftMoney,
+      giftName: giftName,
+      giftCount: giftMsg.num,
+      giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
     },
-    'gift-capsule',
-    instance.uuid
-  )
+  }
+
+  sendToProtocol(data, 'gift-capsule', instance.uuid)
 }
 
 export { giftCapsuleModule }
