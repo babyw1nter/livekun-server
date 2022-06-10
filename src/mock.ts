@@ -20,6 +20,12 @@ interface Mock {
     uid: number
     messageType: string
     type?: string
+    admin?: boolean
+    guard?: number
+    badgeInfo?: {
+      badgename: string
+      level: number
+    }
   }>
   giftCardList: Array<{
     giftImage?: string

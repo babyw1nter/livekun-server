@@ -30,7 +30,6 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   const ccid = chatMsg[7][130].toString() as string
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
 
-  log.info('[💬] ', chatMsg[197] + '：' + msg)
   // log.info('[💬] ', chatMsg[197] + '：' + msg)
 
   if (config.giftCard.comment.use) {
@@ -53,31 +52,49 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     }
   }
 
-  if (blacklist.users.includes(ccid)) return
   // 若存在全站黑名单和用户插件配置黑名单中，则过滤
   if (globalBlacklist.users.includes(ccid) || config.chatMessage.blacklist.includes(ccid)) return
+
+  let type = 'normal'
+  let exInfo = null
+
+  const ext = {
+    admin: false,
+    guard: 0,
+    badgeInfo: {
+      badgename: '',
+      level: 0,
+    },
+  }
+
+  try {
+    exInfo = JSON.parse(chatMsg[99])
+    if (ccid === instance.getStatus().roomInfo.liveId) type = 'anchor'
+    if (exInfo.guard_level === 1) type = 'guard-monthly'
+    if (exInfo.guard_level === 2) type = 'guard-annual'
+    if (chatMsg[39] === '1') type = 'admin'
+
+    ext.admin = chatMsg[39] === '1'
+    ext.guard = Number(exInfo.guard_level)
+    ext.badgeInfo.badgename = exInfo.badgeInfo.badgename
+    ext.badgeInfo.level = Number(exInfo.badgeInfo.level)
+
+    type = 'normal'
+  } catch (err) {
+    type = 'normal'
+  }
 
   const data = {
     type: 'data',
     data: {
+      uid: ccid,
       avatarUrl: chatMsg[10],
       nickname: chatMsg[197],
-      message: msg,
-      uid: ccid,
       messageType: 'chat',
       userInfo: chatMsg[7],
-      type: (() => {
-        try {
-          const exInfo = JSON.parse(chatMsg[99])
-          if (ccid === instance.getStatus().roomInfo.liveId) return 'anchor'
-          if (exInfo.guard_level === 1) return 'guard-monthly'
-          if (exInfo.guard_level === 2) return 'guard-annual'
-          if (chatMsg[39] === '1') return 'admin'
-          return 'normal'
-        } catch (err) {
-          return 'normal'
-        }
-      })(),
+      message: msg,
+      type,
+      ...ext,
     },
   }
 
