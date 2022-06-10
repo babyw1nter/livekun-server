@@ -15,12 +15,12 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
   const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
-  log.info(
-    '[🎁] ',
-    `${giftMsg.fromnick}(${giftMsg.fromid}) 送出 ${giftMsg.num} 个 ${giftName}`,
-    giftMsg.combo > 1 ? giftMsg.combo + ' 连击' : '',
-    giftMsg.combo > 1 ? giftMsg.comboid : ''
-  )
+  // log.info(
+  //   '[🎁] ',
+  //   `${giftMsg.fromnick}(${giftMsg.fromid}) 送出 ${giftMsg.num} 个 ${giftName}`,
+  //   giftMsg.combo > 1 ? giftMsg.combo + ' 连击' : '',
+  //   giftMsg.combo > 1 ? giftMsg.comboid : ''
+  // )
 
   if (config.giftCapsule.minMoney > giftMoney) return
   sendToProtocol(

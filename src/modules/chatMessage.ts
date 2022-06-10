@@ -31,6 +31,7 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
 
   log.info('[💬] ', chatMsg[197] + '：' + msg)
+  // log.info('[💬] ', chatMsg[197] + '：' + msg)
 
   if (config.giftCard.comment.use) {
     let _msg = msg

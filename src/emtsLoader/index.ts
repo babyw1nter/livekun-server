@@ -27,7 +27,6 @@ export default class EmtsLoader {
   public static replace(str: string, replaceValue?: string, showEmts?: boolean): string {
     if (typeof showEmts === 'undefined') showEmts = true
     const emtsArray = str.match(/(?<=\[emts\])(.*?)(?=\[\/emts\])/g)
-    // const emtsArray = str.match(/(\[emts\]).*?(\[\/emts\])/g)
 
     let s = str
     emtsArray?.forEach((e) => {
