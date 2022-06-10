@@ -35,7 +35,7 @@ export interface IConfig {
 
 const defaultConfig: IConfig = {
   giftCapsule: {
-    level: [0, 200, 500],
+    level: [9, 49, 99],
     duration: [5, 15, 30],
     maximum: 10,
     minMoney: 0.01,
