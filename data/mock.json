@@ -32,7 +32,7 @@
     },
     {
       "nickname": "实在是没钱氪了",
-      "avatarUrl": "https://img1.baidu.com/it/u=3254254623,2492769581&fm=26&fmt=auto&gp=0.jpg",
+      "avatarUrl": "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic2.zhimg.com%2Fv2-8caec546245e377a2306db8d53157e2d_r.jpg%3Fsource%3D1940ef5c&refer=http%3A%2F%2Fpic2.zhimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1657517882&t=0821d28c8daba8d2715a29331bd40c43",
       "money": 1,
       "uid": 888111
     },
@@ -110,10 +110,10 @@
       "type": "anchor",
       "messageType": "chat",
       "admin": false,
-      "guard": 2,
+      "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
-        "level": 100
+        "level": 0
       }
     },
     {
@@ -124,10 +124,10 @@
       "type": "anchor",
       "messageType": "chat",
       "admin": false,
-      "guard": 2,
+      "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
-        "level": 100
+        "level": 0
       }
     },
     {
@@ -140,8 +140,8 @@
       "admin": true,
       "guard": 0,
       "badgeInfo": {
-        "badgename": "",
-        "level": 0
+        "badgename": "灵儿~",
+        "level": 39
       }
     },
     {
@@ -167,12 +167,12 @@
       "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
-        "level": 10
+        "level": 12
       }
     },
     {
       "nickname": "实在是没钱氪了",
-      "avatarUrl": "https://img1.baidu.com/it/u=3254254623,2492769581&fm=26&fmt=auto&gp=0.jpg",
+      "avatarUrl": "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic2.zhimg.com%2Fv2-8caec546245e377a2306db8d53157e2d_r.jpg%3Fsource%3D1940ef5c&refer=http%3A%2F%2Fpic2.zhimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1657517882&t=0821d28c8daba8d2715a29331bd40c43",
       "message": "以后再碰猪厂游戏我就是dog！真的服了，这祖传策划啥时候**啊？",
       "uid": 888111,
       "messageType": "chat",
@@ -185,7 +185,7 @@
     },
     {
       "nickname": "实在是没钱氪了",
-      "avatarUrl": "https://img1.baidu.com/it/u=3254254623,2492769581&fm=26&fmt=auto&gp=0.jpg",
+      "avatarUrl": "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpic2.zhimg.com%2Fv2-8caec546245e377a2306db8d53157e2d_r.jpg%3Fsource%3D1940ef5c&refer=http%3A%2F%2Fpic2.zhimg.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1657517882&t=0821d28c8daba8d2715a29331bd40c43",
       "message": "为了玩猪厂游戏，我把房子都卖了，老婆孩子跑了，我一无所有了。",
       "uid": 888111,
       "messageType": "chat",
@@ -233,7 +233,7 @@
       "guard": 1,
       "badgeInfo": {
         "badgename": "灵儿~",
-        "level": 50
+        "level": 43
       }
     },
     {
@@ -247,7 +247,7 @@
       "guard": 1,
       "badgeInfo": {
         "badgename": "灵儿~",
-        "level": 50
+        "level": 43
       }
     },
     {
@@ -261,7 +261,7 @@
       "guard": 2,
       "badgeInfo": {
         "badgename": "灵儿~",
-        "level": 73
+        "level": 100
       }
     }
   ],
