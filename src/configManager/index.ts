@@ -36,7 +36,7 @@ export interface IConfig {
 
 const defaultConfig: IConfig = {
   giftCapsule: {
-    level: [9, 49, 99],
+    level: [0, 99, 199],
     duration: [5, 15, 30],
     maximum: 10,
     minMoney: 0.01,
@@ -48,12 +48,12 @@ const defaultConfig: IConfig = {
     show: {
       join: false,
       follow: false,
-      gift: false,
+      gift: true,
     },
     blacklist: [],
   },
   giftCard: {
-    level: [1, 200, 500],
+    level: [0, 49, 99],
     minMoney: 0.01,
     comment: {
       use: false,
