@@ -1,6 +1,6 @@
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
-import UserConfigManager, { IUserConfig } from '../configManager'
+import UserConfigManager, { IUserConfig } from '../UserConfigManager'
 import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
 import { resWrap } from './server'
 import { readFileSync } from 'fs'

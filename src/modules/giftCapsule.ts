@@ -1,4 +1,4 @@
-import UserConfigManager from '../configManager'
+import UserConfigManager from '../UserConfigManager'
 import { sendToProtocol } from '../socketServer/server'
 import { GiftInterface } from '@hhui64/cclinkjs-room-module'
 import consola from 'consola'

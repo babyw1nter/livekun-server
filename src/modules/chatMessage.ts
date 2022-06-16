@@ -1,5 +1,5 @@
 import { ChatInterface } from '@hhui64/cclinkjs-room-module'
-import UserConfigManager from '../configManager'
+import UserConfigManager from '../UserConfigManager'
 import { sendToProtocol } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
