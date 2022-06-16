@@ -4,7 +4,8 @@ import path from 'path'
 
 const log = consola.withTag('configmanager')
 
-export interface IConfig {
+export interface IUserConfig {
+  uuid: string
   giftCapsule: {
     level: Array<number>
     duration: Array<number>
@@ -34,7 +35,7 @@ export interface IConfig {
   }
 }
 
-const defaultConfig: IConfig = {
+const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
   giftCapsule: {
     level: [0, 99, 199],
     duration: [5, 15, 30],
@@ -64,7 +65,7 @@ const defaultConfig: IConfig = {
   },
 }
 
-class Config implements IConfig {
+class UserConfig implements IUserConfig {
   uuid: string
   giftCapsule: {
     level: number[]
@@ -96,9 +97,9 @@ class Config implements IConfig {
 
   constructor(uuid: string) {
     this.uuid = uuid
-    this.giftCapsule = defaultConfig.giftCapsule
-    this.chatMessage = defaultConfig.chatMessage
-    this.giftCard = defaultConfig.giftCard
+    this.giftCapsule = defaultUserConfig.giftCapsule
+    this.chatMessage = defaultUserConfig.chatMessage
+    this.giftCard = defaultUserConfig.giftCard
 
     try {
       this.read()
@@ -112,7 +113,7 @@ class Config implements IConfig {
   }
 
   read(): this {
-    const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IConfig
+    const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IUserConfig
     this.giftCapsule = configData.giftCapsule
     this.chatMessage = configData.chatMessage
     this.giftCard = configData.giftCard
@@ -129,25 +130,25 @@ class Config implements IConfig {
   }
 
   reset(): this {
-    this.giftCapsule = defaultConfig.giftCapsule
-    this.chatMessage = defaultConfig.chatMessage
-    this.giftCard = defaultConfig.giftCard
+    this.giftCapsule = defaultUserConfig.giftCapsule
+    this.chatMessage = defaultUserConfig.chatMessage
+    this.giftCard = defaultUserConfig.giftCard
     return this
   }
 
-  setGiftCapsule(config: IConfig['giftCapsule']) {
+  setGiftCapsule(config: IUserConfig['giftCapsule']) {
     this.giftCapsule = config
   }
 
-  setChatMessage(config: IConfig['chatMessage']) {
+  setChatMessage(config: IUserConfig['chatMessage']) {
     this.chatMessage = config
   }
 
-  setGiftCard(config: IConfig['giftCard']) {
+  setGiftCard(config: IUserConfig['giftCard']) {
     this.giftCard = config
   }
 
-  update(config: IConfig): this {
+  update(config: IUserConfig): this {
     this.giftCapsule = config.giftCapsule
     this.chatMessage = config.chatMessage
     this.giftCard = config.giftCard
@@ -155,8 +156,8 @@ class Config implements IConfig {
   }
 }
 
-export default class ConfigManager {
-  public static get(uuid: string): Config {
-    return new Config(uuid)
+export default class UserConfigManager {
+  public static get(uuid: string): UserConfig {
+    return new UserConfig(uuid)
   }
 }

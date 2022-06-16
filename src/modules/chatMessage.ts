@@ -1,5 +1,5 @@
 import { ChatInterface } from '@hhui64/cclinkjs-room-module'
-import ConfigManager from '../configManager'
+import UserConfigManager from '../configManager'
 import { sendToProtocol } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
@@ -25,7 +25,7 @@ interface ICommentChatMsgCache {
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
 const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSInstance): void => {
-  const config = ConfigManager.get(instance.uuid)
+  const config = UserConfigManager.get(instance.uuid)
 
   const ccid = chatMsg[7][130].toString() as string
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')

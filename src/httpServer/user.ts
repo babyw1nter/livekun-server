@@ -1,6 +1,6 @@
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
-import ConfigManager, { IConfig } from '../configManager'
+import UserConfigManager, { IUserConfig } from '../configManager'
 import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
 import { resWrap } from './server'
 import { readFileSync } from 'fs'
@@ -72,7 +72,7 @@ userRouter.post('/login', (req, res) => {
 
     // 登陆成功时，为其创建 cclinkjs 实例
     const instance = CCLinkJSManager.createCCLinkJS(user.uuid)
-    const config = ConfigManager.get(user.uuid)
+    const config = UserConfigManager.get(user.uuid)
 
     res.json(
       resWrap(200, '登录成功', {
@@ -89,7 +89,7 @@ userRouter.post('/login', (req, res) => {
 
 userRouter.post('/autologin', (req, res) => {
   const uuid = req.session.user?.uuid as string
-  const config = ConfigManager.get(uuid)
+  const config = UserConfigManager.get(uuid)
   let instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (!instance) {
@@ -117,7 +117,7 @@ userRouter.get('/get-config', (req, res) => {
   const uuid = req.session.user?.uuid || (req.query.uuid as string) || ''
 
   if (uuid !== '' && uuid.length < 64) {
-    res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
+    res.json(resWrap(200, 'ok', UserConfigManager.get(uuid)))
   } else {
     res.json(resWrap(404, 'UUID not found.'))
   }
@@ -125,15 +125,15 @@ userRouter.get('/get-config', (req, res) => {
 
 userRouter.post('/update-config', (req, res) => {
   const uuid = req.session.user?.uuid as string
-  const newConfig = req.body as IConfig
+  const newConfig = req.body as IUserConfig
 
-  const config = ConfigManager.get(uuid)
+  const config = UserConfigManager.get(uuid)
 
   config.update(newConfig).save().read()
 
   if (socketServer) {
     sendToProtocol({ type: 'method', data: { method: 'get-config' } })
-    res.json(resWrap(200, 'ok', ConfigManager.get(uuid)))
+    res.json(resWrap(200, 'ok', UserConfigManager.get(uuid)))
   } else {
     res.json(resWrap(20001, 'socket 未初始化'))
   }
