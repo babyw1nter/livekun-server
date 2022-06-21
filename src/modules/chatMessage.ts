@@ -53,7 +53,7 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   }
 
   // 若存在全站黑名单和用户插件配置黑名单中，则过滤
-  if (globalBlacklist.users.includes(ccid) || config.chatMessage.blacklist.includes(ccid)) return
+  if (globalBlacklist.users.includes(ccid) || config.chatMessage.blacklist.findIndex(i => i.ccid === ccid) > -1) return
 
   let type = 'normal'
   let exInfo = null

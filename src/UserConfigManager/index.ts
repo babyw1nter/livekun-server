@@ -21,7 +21,10 @@ export interface IUserConfig {
       follow: boolean
       gift: boolean
     }
-    blacklist: Array<string>
+    blacklist: Array<{
+      ccid: number | string
+      note: string
+    }>
   }
   giftCard: {
     level: Array<number>
@@ -82,7 +85,10 @@ class UserConfig implements IUserConfig {
       follow: boolean
       gift: boolean
     }
-    blacklist: string[]
+    blacklist: Array<{
+      ccid: number | string
+      note: string
+    }>
   }
   giftCard: {
     level: number[]
