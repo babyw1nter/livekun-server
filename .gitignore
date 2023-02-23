@@ -26,4 +26,8 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-config
+
+/data/user/configs
+
+/config
+!/config/default.js
