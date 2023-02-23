@@ -1,6 +1,6 @@
 import consola from 'consola'
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 const log = consola.withTag('configmanager')
 
@@ -47,7 +47,7 @@ const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
   },
   chatMessage: {
     style: {
-      fontSize: 16,
+      fontSize: 18,
     },
     show: {
       join: false,
@@ -115,7 +115,7 @@ class UserConfig implements IUserConfig {
   }
 
   getFilePath(): string {
-    return path.join(__dirname, '../../', 'config', `${this.uuid}.json`)
+    return path.join(__dirname, '../../', 'data', 'user', 'configs', `${this.uuid}.json`)
   }
 
   read(): this {

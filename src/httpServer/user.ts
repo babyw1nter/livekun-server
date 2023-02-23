@@ -3,8 +3,8 @@ import CCLinkJSManager from '../cclinkjsManager'
 import UserConfigManager, { IUserConfig } from '../UserConfigManager'
 import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
 import { resWrap } from './server'
-import { readFileSync } from 'fs'
-import path from 'path'
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 
 interface IUser {
   uuid: string
@@ -22,7 +22,7 @@ class UserManager {
 
   static read(): void {
     try {
-      UserManager.userData = JSON.parse(readFileSync(path.join(__dirname, '../../', 'data', 'users.json')).toString())
+      UserManager.userData = JSON.parse(readFileSync(path.join(__dirname, '../../', 'data', 'user', 'users.json')).toString())
     } catch (error) {
       UserManager.userData = {
         users: [],

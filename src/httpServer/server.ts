@@ -1,7 +1,8 @@
+import { Server } from 'node:http'
+import path from 'node:path'
+import config from 'config'
 import express from 'express'
-import path from 'path'
 import consola from 'consola'
-import { Server } from 'http'
 import redis from 'redis'
 import RedisStore from 'connect-redis'
 import session from 'express-session'
@@ -10,15 +11,13 @@ import apiRouter from './api'
 
 const log = consola.withTag('httpServer')
 
-const port = 39074
+const port = config.get('server.port')
 
 const app = express()
 const Store = RedisStore(session)
-const redisClient = redis.createClient({
-  host: '127.0.0.1',
-  port: 6379,
-})
+const redisClient = redis.createClient(config.get('redis'))
 
+app.set('trust proxy', 1)
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(
@@ -27,12 +26,11 @@ app.use(
       client: redisClient,
     }),
     secret: 'hhui64',
-    name: 'session',
+    name: 'token',
     resave: false,
     saveUninitialized: false,
     cookie: {
-      // secure: true,
-      httpOnly: true,
+      ...config.get('session.cookie')
     },
   })
 )
@@ -70,7 +68,7 @@ app.use((req, res, next) => {
 })
 app.use('/user', userRouter)
 app.use('/api', apiRouter)
-app.use('/', express.static(path.join(__dirname, '../../', 'web')))
+// app.use('/', express.static(path.join(__dirname, '../../', 'web')))
 
 export const resWrap = <T>(
   code?: number,

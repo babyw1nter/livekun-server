@@ -4,8 +4,8 @@ import { sendToProtocol } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
-import { readFileSync } from 'fs'
-import path from 'path'
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 
 const log = consola.withTag('modules/chatMessage')
 

@@ -3,8 +3,8 @@ import consola from 'consola'
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
-import { readFileSync } from 'fs'
-import path from 'path'
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import { getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard, mockData } from '../mock'
 
 const log = consola.withTag('httpserver/api')

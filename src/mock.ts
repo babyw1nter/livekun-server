@@ -1,6 +1,6 @@
 import { giftData } from './giftLoader'
-import { readFileSync } from 'fs'
-import path from 'path'
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 
 const randomNum = (minNum: number, maxNum: number): number => {
   return parseInt((Math.random() * (maxNum - minNum + 1) + minNum).toString(), 10)
