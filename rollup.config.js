@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import resolve from 'rollup-plugin-node-resolve' // 依赖引用插件
 import commonjs from 'rollup-plugin-commonjs' // commonjs模块转换插件
 // import { eslint } from 'rollup-plugin-eslint' // eslint插件
