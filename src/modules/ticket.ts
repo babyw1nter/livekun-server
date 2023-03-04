@@ -7,9 +7,9 @@ import { CCLinkJSInstance } from '../cclinkjsManager'
 import { v4 as uuidv4 } from 'uuid'
 import { PluginNames } from '@/api/plugins'
 
-const log = consola.withTag('modules/giftCapsule')
+const log = consola.withTag('modules/ticket')
 
-const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
+const ticketModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
   const config = UserConfigManager.get(instance.uuid)
 
   const ccid = giftMsg.fromid.toString()
@@ -25,7 +25,7 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
   //   giftMsg.combo > 1 ? giftMsg.comboid : ''
   // )
 
-  if (config.giftCapsule.minMoney > giftMoney) return
+  if (config.ticket.minMoney > giftMoney) return
 
   const data: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
     type: 'PLUGIN_MESSAGE',
@@ -34,7 +34,7 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
       uid: ccid,
       avatarUrl: giftMsg.frompurl,
       nickname: giftMsg.fromnick,
-      messageType: 'gift-capsule',
+      messageType: 'ticket',
       money: giftMoney,
       giftName: giftName,
       giftCount: giftMsg.num,
@@ -45,4 +45,4 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
   send(data, PluginNames.PLUGIN_TICKET, instance.uuid)
 }
 
-export { giftCapsuleModule }
+export { ticketModule }

@@ -1,5 +1,5 @@
 import { chatMessageModule } from '../modules/chatMessage'
-import { giftCapsuleModule } from '../modules/giftCapsule'
+import { ticketModule } from '../modules/ticket'
 import { giftCardModule } from '../modules/giftCard'
 import { CCLinkJS, ICCLinkJSOptions, ICCRecvJsonData } from '@hhui64/cclinkjs'
 import { ChatListener, GiftListener, RoomMethods, RoomInterface } from '@hhui64/cclinkjs-room-module'
@@ -66,7 +66,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
       .on(
         GiftListener.EventName(),
         GiftListener.EventListener((giftMsg) => {
-          giftCapsuleModule(giftMsg, this)
+          ticketModule(giftMsg, this)
         })
       )
       .on(

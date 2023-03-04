@@ -8,7 +8,7 @@ const randomNum = (minNum: number, maxNum: number): number => {
 }
 
 interface Mock {
-  giftCapsuleList: Array<{
+  ticketList: Array<{
     money: number
     nickname: string
     avatarUrl: string
@@ -46,10 +46,10 @@ interface Mock {
 
 const mockData = JSON.parse(readFileSync(path.join(__dirname, '../', 'data', 'mock.json')).toString()) as Mock
 
-const getRandomGiftCapsule = () => {
+const getRandomTicket = () => {
   return {
     key: uuidv4(),
-    ...mockData.giftCapsuleList[randomNum(0, mockData.giftCapsuleList.length - 1)],
+    ...mockData.ticketList[randomNum(0, mockData.ticketList.length - 1)],
     money: randomNum(1, 100),
   }
 }
@@ -71,4 +71,4 @@ const getRandomGiftCard = () => {
   }
 }
 
-export { randomNum, getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard, mockData }
+export { randomNum, getRandomTicket, getRandomChatMessage, getRandomGiftCard, mockData }

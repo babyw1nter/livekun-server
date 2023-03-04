@@ -6,7 +6,7 @@ const log = consola.withTag('configmanager')
 
 export interface IUserConfig {
   uuid: string
-  giftCapsule: {
+  ticket: {
     level: Array<number>
     duration: Array<number>
     maximum: number
@@ -39,7 +39,7 @@ export interface IUserConfig {
 }
 
 const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
-  giftCapsule: {
+  ticket: {
     level: [0, 99, 199],
     duration: [5, 15, 30],
     maximum: 10,
@@ -70,7 +70,7 @@ const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
 
 class UserConfig implements IUserConfig {
   uuid: string
-  giftCapsule: {
+  ticket: {
     level: number[]
     duration: number[]
     maximum: number
@@ -103,7 +103,7 @@ class UserConfig implements IUserConfig {
 
   constructor(uuid: string) {
     this.uuid = uuid
-    this.giftCapsule = defaultUserConfig.giftCapsule
+    this.ticket = defaultUserConfig.ticket
     this.chatMessage = defaultUserConfig.chatMessage
     this.giftCard = defaultUserConfig.giftCard
 
@@ -120,7 +120,7 @@ class UserConfig implements IUserConfig {
 
   read(): this {
     const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IUserConfig
-    this.giftCapsule = configData.giftCapsule
+    this.ticket = configData.ticket
     this.chatMessage = configData.chatMessage
     this.giftCard = configData.giftCard
     return this
@@ -136,14 +136,14 @@ class UserConfig implements IUserConfig {
   }
 
   reset(): this {
-    this.giftCapsule = defaultUserConfig.giftCapsule
+    this.ticket = defaultUserConfig.ticket
     this.chatMessage = defaultUserConfig.chatMessage
     this.giftCard = defaultUserConfig.giftCard
     return this
   }
 
-  setGiftCapsule(config: IUserConfig['giftCapsule']) {
-    this.giftCapsule = config
+  setTicket(config: IUserConfig['ticket']) {
+    this.ticket = config
   }
 
   setChatMessage(config: IUserConfig['chatMessage']) {
@@ -155,7 +155,7 @@ class UserConfig implements IUserConfig {
   }
 
   update(config: IUserConfig): this {
-    this.giftCapsule = config.giftCapsule
+    this.ticket = config.ticket
     this.chatMessage = config.chatMessage
     this.giftCard = config.giftCard
     return this

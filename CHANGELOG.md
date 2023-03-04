@@ -176,7 +176,7 @@
 
 ### Performance Improvements
 
-* 调整礼物胶囊持续时间的单位 ([f69c774](https://github.com/hhui64/livekun-server/commit/f69c7748bbefd14270250de2477acb107496e740))
+* 调整 Ticket 持续时间的单位 ([f69c774](https://github.com/hhui64/livekun-server/commit/f69c7748bbefd14270250de2477acb107496e740))
 
 
 
