@@ -1,11 +1,12 @@
 import { ChatInterface } from '@hhui64/cclinkjs-room-module'
 import UserConfigManager from '../UserConfigManager'
-import { sendToProtocol } from '../socketServer/server'
+import { send } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
+import { v4 as uuidv4 } from 'uuid'
 
 const log = consola.withTag('modules/chatMessage')
 
@@ -92,6 +93,7 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   const data = {
     type: 'data',
     data: {
+      key: uuidv4(),
       uid: ccid,
       avatarUrl: chatMsg[10],
       nickname: chatMsg[197],
@@ -103,7 +105,7 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     },
   }
 
-  sendToProtocol(data, 'chat-message', instance.uuid)
+  send(data, 'chat-message', instance.uuid)
 }
 
 const clearChatMessageCache = (): void => {

@@ -1,10 +1,11 @@
 import UserConfigManager from '../UserConfigManager'
-import { sendToProtocol } from '../socketServer/server'
+import { send } from '../socketServer/server'
 import { GiftInterface } from '@hhui64/cclinkjs-room-module'
 import { commentChatMsgCache } from './chatMessage'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
+import { v4 as uuidv4 } from 'uuid'
 
 const log = consola.withTag('modules/giftCard')
 
@@ -41,10 +42,11 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
   const data = {
     type: 'data',
     data: {
+      key: uuidv4(),
+      uid: giftMsg.fromid.toString(),
       avatarUrl: giftMsg.frompurl,
       nickname: giftMsg.fromnick,
       message: msg,
-      uid: giftMsg.fromid.toString(),
       messageType: 'gift',
       money: giftMoney,
       giftName: giftName,
@@ -55,8 +57,8 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
     },
   }
 
-  sendToProtocol(data, 'chat-message', instance.uuid)
-  sendToProtocol(data, 'gift-card', instance.uuid)
+  send(data, 'chat-message', instance.uuid)
+  send(data, 'gift-card', instance.uuid)
 }
 
 export { giftCardModule }

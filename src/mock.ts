@@ -1,6 +1,7 @@
 import { giftData } from './giftLoader'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
+import { v4 as uuidv4 } from 'uuid'
 
 const randomNum = (minNum: number, maxNum: number): number => {
   return parseInt((Math.random() * (maxNum - minNum + 1) + minNum).toString(), 10)
@@ -47,6 +48,7 @@ const mockData = JSON.parse(readFileSync(path.join(__dirname, '../', 'data', 'mo
 
 const getRandomGiftCapsule = () => {
   return {
+    key: uuidv4(),
     ...mockData.giftCapsuleList[randomNum(0, mockData.giftCapsuleList.length - 1)],
     money: randomNum(1, 100),
   }
@@ -54,7 +56,7 @@ const getRandomGiftCapsule = () => {
 
 const getRandomChatMessage = () => {
   return randomNum(0, 5)
-    ? mockData.chatMessageList[randomNum(0, mockData.chatMessageList.length - 1)]
+    ? { key: uuidv4(), ...mockData.chatMessageList[randomNum(0, mockData.chatMessageList.length - 1)] }
     : getRandomGiftCard()
 }
 
@@ -62,6 +64,7 @@ const getRandomGiftCard = () => {
   const gift = giftData.conf[randomNum(0, giftData.conf.length - 1)]
 
   return {
+    key: uuidv4(),
     ...mockData.giftCardList[randomNum(0, mockData.giftCardList.length - 1)],
     giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
     giftIcon: gift?.icon,

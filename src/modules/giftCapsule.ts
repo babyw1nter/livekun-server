@@ -1,9 +1,10 @@
 import UserConfigManager from '../UserConfigManager'
-import { sendToProtocol } from '../socketServer/server'
+import { send } from '../socketServer/server'
 import { GiftInterface } from '@hhui64/cclinkjs-room-module'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
+import { v4 as uuidv4 } from 'uuid'
 
 const log = consola.withTag('modules/giftCapsule')
 
@@ -28,6 +29,7 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
   const data = {
     type: 'data',
     data: {
+      key: uuidv4(),
       uid: ccid,
       avatarUrl: giftMsg.frompurl,
       nickname: giftMsg.fromnick,
@@ -39,7 +41,7 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
     },
   }
 
-  sendToProtocol(data, 'gift-capsule', instance.uuid)
+  send(data, 'gift-capsule', instance.uuid)
 }
 
 export { giftCapsuleModule }
