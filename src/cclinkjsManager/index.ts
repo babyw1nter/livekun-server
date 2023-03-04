@@ -82,7 +82,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
     //     cclinkjsLog.info('[🏡] ', userJoinRoomMsg.name, ' 进入了直播间')
 
     //     if (!UserConfigManager.getConfig().chatMessage.show.join) return
-    //     sendToProtocol(
+    //     send(
     //       JSON.stringify(
     //         wrap({
     //           type: 'data',

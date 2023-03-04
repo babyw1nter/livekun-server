@@ -1,7 +1,7 @@
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
 import UserConfigManager, { IUserConfig } from '../UserConfigManager'
-import { socketServer, sendToProtocol, wrap } from '../socketServer/server'
+import { socketServer, send, wrap } from '../socketServer/server'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
@@ -132,7 +132,7 @@ userRouter.post('/update-config', (req, res) => {
   config.update(newConfig).save().read()
 
   if (socketServer) {
-    sendToProtocol({ type: 'method', data: { method: 'get-config' } })
+    send({ type: 'method', data: { method: 'get-config' } })
     res.json(resWrap(200, 'ok', UserConfigManager.get(uuid)))
   } else {
     res.json(resWrap(20001, 'socket 未初始化'))

@@ -1,4 +1,4 @@
-import { sendToProtocol } from '../socketServer/server'
+import { send } from '../socketServer/server'
 import consola from 'consola'
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
@@ -137,7 +137,7 @@ apiRouter.post('/control', (req, res) => {
 
   switch (method) {
     case 'sendMockDataToGiftCapsule':
-      sendToProtocol(
+      send(
         {
           type: 'data',
           data: getRandomGiftCapsule(),
@@ -147,7 +147,7 @@ apiRouter.post('/control', (req, res) => {
       )
       break
     case 'sendMockDataToChatMessage':
-      sendToProtocol(
+      send(
         {
           type: 'data',
           data: getRandomChatMessage(),
@@ -157,7 +157,7 @@ apiRouter.post('/control', (req, res) => {
       )
       break
     case 'sendMockDataToGiftCard':
-      sendToProtocol(
+      send(
         {
           type: 'data',
           data: getRandomGiftCard(),
@@ -167,22 +167,22 @@ apiRouter.post('/control', (req, res) => {
       )
       break
     case 'clearGiftCapsule':
-      sendToProtocol({ type: 'method', data: { method: 'clear' } }, 'gift-capsule', uuid)
+      send({ type: 'method', data: { method: 'clear' } }, 'gift-capsule', uuid)
       break
     case 'clearChatMessage':
-      sendToProtocol({ type: 'method', data: { method: 'clear' } }, 'chat-message', uuid)
+      send({ type: 'method', data: { method: 'clear' } }, 'chat-message', uuid)
       break
     case 'clearGiftCard':
-      sendToProtocol({ type: 'method', data: { method: 'clear' } }, 'gift-card', uuid)
+      send({ type: 'method', data: { method: 'clear' } }, 'gift-card', uuid)
       break
     case 'refreshGiftCapsule':
-      sendToProtocol({ type: 'method', data: { method: 'refresh' } }, 'gift-capsule', uuid)
+      send({ type: 'method', data: { method: 'refresh' } }, 'gift-capsule', uuid)
       break
     case 'refreshChatMessage':
-      sendToProtocol({ type: 'method', data: { method: 'refresh' } }, 'chat-message', uuid)
+      send({ type: 'method', data: { method: 'refresh' } }, 'chat-message', uuid)
       break
     case 'refreshGiftCard':
-      sendToProtocol({ type: 'method', data: { method: 'refresh' } }, 'gift-card', uuid)
+      send({ type: 'method', data: { method: 'refresh' } }, 'gift-card', uuid)
       break
   }
 
