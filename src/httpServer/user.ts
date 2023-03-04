@@ -132,7 +132,7 @@ userRouter.post('/update-config', (req, res) => {
   config.update(newConfig).save().read()
 
   if (socketServer) {
-    send({ type: 'method', data: { method: 'get-config' } })
+    send({ type: 'method', data: { method: 'get-config' } }, '', uuid)
     res.json(resWrap(200, 'ok', UserConfigManager.get(uuid)))
   } else {
     res.json(resWrap(20001, 'socket 未初始化'))
