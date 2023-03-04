@@ -8,9 +8,9 @@ import { CCLinkJSInstance } from '../cclinkjsManager'
 import { v4 as uuidv4 } from 'uuid'
 import { PluginNames } from '@/api/plugins'
 
-const log = consola.withTag('modules/giftCard')
+const log = consola.withTag('modules/paid')
 
-const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
+const paidModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
   const config = UserConfigManager.get(instance.uuid)
 
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
@@ -18,17 +18,17 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
   const giftName = gift ? decodeURI(gift.name) : giftMsg.saleid.toString()
   const giftMoney = gift?.price ? (gift.price / 1000) * giftMsg.num : 0
 
-  if (config.giftCard.minMoney > giftMoney) return
+  if (config.paid.minMoney > giftMoney) return
 
   const msg = `投喂 ${giftName}x${giftMsg.num}`
   let comment = ''
 
   // 判断是否留言礼物
   if (
-    config.giftCard.comment.use &&
-    (config.giftCard.comment.giftWhitelist.split('\n').includes(giftName) ||
-      config.giftCard.comment.giftWhitelist === '') &&
-    giftMoney >= config.giftCard.comment.giftMinMoney
+    config.paid.comment.use &&
+    (config.paid.comment.giftWhitelist.split('\n').includes(giftName) ||
+      config.paid.comment.giftWhitelist === '') &&
+    giftMoney >= config.paid.comment.giftMinMoney
   ) {
     const commentIndex = commentChatMsgCache.findIndex(
       (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
@@ -62,4 +62,4 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
   send(data, PluginNames.PLUGIN_PAID, instance.uuid)
 }
 
-export { giftCardModule }
+export { paidModule }

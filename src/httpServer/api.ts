@@ -5,7 +5,7 @@ import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { getRandomTicket, getRandomChatMessage, getRandomGiftCard, mockData } from '../mock'
+import { getRandomTicket, getRandomChatMessage, getRandomPaid, mockData } from '../mock'
 import { PluginNames, PluginActions } from '@/api/plugins'
 
 const log = consola.withTag('httpserver/api')
@@ -41,7 +41,7 @@ apiRouter.get('/get-mockdata', (req, res) => {
     resWrap(200, 'ok', {
       ticketMockData: mockData.ticketList,
       chatMessageMockData: mockData.chatMessageList,
-      giftCardMockData: mockData.giftCardList,
+      paidMockData: mockData.paidList,
     })
   )
 })
@@ -157,11 +157,11 @@ apiRouter.post('/control', (req, res) => {
         uuid
       )
       break
-    case 'sendMockDataToGiftCard':
+    case 'sendMockDataToPaid':
       send(
         {
           type: 'PLUGIN_MESSAGE',
-          data: getRandomGiftCard(),
+          data: getRandomPaid(),
         },
         PluginNames.PLUGIN_PAID,
         uuid
@@ -173,7 +173,7 @@ apiRouter.post('/control', (req, res) => {
     case 'clearTicket':
       send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_TICKET, uuid)
       break
-    case 'clearGiftCard':
+    case 'clearPaid':
       send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_PAID, uuid)
       break
     case 'refreshChatMessage':
@@ -186,7 +186,7 @@ apiRouter.post('/control', (req, res) => {
     case 'refreshTicket':
       send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } }, PluginNames.PLUGIN_TICKET, uuid)
       break
-    case 'refreshGiftCard':
+    case 'refreshPaid':
       send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } }, PluginNames.PLUGIN_PAID, uuid)
       break
   }

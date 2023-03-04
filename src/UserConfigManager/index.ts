@@ -26,7 +26,7 @@ export interface IUserConfig {
       note: string
     }>
   }
-  giftCard: {
+  paid: {
     level: Array<number>
     minMoney: number
     comment: {
@@ -56,7 +56,7 @@ const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
     },
     blacklist: [],
   },
-  giftCard: {
+  paid: {
     level: [0, 9, 49, 99, 199, 249, 499],
     minMoney: 5,
     comment: {
@@ -90,7 +90,7 @@ class UserConfig implements IUserConfig {
       note: string
     }>
   }
-  giftCard: {
+  paid: {
     level: number[]
     minMoney: number
     comment: {
@@ -105,7 +105,7 @@ class UserConfig implements IUserConfig {
     this.uuid = uuid
     this.ticket = defaultUserConfig.ticket
     this.chatMessage = defaultUserConfig.chatMessage
-    this.giftCard = defaultUserConfig.giftCard
+    this.paid = defaultUserConfig.paid
 
     try {
       this.read()
@@ -122,7 +122,7 @@ class UserConfig implements IUserConfig {
     const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IUserConfig
     this.ticket = configData.ticket
     this.chatMessage = configData.chatMessage
-    this.giftCard = configData.giftCard
+    this.paid = configData.paid
     return this
   }
 
@@ -138,7 +138,7 @@ class UserConfig implements IUserConfig {
   reset(): this {
     this.ticket = defaultUserConfig.ticket
     this.chatMessage = defaultUserConfig.chatMessage
-    this.giftCard = defaultUserConfig.giftCard
+    this.paid = defaultUserConfig.paid
     return this
   }
 
@@ -150,14 +150,14 @@ class UserConfig implements IUserConfig {
     this.chatMessage = config
   }
 
-  setGiftCard(config: IUserConfig['giftCard']) {
-    this.giftCard = config
+  setPaid(config: IUserConfig['paid']) {
+    this.paid = config
   }
 
   update(config: IUserConfig): this {
     this.ticket = config.ticket
     this.chatMessage = config.chatMessage
-    this.giftCard = config.giftCard
+    this.paid = config.paid
     return this
   }
 }

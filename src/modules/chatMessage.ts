@@ -34,11 +34,11 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
 
   // log.info('[💬] ', chatMsg[197] + '：' + msg)
 
-  if (config.giftCard.comment.use) {
+  if (config.paid.comment.use) {
     let _msg = msg
 
-    if (msg.slice(0, config.giftCard.comment.prefix.length) === config.giftCard.comment.prefix) {
-      _msg = _msg.slice(config.giftCard.comment.prefix.length)
+    if (msg.slice(0, config.paid.comment.prefix.length) === config.paid.comment.prefix) {
+      _msg = _msg.slice(config.paid.comment.prefix.length)
 
       const cacheIndex = commentChatMsgCache.findIndex((i) => i.uid === ccid)
       const data = {

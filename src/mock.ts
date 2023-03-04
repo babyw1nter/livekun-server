@@ -28,7 +28,7 @@ interface Mock {
       level: number
     }
   }>
-  giftCardList: Array<{
+  paidList: Array<{
     giftImage?: string
     giftIcon: string
     nickname: string
@@ -57,18 +57,18 @@ const getRandomTicket = () => {
 const getRandomChatMessage = () => {
   return randomNum(0, 5)
     ? { key: uuidv4(), ...mockData.chatMessageList[randomNum(0, mockData.chatMessageList.length - 1)] }
-    : getRandomGiftCard()
+    : getRandomPaid()
 }
 
-const getRandomGiftCard = () => {
+const getRandomPaid = () => {
   const gift = giftData.conf[randomNum(0, giftData.conf.length - 1)]
 
   return {
     key: uuidv4(),
-    ...mockData.giftCardList[randomNum(0, mockData.giftCardList.length - 1)],
+    ...mockData.paidList[randomNum(0, mockData.paidList.length - 1)],
     giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
     giftIcon: gift?.icon,
   }
 }
 
-export { randomNum, getRandomTicket, getRandomChatMessage, getRandomGiftCard, mockData }
+export { randomNum, getRandomTicket, getRandomChatMessage, getRandomPaid, mockData }
