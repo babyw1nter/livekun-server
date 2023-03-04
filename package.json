@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/index.js",
-    "dev": "ts-node-dev --respawn --transpile-only --rs --watch ./src,./data ./src/index.ts",
-    "ts-node": "ts-node ./src/index.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --rs --watch ./src,./data ./src/index.ts",
+    "ts-node": "ts-node -r tsconfig-paths/register ./src/index.ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "build:tsc": "tsc -p tsconfig.json"
   },
@@ -32,6 +32,7 @@
     "rollup-plugin-typescript2": "^0.32.1",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^3.14.2",
     "typescript": "^4.9.5"
   },
   "dependencies": {
