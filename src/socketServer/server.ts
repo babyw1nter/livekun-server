@@ -1,30 +1,50 @@
 import { Server } from 'http'
 import WebSocket from 'websocket'
 import { v4 as uuidv4 } from 'uuid'
+import { PluginNames, PluginActions } from '../api/plugins'
 import consola from 'consola'
 
 const log = consola.withTag('socketServer')
 
 let socketServer: WebSocket.server | null = null
 
-interface IWrapData<T> {
-  code?: number
-  type: string
-  data: T
-  timestamp?: number
+interface IPluginCommonMessage {
+  key: string
+  uid: number | string
+  avatarUrl: string
+  nickname: string
+  userInfo?: unknown
+  [key: string]: unknown
 }
 
-interface IBaseSocketData {
-  type: 'LOGIN' | 'PLUGIN' | 'UNKNOWN'
-  data: unknown
-}
-
-interface LoginResponse extends IBaseSocketData {
-  type: 'LOGIN'
-  data: {
-    pluginName: string
-    uuid: string
+interface IBaseSocketMessageMap {
+  /** socket 握手协议 */
+  CONNECT_RESPONSE: {
+    serverVersion: string
   }
+  /** @tudo 登录 */
+  LOGIN: {
+    [key: string]: unknown
+  }
+  /** 插件握手协议 */
+  PLUGIN_CONNECT: {
+    uuid: string
+    pluginName: PluginNames
+  }
+  /** @see PluginActions */
+  PLUGIN_ACTION: {
+    action: PluginActions
+  }
+  /** 插件消息 */
+  PLUGIN_MESSAGE: IPluginCommonMessage
+  UNKNOWN: {
+    [key: string]: unknown
+  }
+}
+
+interface IBaseSocketMessage<K extends keyof IBaseSocketMessageMap> {
+  type: K | string
+  data: IBaseSocketMessageMap[K]
 }
 
 interface IPluginConnection {
@@ -38,11 +58,11 @@ interface IPluginConnection {
 
 const pc: Array<IPluginConnection> = []
 
-const encode = (data: string): Buffer => {
-  return Buffer.from(data)
+const encode = <T>(data: T): Buffer => {
+  return Buffer.from(JSON.stringify(data))
 }
 
-const decode = (data: Buffer): IBaseSocketData => {
+const decode = (data: Buffer): IBaseSocketMessage<'UNKNOWN'> => {
   try {
     return JSON.parse(data.toString('utf-8'))
   } catch (error) {
@@ -72,41 +92,48 @@ const removePluginConnection = (uniqueId: string) => {
   if (index) pc.splice(index, 1)
 }
 
-const send = <T>(
-  data: IWrapData<T>,
-  pluginName?: 'gift-capsule' | 'chat-message' | 'gift-card' | string,
+const send = <K extends keyof IBaseSocketMessageMap>(
+  data: IBaseSocketMessage<K>,
+  pluginName?: PluginNames,
   uuid?: string
 ): void => {
   if (!pc.length) return
 
   if (!pluginName && !uuid) {
-    pc.forEach((c) => c.connection.sendBytes(encode(JSON.stringify(wrap(data)))))
+    pc.forEach((c) => c.connection.sendBytes(encode(wrap(data))))
   } else if (pluginName && !uuid) {
     pc.forEach((c) => {
       if (c.pluginName === pluginName) {
-        c.connection.sendBytes(encode(JSON.stringify(wrap(data))))
+        c.connection.sendBytes(encode(wrap(data)))
       }
     })
   } else if (!pluginName && uuid) {
     pc.forEach((c) => {
       if (c.uuid === uuid) {
-        c.connection.sendBytes(encode(JSON.stringify(wrap(data))))
+        c.connection.sendBytes(encode(wrap(data)))
       }
     })
   } else {
     pc.forEach((c) => {
       if (c.pluginName === pluginName && c.uuid === uuid) {
-        c.connection.sendBytes(encode(JSON.stringify(wrap(data))))
+        c.connection.sendBytes(encode(wrap(data)))
       }
     })
   }
 }
 
+
+interface IWrapData<T> {
+  type: string
+  data: T
+  code?: number
+  timestamp?: number
+}
+
 const wrap = <T>(wrapData: IWrapData<T>): Required<IWrapData<T>> => {
   return {
+    ...wrapData,
     code: wrapData.code || 200,
-    type: wrapData.type,
-    data: wrapData.data,
     timestamp: Date.now(),
   }
 }
@@ -129,14 +156,12 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
 
     connection.sendBytes(
       encode(
-        JSON.stringify(
-          wrap({
-            type: 'CONNECT_RESPONSE',
-            data: {
-              serverVersion: '1.0.0',
-            },
-          })
-        )
+        wrap(<IBaseSocketMessage<'CONNECT_RESPONSE'>>{
+          type: 'CONNECT_RESPONSE',
+          data: {
+            serverVersion: '1.0.0',
+          },
+        })
       )
     )
 
@@ -144,12 +169,12 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
       if (data.type === 'binary') {
         const msg = decode(data.binaryData)
         switch (msg.type) {
-          case 'LOGIN': {
-            const lr = msg as LoginResponse
-            addPluginConnection(lr.data.pluginName, lr.data.uuid, connection)
+          case 'PLUGIN_CONNECT': {
+            const pluginConnect = msg as unknown as IBaseSocketMessage<'PLUGIN_CONNECT'>
+            addPluginConnection(pluginConnect.data.pluginName, pluginConnect.data.uuid, connection)
             break
           }
-          case 'PLUGIN': {
+          case 'PLUGIN_MESSAGE': {
             break
           }
           default:
@@ -164,4 +189,5 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
   return wsServer
 }
 
-export { socketServer, wrap, send }
+export { socketServer, encode, decode, wrap, send }
+export type { IBaseSocketMessage, IBaseSocketMessageMap, IPluginCommonMessage }

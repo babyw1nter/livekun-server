@@ -1,12 +1,13 @@
 import { ChatInterface } from '@hhui64/cclinkjs-room-module'
 import UserConfigManager from '../UserConfigManager'
-import { send } from '../socketServer/server'
+import { IBaseSocketMessage, send } from '../socketServer/server'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
+import { PluginNames } from '@/api/plugins'
 
 const log = consola.withTag('modules/chatMessage')
 
@@ -90,12 +91,12 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     }
   }
 
-  const data = {
-    type: 'data',
+  const data: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
+    type: 'PLUGIN_MESSAGE',
     data: {
       key: uuidv4(),
       uid: ccid,
-      avatarUrl: chatMsg[10],
+      avatarUrl: chatMsg[10] || '',
       nickname: chatMsg[197],
       messageType: 'chat',
       userInfo: chatMsg[7],
@@ -105,7 +106,7 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     },
   }
 
-  send(data, 'chat-message', instance.uuid)
+  send(data, PluginNames.PLUGIN_CHAT_MESSAGE, instance.uuid)
 }
 
 const clearChatMessageCache = (): void => {

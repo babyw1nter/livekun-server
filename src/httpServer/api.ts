@@ -6,6 +6,7 @@ import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { getRandomGiftCapsule, getRandomChatMessage, getRandomGiftCard, mockData } from '../mock'
+import { PluginNames, PluginActions } from '@/api/plugins'
 
 const log = consola.withTag('httpserver/api')
 
@@ -136,53 +137,57 @@ apiRouter.post('/control', (req, res) => {
   const method = req.body.method as string
 
   switch (method) {
-    case 'sendMockDataToGiftCapsule':
-      send(
-        {
-          type: 'data',
-          data: getRandomGiftCapsule(),
-        },
-        'gift-capsule',
-        uuid
-      )
-      break
     case 'sendMockDataToChatMessage':
       send(
         {
-          type: 'data',
+          type: 'PLUGIN_MESSAGE',
           data: getRandomChatMessage(),
         },
-        'chat-message',
+        PluginNames.PLUGIN_CHAT_MESSAGE,
+        uuid
+      )
+      break
+    case 'sendMockDataToGiftCapsule':
+      send(
+        {
+          type: 'PLUGIN_MESSAGE',
+          data: getRandomGiftCapsule(),
+        },
+        PluginNames.PLUGIN_TICKET,
         uuid
       )
       break
     case 'sendMockDataToGiftCard':
       send(
         {
-          type: 'data',
+          type: 'PLUGIN_MESSAGE',
           data: getRandomGiftCard(),
         },
-        'gift-card',
+        PluginNames.PLUGIN_PAID,
         uuid
       )
       break
-    case 'clearGiftCapsule':
-      send({ type: 'method', data: { method: 'clear' } }, 'gift-capsule', uuid)
-      break
     case 'clearChatMessage':
-      send({ type: 'method', data: { method: 'clear' } }, 'chat-message', uuid)
+      send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_CHAT_MESSAGE, uuid)
+      break
+    case 'clearGiftCapsule':
+      send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_TICKET, uuid)
       break
     case 'clearGiftCard':
-      send({ type: 'method', data: { method: 'clear' } }, 'gift-card', uuid)
-      break
-    case 'refreshGiftCapsule':
-      send({ type: 'method', data: { method: 'refresh' } }, 'gift-capsule', uuid)
+      send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_PAID, uuid)
       break
     case 'refreshChatMessage':
-      send({ type: 'method', data: { method: 'refresh' } }, 'chat-message', uuid)
+      send(
+        { type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } },
+        PluginNames.PLUGIN_CHAT_MESSAGE,
+        uuid
+      )
+      break
+    case 'refreshGiftCapsule':
+      send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } }, PluginNames.PLUGIN_TICKET, uuid)
       break
     case 'refreshGiftCard':
-      send({ type: 'method', data: { method: 'refresh' } }, 'gift-card', uuid)
+      send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } }, PluginNames.PLUGIN_PAID, uuid)
       break
   }
 

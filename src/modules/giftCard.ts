@@ -1,11 +1,12 @@
 import UserConfigManager from '../UserConfigManager'
-import { send } from '../socketServer/server'
+import { IBaseSocketMessage, send } from '../socketServer/server'
 import { GiftInterface } from '@hhui64/cclinkjs-room-module'
 import { commentChatMsgCache } from './chatMessage'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { v4 as uuidv4 } from 'uuid'
+import { PluginNames } from '@/api/plugins'
 
 const log = consola.withTag('modules/giftCard')
 
@@ -39,8 +40,8 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
     }
   }
 
-  const data = {
-    type: 'data',
+  const data: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
+    type: 'PLUGIN_MESSAGE',
     data: {
       key: uuidv4(),
       uid: giftMsg.fromid.toString(),
@@ -57,8 +58,8 @@ const giftCardModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInsta
     },
   }
 
-  send(data, 'chat-message', instance.uuid)
-  send(data, 'gift-card', instance.uuid)
+  send(data, PluginNames.PLUGIN_CHAT_MESSAGE, instance.uuid)
+  send(data, PluginNames.PLUGIN_PAID, instance.uuid)
 }
 
 export { giftCardModule }

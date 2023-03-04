@@ -1,10 +1,11 @@
 import UserConfigManager from '../UserConfigManager'
-import { send } from '../socketServer/server'
+import { IBaseSocketMessage, send } from '../socketServer/server'
 import { GiftInterface } from '@hhui64/cclinkjs-room-module'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { v4 as uuidv4 } from 'uuid'
+import { PluginNames } from '@/api/plugins'
 
 const log = consola.withTag('modules/giftCapsule')
 
@@ -26,8 +27,8 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
 
   if (config.giftCapsule.minMoney > giftMoney) return
 
-  const data = {
-    type: 'data',
+  const data: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
+    type: 'PLUGIN_MESSAGE',
     data: {
       key: uuidv4(),
       uid: ccid,
@@ -41,7 +42,7 @@ const giftCapsuleModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSIn
     },
   }
 
-  send(data, 'gift-capsule', instance.uuid)
+  send(data, PluginNames.PLUGIN_TICKET, instance.uuid)
 }
 
 export { giftCapsuleModule }
