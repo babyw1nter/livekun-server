@@ -1,3 +1,37 @@
+# [1.0.0-alpha.5](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2023-03-04)
+
+
+### Bug Fixes
+
+* **httpServer:** 修复调用 send 方法时未指定 uuid 的 bug ([1956d14](https://github.com/hhui64/livekun-server/commit/1956d1401943291244b59ea998ea5aebfc43dbcb))
+* **modules/chatMessage:** 修复额外数据 JSON 获取失败的错误问题 ([21cf442](https://github.com/hhui64/livekun-server/commit/21cf4426c98e8b0a1194fd4383109322b46a76ee))
+* **modules/chatMessage:** 修复消息类型错误的问题 ([e70af0c](https://github.com/hhui64/livekun-server/commit/e70af0c547fd287df9d39fda1024b3e5d8844921))
+* **socketServer:** 修复 send 方法参数判断逻辑的 bug ([508be34](https://github.com/hhui64/livekun-server/commit/508be34ee4c743a5496c70da40571f20cd693434))
+* **socketServer:** 修复 ws 连接协议为空时崩溃的问题 ([3321cf0](https://github.com/hhui64/livekun-server/commit/3321cf01c9c93ea92a3e7b90418b49e87018a7a5))
+
+
+### Features
+
+* 新增更多礼物金额档位配置 ([628cd9c](https://github.com/hhui64/livekun-server/commit/628cd9c7f2b3700d54a65b0cb9cb7267b7d99a21))
+* 新增消息的唯一 key ([97a237b](https://github.com/hhui64/livekun-server/commit/97a237badafe1db3337ad9f3934ef9600e005b3e))
+* **modules/chatMessage:** 新增房管、守护、粉丝牌等字段信息 ([95e7640](https://github.com/hhui64/livekun-server/commit/95e7640afae5914d7be53b0bd7d51a755ce00391))
+* **modules/chatMessage:** 新增支持自定义黑名单 ([5fb0f51](https://github.com/hhui64/livekun-server/commit/5fb0f51786178051c1cdda558816a102c5840925))
+* **modules/chatMessage:** blacklist ([e6236a0](https://github.com/hhui64/livekun-server/commit/e6236a086cf577343351491b7fa6922402214782))
+* **paid:** 新增 Paid 插件，从旧版礼物卡片重写而来 ([79b749d](https://github.com/hhui64/livekun-server/commit/79b749da2a063d2f669a4d370c4acc3b24cccdcb))
+* **socketServer:** 新增大量接口以及类型定义 ([69f1bb1](https://github.com/hhui64/livekun-server/commit/69f1bb158093181f0a0d1c86857ae0f1edfdab57))
+* **ticket:** 新增 Ticket 插件，从旧版礼物胶囊重写而来 ([68df8ff](https://github.com/hhui64/livekun-server/commit/68df8ff663cc40c57325d5c2bbdbe735588eb98a))
+
+
+### Performance Improvements
+
+* **configManager:** 优化配置的默认值 ([477da6e](https://github.com/hhui64/livekun-server/commit/477da6edaac638b96db35fc794ed61e461856261))
+* **configManager:** 优化配置的默认值 ([6432e9c](https://github.com/hhui64/livekun-server/commit/6432e9c4595c079a6a50a04b8ce436f7ab77eba1))
+* use prefix `node:` to import node api ([4064d7d](https://github.com/hhui64/livekun-server/commit/4064d7da75a107cd7e52225b985933f26056b9b5))
+* use prefix `node:` to import node api ([09c8adb](https://github.com/hhui64/livekun-server/commit/09c8adb85ddeb228b18d5fbdc286401393020e48))
+* **UserConfigManager:** 优化 Ticket 插件的默认最大个数值 ([123c3dd](https://github.com/hhui64/livekun-server/commit/123c3ddb4cd02d3263b157fc497ac55b1b33e273))
+
+
+
 # [1.0.0-alpha.4](https://github.com/hhui64/livekun-server/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2022-06-08)
 
 
@@ -19,7 +53,7 @@
 
 * 优化获取实例就绪状态的方法 ([e38c6ce](https://github.com/hhui64/livekun-server/commit/e38c6ce07f41cdd01bf9ff9d749c2342adc076d3))
 * **cclinkjsManager:** 优化创建实例时支持传入实例 options ([8d51754](https://github.com/hhui64/livekun-server/commit/8d51754366da1a1af4a88a0d9fd773018a6c8f59))
-* **modules/paid:** 调整文案 ([9caca6a](https://github.com/hhui64/livekun-server/commit/9caca6abd20b27bc8995f1d300fd84c9ce92cefa))
+* **modules/giftCard:** 调整文案 ([9caca6a](https://github.com/hhui64/livekun-server/commit/9caca6abd20b27bc8995f1d300fd84c9ce92cefa))
 
 
 
@@ -35,7 +69,7 @@
 
 * **httpServer/api:** 新增获取 mock 数据接口 ([a7fd406](https://github.com/hhui64/livekun-server/commit/a7fd406f292528615cd6ab6c8ff9da8450d1bb57))
 * **httpServer/api:** 新增获取公告接口 ([822aca5](https://github.com/hhui64/livekun-server/commit/822aca566c2890db44dc28ec51b6c73a890c7f66))
-* **modules/paid:** 新增礼物图标 url 属性 ([8e23244](https://github.com/hhui64/livekun-server/commit/8e23244f34f15c7626d086fa1967724ac82f4583))
+* **modules/giftCard:** 新增礼物图标 url 属性 ([8e23244](https://github.com/hhui64/livekun-server/commit/8e23244f34f15c7626d086fa1967724ac82f4583))
 
 
 ### Performance Improvements
@@ -106,7 +140,7 @@
 * **configManager:** 新增配置管理器的指定 UUID 获取 ([3f27008](https://github.com/hhui64/livekun-server/commit/3f27008d580a0de97eee9bf90bc89fe93a90b06d))
 * **mock:** 优化 mock 数据随机返回礼物卡片 ([1b77994](https://github.com/hhui64/livekun-server/commit/1b77994523d570d4ac1459caee932d8f6ef1ccb9))
 * **modules/*:** 优化礼物数据的加载逻辑 ([f7cf41d](https://github.com/hhui64/livekun-server/commit/f7cf41dbde2c4832a24a3dd0ab99d490af41c62f))
-* **modules/paid:** 优化礼物图标 Url 的获取顺序 ([538436e](https://github.com/hhui64/livekun-server/commit/538436e266ca59fd6258ee643064d3ec963edc0c))
+* **modules/giftCard:** 优化礼物图标 Url 的获取顺序 ([538436e](https://github.com/hhui64/livekun-server/commit/538436e266ca59fd6258ee643064d3ec963edc0c))
 
 
 
@@ -129,7 +163,7 @@
 * **emtsLoader:** 新增 emtsLoader 表情加载器 ([0f1dabd](https://github.com/hhui64/livekun-server/commit/0f1dabdfbbaa52822c1d12b4b882902af809ec23))
 * **modules/chatMessage:** 新增 chatMessage 事件处理模块 ([0af83d9](https://github.com/hhui64/livekun-server/commit/0af83d920680ad46152ae892fb14703b45f484c4))
 * **modules/giftCapsule:** 新增 giftCapsule 事件处理模块 ([6f4669a](https://github.com/hhui64/livekun-server/commit/6f4669aead85224c4becde324f42fcf2120ca046))
-* **modules/paid:** 新增 paid 事件处理模块 ([d7be6f1](https://github.com/hhui64/livekun-server/commit/d7be6f1dcfcb08d1d74de9943f64182ab7be3957))
+* **modules/giftCard:** 新增 giftCard 事件处理模块 ([d7be6f1](https://github.com/hhui64/livekun-server/commit/d7be6f1dcfcb08d1d74de9943f64182ab7be3957))
 * **statusManager:** 新增 statusManager 状态管理器 ([23c55e8](https://github.com/hhui64/livekun-server/commit/23c55e87683a33034fbd5e9cda9f3db8d8b7753c))
 
 
@@ -137,7 +171,7 @@
 
 * **httpServer:** 优化进房接口的错误信息 ([bfe4fcf](https://github.com/hhui64/livekun-server/commit/bfe4fcf53591facde071f548c7c5480ba784082c))
 * **modules/chatMessage:** 优化聊天消息格式处理逻辑 ([7501aa1](https://github.com/hhui64/livekun-server/commit/7501aa1e5e98d3642969d561e1033be08edf4d9f))
-* **modules/paid:** 优化礼物卡片消息与留言属性分开发送 ([1ed0fe5](https://github.com/hhui64/livekun-server/commit/1ed0fe5fb003e5fc8ba7650d203c63188c66433e))
+* **modules/giftCard:** 优化礼物卡片消息与留言属性分开发送 ([1ed0fe5](https://github.com/hhui64/livekun-server/commit/1ed0fe5fb003e5fc8ba7650d203c63188c66433e))
 
 
 
@@ -176,7 +210,7 @@
 
 ### Performance Improvements
 
-* 调整 Ticket 持续时间的单位 ([f69c774](https://github.com/hhui64/livekun-server/commit/f69c7748bbefd14270250de2477acb107496e740))
+* 调整礼物胶囊持续时间的单位 ([f69c774](https://github.com/hhui64/livekun-server/commit/f69c7748bbefd14270250de2477acb107496e740))
 
 
 
