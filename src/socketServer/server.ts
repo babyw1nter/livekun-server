@@ -79,15 +79,15 @@ const send = <T>(
 ): void => {
   if (!pc.length) return
 
-  if (pluginName === '' && uuid === '') {
+  if (!pluginName && !uuid) {
     pc.forEach((c) => c.connection.sendBytes(encode(JSON.stringify(wrap(data)))))
-  } else if (pluginName !== '' && uuid === '') {
+  } else if (pluginName && !uuid) {
     pc.forEach((c) => {
       if (c.pluginName === pluginName) {
         c.connection.sendBytes(encode(JSON.stringify(wrap(data))))
       }
     })
-  } else if (pluginName === '' && uuid !== '') {
+  } else if (!pluginName && uuid) {
     pc.forEach((c) => {
       if (c.uuid === uuid) {
         c.connection.sendBytes(encode(JSON.stringify(wrap(data))))
@@ -95,7 +95,7 @@ const send = <T>(
     })
   } else {
     pc.forEach((c) => {
-      if ((c.pluginName === pluginName && c.uuid) === uuid) {
+      if (c.pluginName === pluginName && c.uuid === uuid) {
         c.connection.sendBytes(encode(JSON.stringify(wrap(data))))
       }
     })
