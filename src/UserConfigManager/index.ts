@@ -42,7 +42,7 @@ const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
   ticket: {
     level: [0, 99, 199],
     duration: [5, 15, 30],
-    maximum: 10,
+    maximum: 100,
     minMoney: 0.01,
   },
   chatMessage: {
