@@ -122,7 +122,7 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
   // })
 
   wsServer.on('connect', (connection) => {
-    if (connection.protocol === '' || connection.protocol.length > 128) {
+    if (typeof connection.protocol === 'undefined' || connection.protocol === '' || connection.protocol.length > 128) {
       connection.drop(1002)
       return
     }
@@ -131,10 +131,9 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
       encode(
         JSON.stringify(
           wrap({
-            type: 'connect-response',
+            type: 'CONNECT_RESPONSE',
             data: {
               serverVersion: '1.0.0',
-              protocol: connection.protocol,
             },
           })
         )
