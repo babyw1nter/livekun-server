@@ -6,7 +6,7 @@ import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { getRandomTicket, getRandomChatMessage, getRandomPaid, mockData } from '../mock'
-import { PluginNames, PluginActions } from '@/api/plugins'
+import { PluginNames, PluginActions } from '../api/plugins'
 
 const log = consola.withTag('httpserver/api')
 

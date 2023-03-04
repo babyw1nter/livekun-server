@@ -6,7 +6,7 @@ import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { v4 as uuidv4 } from 'uuid'
-import { PluginNames } from '@/api/plugins'
+import { PluginNames } from '../api/plugins'
 
 const log = consola.withTag('modules/paid')
 

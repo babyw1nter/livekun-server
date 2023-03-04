@@ -5,7 +5,7 @@ import { socketServer, send } from '../socketServer/server'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { PluginNames, PluginActions } from '@/api/plugins'
+import { PluginNames, PluginActions } from '../api/plugins'
 
 interface IUser {
   uuid: string

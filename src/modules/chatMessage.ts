@@ -7,7 +7,7 @@ import { CCLinkJSInstance } from '../cclinkjsManager'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
-import { PluginNames } from '@/api/plugins'
+import { PluginNames } from '../api/plugins'
 
 const log = consola.withTag('modules/chatMessage')
 
