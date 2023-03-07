@@ -7,7 +7,7 @@ import { CCLinkJSInstance } from '../cclinkjsManager'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
-import { PluginNames } from '../api/plugins'
+import { IPluginConfig, PluginNames } from '../api/plugins'
 
 const log = consola.withTag('modules/chatMessage')
 
@@ -27,18 +27,23 @@ interface ICommentChatMsgCache {
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
 const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSInstance): void => {
-  const config = UserConfigManager.get(instance.uuid)
+  const chatMessagePluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
+    PluginNames.PLUGIN_CHAT_MESSAGE
+  ) as IPluginConfig<'chat-message'>
+  const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
+    PluginNames.PLUGIN_PAID
+  ) as IPluginConfig<'paid'>
 
   const ccid = chatMsg[7][130].toString() as string
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
 
   // log.info('[💬] ', chatMsg[197] + '：' + msg)
 
-  if (config.paid.comment.use) {
+  if (paidPluginConfig.pluginConfig.comment.use) {
     let _msg = msg
 
-    if (msg.slice(0, config.paid.comment.prefix.length) === config.paid.comment.prefix) {
-      _msg = _msg.slice(config.paid.comment.prefix.length)
+    if (msg.slice(0, paidPluginConfig.pluginConfig.comment.prefix.length) === paidPluginConfig.pluginConfig.comment.prefix) {
+      _msg = _msg.slice(paidPluginConfig.pluginConfig.comment.prefix.length)
 
       const cacheIndex = commentChatMsgCache.findIndex((i) => i.uid === ccid)
       const data = {
@@ -55,7 +60,8 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   }
 
   // 若存在全站黑名单和用户插件配置黑名单中，则过滤
-  if (globalBlacklist.users.includes(ccid) || config.chatMessage.blacklist.findIndex(i => i.ccid === ccid) > -1) return
+  if (globalBlacklist.users.includes(ccid) || chatMessagePluginConfig.pluginConfig.blacklist.findIndex((i) => i.ccid === ccid) > -1)
+    return
 
   let type = 'normal'
   let exInfo = null

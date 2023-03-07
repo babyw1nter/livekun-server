@@ -5,12 +5,14 @@ import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { v4 as uuidv4 } from 'uuid'
-import { PluginNames } from '../api/plugins'
+import { IPluginConfig, PluginNames } from '../api/plugins'
 
 const log = consola.withTag('modules/ticket')
 
 const ticketModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
-  const config = UserConfigManager.get(instance.uuid)
+  const ticketPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
+    PluginNames.PLUGIN_TICKET
+  ) as IPluginConfig<'ticket'>
 
   const ccid = giftMsg.fromid.toString()
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
@@ -25,7 +27,7 @@ const ticketModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstanc
   //   giftMsg.combo > 1 ? giftMsg.comboid : ''
   // )
 
-  if (config.ticket.minMoney > giftMoney) return
+  if (ticketPluginConfig.pluginConfig.minMoney > giftMoney) return
 
   const data: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
     type: 'PLUGIN_MESSAGE',
