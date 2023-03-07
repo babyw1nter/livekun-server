@@ -12,7 +12,7 @@ const log = consola.withTag('httpserver/api')
 
 const apiRouter = express.Router()
 
-apiRouter.get('/get-broadcasts', (req, res) => {
+apiRouter.get('/getBroadcasts', (req, res) => {
   interface Broadcasts {
     banner: string
     broadcastsToptips: string
@@ -36,7 +36,7 @@ apiRouter.get('/get-broadcasts', (req, res) => {
   }
 })
 
-apiRouter.get('/get-mockdata', (req, res) => {
+apiRouter.get('/getMockdata', (req, res) => {
   res.json(
     resWrap(200, 'ok', {
       ticketMockData: mockData.ticketList,
@@ -46,7 +46,7 @@ apiRouter.get('/get-mockdata', (req, res) => {
   )
 })
 
-apiRouter.get('/get-status', (req, res) => {
+apiRouter.get('/getStatus', (req, res) => {
   const uuid = req.session.user?.uuid || (req.query.uuid as string)
   const instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 

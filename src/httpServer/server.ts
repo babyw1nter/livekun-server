@@ -49,12 +49,12 @@ app.use((req, res, next) => {
   const requiresAuth = [
     '/user/autologin',
     '/user/logout',
-    '/user/get-status',
-    '/user/update-config',
+    '/user/getStatus',
+    '/user/setPluginConfig',
     '/api/join',
     '/api/reset',
     '/api/control',
-    '/api/get-status',
+    '/api/getStatus',
   ]
 
   if (requiresAuth.includes(req.path)) {
