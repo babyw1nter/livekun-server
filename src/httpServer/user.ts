@@ -1,6 +1,6 @@
 import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
-import UserConfigManager, { IUserConfig } from '../UserConfigManager'
+import UserConfigManager, { IUserPluginsConfig } from '../UserConfigManager'
 import { socketServer, send } from '../socketServer/server'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
@@ -23,7 +23,9 @@ class UserManager {
 
   static read(): void {
     try {
-      UserManager.userData = JSON.parse(readFileSync(path.join(__dirname, '../../', 'data', 'user', 'users.json')).toString())
+      UserManager.userData = JSON.parse(
+        readFileSync(path.join(__dirname, '../../', 'data', 'user', 'users.json')).toString()
+      )
     } catch (error) {
       UserManager.userData = {
         users: [],
@@ -73,13 +75,12 @@ userRouter.post('/login', (req, res) => {
 
     // 登陆成功时，为其创建 cclinkjs 实例
     const instance = CCLinkJSManager.createCCLinkJS(user.uuid)
-    const config = UserConfigManager.get(user.uuid)
+    // const config = UserConfigManager.get(user.uuid)
 
     res.json(
       resWrap(200, '登录成功', {
         user: req.session.user,
-        status: instance.getStatus(),
-        config,
+        status: instance.getStatus()
       })
     )
   } else {
@@ -90,7 +91,7 @@ userRouter.post('/login', (req, res) => {
 
 userRouter.post('/autologin', (req, res) => {
   const uuid = req.session.user?.uuid as string
-  const config = UserConfigManager.get(uuid)
+  // const config = UserConfigManager.get(uuid)
   let instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (!instance) {
@@ -100,8 +101,7 @@ userRouter.post('/autologin', (req, res) => {
   res.json(
     resWrap(200, 'session 登录成功', {
       user: req.session.user,
-      status: instance.getStatus(),
-      config,
+      status: instance.getStatus()
     })
   )
 })
@@ -114,30 +114,58 @@ userRouter.get('/logout', (req, res) => {
   res.json(resWrap(200, '注销成功'))
 })
 
-userRouter.get('/get-config', (req, res) => {
+userRouter.get('/getPluginConfig', (req, res) => {
   const uuid = req.session.user?.uuid || (req.query.uuid as string) || ''
+  const pluginName = (req.query.pluginName as string)
+    .split(',')
+    .map((i) => i.trim())
+    .filter((i) => i !== '')
 
   if (uuid !== '' && uuid.length < 64) {
-    res.json(resWrap(200, 'ok', UserConfigManager.get(uuid)))
+    const userConfig = UserConfigManager.get(uuid)
+    const pluginConfig = userConfig.getPluginConfig(pluginName)
+
+    res.json(resWrap(200, 'ok', pluginConfig))
   } else {
     res.json(resWrap(404, 'UUID not found.'))
   }
 })
 
-userRouter.post('/update-config', (req, res) => {
+userRouter.post('/setPluginConfig', (req, res) => {
   const uuid = req.session.user?.uuid as string
-  const newConfig = req.body as IUserConfig
+  const pluginName = req.body.pluginName as PluginNames
+  const pluginConfig = req.body.pluginConfig
 
-  const config = UserConfigManager.get(uuid)
+  const userConfig = UserConfigManager.get(uuid)
 
-  config.update(newConfig).save().read()
+  userConfig.setPluginConfig(pluginName, pluginConfig)
 
+  userConfig.save().read()
+
+  // 向正在连接的插件下发更新配置请求
   if (socketServer) {
-    send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } }, undefined, uuid)
-    res.json(resWrap(200, 'ok', UserConfigManager.get(uuid)))
-  } else {
-    res.json(resWrap(20001, 'socket 未初始化'))
+    send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } }, pluginName, uuid)
   }
+
+  res.json(resWrap(200, 'ok'))
+})
+
+userRouter.post('/resetPluginConfig', (req, res) => {
+  const uuid = req.session.user?.uuid as string
+  const pluginName = req.body.pluginName as PluginNames
+
+  const userConfig = UserConfigManager.get(uuid)
+
+  userConfig.resetPluginConfig(pluginName)
+
+  userConfig.save().read()
+
+  // 向正在连接的插件下发更新配置请求
+  if (socketServer) {
+    send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } }, pluginName, uuid)
+  }
+
+  res.json(resWrap(200, 'ok'))
 })
 
 export default userRouter
