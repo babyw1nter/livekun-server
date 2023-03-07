@@ -43,6 +43,10 @@ class UserPluginsConfig implements IUserPluginsConfig {
       pluginsConfig: this.pluginsConfig,
     }
 
+    configData.pluginsConfig.forEach(i => {
+      if (typeof i.isDefault !== 'undefined') delete i.isDefault
+    })
+
     try {
       fs.writeFileSync(this.getFilePath(), JSON.stringify(configData, null, 2))
     } catch (error) {
