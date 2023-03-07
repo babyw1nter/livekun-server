@@ -1,111 +1,24 @@
 import consola from 'consola'
 import fs from 'node:fs'
 import path from 'node:path'
+import { defaultPluginsConfig, IPluginConfig, IPluginConfigMap, PluginNames, PluginsConfig } from '../api/plugins'
 
 const log = consola.withTag('configmanager')
 
-export interface IUserConfig {
+export interface IUserPluginsConfig {
   uuid: string
-  ticket: {
-    level: Array<number>
-    duration: Array<number>
-    maximum: number
-    minMoney: number
-  }
-  chatMessage: {
-    style: {
-      fontSize: number
-    }
-    show: {
-      join: boolean
-      follow: boolean
-      gift: boolean
-    }
-    blacklist: Array<{
-      ccid: number | string
-      note: string
-    }>
-  }
-  paid: {
-    level: Array<number>
-    minMoney: number
-    comment: {
-      use: boolean
-      prefix: string
-      giftMinMoney: number
-      giftWhitelist: string
-    }
-  }
+  pluginsConfig: PluginsConfig
 }
 
-const defaultUserConfig: Omit<IUserConfig, 'uuid'> = {
-  ticket: {
-    level: [0, 99, 199],
-    duration: [5, 15, 30],
-    maximum: 100,
-    minMoney: 0.01,
-  },
-  chatMessage: {
-    style: {
-      fontSize: 18,
-    },
-    show: {
-      join: false,
-      follow: false,
-      gift: true,
-    },
-    blacklist: [],
-  },
-  paid: {
-    level: [0, 9, 49, 99, 199, 249, 499],
-    minMoney: 5,
-    comment: {
-      use: false,
-      prefix: '留言：',
-      giftMinMoney: 10,
-      giftWhitelist: '',
-    },
-  },
-}
-
-class UserConfig implements IUserConfig {
+class UserPluginsConfig implements IUserPluginsConfig {
   uuid: string
-  ticket: {
-    level: number[]
-    duration: number[]
-    maximum: number
-    minMoney: number
-  }
-  chatMessage: {
-    style: {
-      fontSize: number
-    }
-    show: {
-      join: boolean
-      follow: boolean
-      gift: boolean
-    }
-    blacklist: Array<{
-      ccid: number | string
-      note: string
-    }>
-  }
-  paid: {
-    level: number[]
-    minMoney: number
-    comment: {
-      use: boolean
-      prefix: string
-      giftMinMoney: number
-      giftWhitelist: string
-    }
-  }
+  pluginsConfig: PluginsConfig
+  readonly defaultPluginsConfig: PluginsConfig
 
   constructor(uuid: string) {
     this.uuid = uuid
-    this.ticket = defaultUserConfig.ticket
-    this.chatMessage = defaultUserConfig.chatMessage
-    this.paid = defaultUserConfig.paid
+    this.pluginsConfig = []
+    this.defaultPluginsConfig = defaultPluginsConfig
 
     try {
       this.read()
@@ -119,16 +32,19 @@ class UserConfig implements IUserConfig {
   }
 
   read(): this {
-    const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IUserConfig
-    this.ticket = configData.ticket
-    this.chatMessage = configData.chatMessage
-    this.paid = configData.paid
+    const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IUserPluginsConfig
+    this.pluginsConfig = configData.pluginsConfig
     return this
   }
 
   save(): this {
+    const configData = {
+      uuid: this.uuid,
+      pluginsConfig: this.pluginsConfig,
+    }
+
     try {
-      fs.writeFileSync(this.getFilePath(), JSON.stringify(this, null, 2))
+      fs.writeFileSync(this.getFilePath(), JSON.stringify(configData, null, 2))
     } catch (error) {
       log.error(error)
     }
@@ -136,34 +52,60 @@ class UserConfig implements IUserConfig {
   }
 
   reset(): this {
-    this.ticket = defaultUserConfig.ticket
-    this.chatMessage = defaultUserConfig.chatMessage
-    this.paid = defaultUserConfig.paid
+    this.pluginsConfig = []
     return this
   }
 
-  setTicket(config: IUserConfig['ticket']) {
-    this.ticket = config
+  // getPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K): IPluginConfig<K> | null
+  // getPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K[]): PluginsConfig
+  getPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K | K[] | string | string[]) {
+    if (Array.isArray(pluginName)) {
+      const _user = this.pluginsConfig.filter((item) => pluginName.some((i) => item.pluginName === i))
+
+      // 如果在用户配置文件中没找到，则从默认配置中获取
+      // 默认配置文件带有 `isDefault: true` 用以区分配置的来源
+      const notFindPluginName = pluginName.filter((i) => _user.findIndex((j) => j.pluginName === i) < 0)
+      const _default = this.defaultPluginsConfig
+        .filter((item) => notFindPluginName.some((i) => item.pluginName === i))
+        .map((i) => ({ ...i, isDefault: true }))
+
+      return _user.concat(_default)
+    } else {
+      return (
+        this.pluginsConfig.find((i) => i.pluginName === pluginName) ||
+        this.defaultPluginsConfig.find((i) => i.pluginName === pluginName) ||
+        null
+      )
+    }
   }
 
-  setChatMessage(config: IUserConfig['chatMessage']) {
-    this.chatMessage = config
+  setPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K | string, pluginConfig: IPluginConfigMap[K]) {
+    const getIndex = () => this.pluginsConfig.findIndex((i) => i.pluginName === pluginName)
+    const index = getIndex()
+
+    if (index > -1) {
+      this.pluginsConfig[index].pluginConfig = pluginConfig
+    } else {
+      const defaultPluginConfig = this.defaultPluginsConfig.find((i) => i.pluginName === pluginName)
+      if (defaultPluginConfig) {
+        this.pluginsConfig.push(JSON.parse(JSON.stringify(defaultPluginConfig)))
+        this.pluginsConfig[getIndex()].pluginConfig = pluginConfig
+      }
+    }
   }
 
-  setPaid(config: IUserConfig['paid']) {
-    this.paid = config
-  }
+  resetPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K | string) {
+    const index = this.pluginsConfig.findIndex((i) => i.pluginName === pluginName)
 
-  update(config: IUserConfig): this {
-    this.ticket = config.ticket
-    this.chatMessage = config.chatMessage
-    this.paid = config.paid
-    return this
+    if (index > -1) {
+      // 直接删除就好
+      this.pluginsConfig.splice(index, 1)
+    }
   }
 }
 
 export default class UserConfigManager {
-  public static get(uuid: string): UserConfig {
-    return new UserConfig(uuid)
+  public static get(uuid: string): UserPluginsConfig {
+    return new UserPluginsConfig(uuid)
   }
 }
