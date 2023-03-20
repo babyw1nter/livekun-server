@@ -13,7 +13,7 @@
       "uid": 444
     },
     {
-      "nickname": "CC灵儿",
+      "nickname": "灵儿想叮当☃️",
       "avatarUrl": "https://z3.ax1x.com/2021/08/11/ftOL4K.png",
       "money": 69,
       "uid": 6900
@@ -56,7 +56,10 @@
       "message": "谁能告诉我现在是什么情况？谁能告诉我现在是什么情况？我是谁我在哪？",
       "uid": 6696,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -69,7 +72,10 @@
       "message": "加油加油加油加油加油加油",
       "uid": 3333,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -82,7 +88,10 @@
       "message": "😝为什么停下来了😿😿😿😿？？！",
       "uid": 3333,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -95,7 +104,10 @@
       "message": "哼哼哼啊啊啊啊啊啊啊啊",
       "uid": 3333,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -103,13 +115,16 @@
       }
     },
     {
-      "nickname": "CC灵儿",
+      "nickname": "灵儿想叮当☃️",
       "avatarUrl": "https://z3.ax1x.com/2021/08/11/ftOL4K.png",
       "message": "……你在想屁屁吃呢！！~",
       "uid": 66690,
       "type": "anchor",
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": true
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -117,13 +132,16 @@
       }
     },
     {
-      "nickname": "CC灵儿",
+      "nickname": "灵儿想叮当☃️",
       "avatarUrl": "https://z3.ax1x.com/2021/08/11/ftOL4K.png",
       "message": "喜欢你，因为我喜欢你，比世界上的任何一个人都喜欢你。~",
       "uid": 66690,
       "type": "anchor",
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": true
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -137,7 +155,10 @@
       "uid": 3312,
       "type": "admin",
       "messageType": "chat",
-      "admin": true,
+      "rule": {
+        "admin": true,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -150,7 +171,10 @@
       "message": "I just need someone who will never abandon me.",
       "uid": 91330,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -163,7 +187,10 @@
       "message": "",
       "uid": 91330,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -176,7 +203,10 @@
       "message": "敵将打ち取ったり",
       "uid": 888111,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -189,7 +219,10 @@
       "message": "偶像幸运星？灵儿！",
       "uid": 888111,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -202,7 +235,10 @@
       "message": "いいよ、こいよ！",
       "uid": 888222,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -215,7 +251,10 @@
       "message": "24岁，是学生",
       "uid": 888222,
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 0,
       "badgeInfo": {
         "badgename": "",
@@ -229,7 +268,10 @@
       "uid": 888333,
       "type": "guard-monthly",
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 1,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -243,7 +285,10 @@
       "uid": 888333,
       "type": "guard-monthly",
       "messageType": "chat",
-      "admin": false,
+      "rule": {
+        "admin": false,
+        "anchor": false
+      },
       "guard": 1,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -257,7 +302,10 @@
       "uid": 23434347,
       "type": "guard-annual",
       "messageType": "chat",
-      "admin": true,
+      "rule": {
+        "admin": true,
+        "anchor": false
+      },
       "guard": 2,
       "badgeInfo": {
         "badgename": "灵儿~",
@@ -279,7 +327,7 @@
       "messageType": "gift"
     },
     {
-      "nickname": "CC灵儿",
+      "nickname": "灵儿想叮当☃️",
       "avatarUrl": "https://z3.ax1x.com/2021/08/11/ftOL4K.png",
       "money": 69,
       "giftName": "火箭",
