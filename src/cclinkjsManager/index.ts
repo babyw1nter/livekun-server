@@ -15,7 +15,7 @@ export interface ICCLinkJSInstance {
 }
 
 export interface ICCLinkJSInstanceStatus {
-  isJoinRoom: boolean
+  isJoinedRoom: boolean
   roomInfo: {
     liveId: string
     title: string
@@ -31,7 +31,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
     this.uuid = uuid || uuidv4()
     this.cclinkjs = new CCLinkJS(options)
     this.status = {
-      isJoinRoom: false,
+      isJoinedRoom: false,
       roomInfo: {
         liveId: '',
         title: '',
@@ -116,7 +116,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
 
   public resetStatus(): void {
     this.setStatus({
-      isJoinRoom: false,
+      isJoinedRoom: false,
       roomInfo: {
         liveId: '',
         title: '',
@@ -171,7 +171,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
           .send(RoomMethods.joinLiveRoomProtocol(roomId, channelId, gameType), 3000)
           .then((res) => {
             this.setStatus({
-              isJoinRoom: true,
+              isJoinedRoom: true,
               roomInfo: {
                 liveId,
                 title: title || ' 无标题',
