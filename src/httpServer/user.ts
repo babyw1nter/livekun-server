@@ -75,14 +75,8 @@ userRouter.post('/login', (req, res) => {
 
     // 登陆成功时，为其创建 cclinkjs 实例
     const instance = CCLinkJSManager.createCCLinkJS(user.uuid)
-    // const config = UserConfigManager.get(user.uuid)
 
-    res.json(
-      resWrap(200, '登录成功', {
-        user: req.session.user,
-        status: instance.getStatus()
-      })
-    )
+    res.json(resWrap(200, '登录成功', req.session.user))
   } else {
     res.json(resWrap(10001, '用户名或密码不正确'))
     return
@@ -91,19 +85,14 @@ userRouter.post('/login', (req, res) => {
 
 userRouter.post('/autologin', (req, res) => {
   const uuid = req.session.user?.uuid as string
-  // const config = UserConfigManager.get(uuid)
+
   let instance = CCLinkJSManager.getCCLinkJSInstance(uuid)
 
   if (!instance) {
     instance = CCLinkJSManager.createCCLinkJS(uuid)
   }
 
-  res.json(
-    resWrap(200, 'session 登录成功', {
-      user: req.session.user,
-      status: instance.getStatus()
-    })
-  )
+  res.json(resWrap(200, 'session 登录成功', req.session.user))
 })
 
 userRouter.get('/logout', (req, res) => {
