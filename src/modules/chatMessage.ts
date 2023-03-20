@@ -29,10 +29,10 @@ const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSInstance): void => {
   const chatMessagePluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
     PluginNames.PLUGIN_CHAT_MESSAGE
-  ) as IPluginConfig<'chat-message'>
+  ) as IPluginConfig<PluginNames.PLUGIN_CHAT_MESSAGE>
   const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
     PluginNames.PLUGIN_PAID
-  ) as IPluginConfig<'paid'>
+  ) as IPluginConfig<PluginNames.PLUGIN_PAID>
 
   const ccid = chatMsg[7][130].toString() as string
   const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
@@ -63,11 +63,15 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   if (globalBlacklist.users.includes(ccid) || chatMessagePluginConfig.pluginConfig.blacklist.findIndex((i) => i.ccid === ccid) > -1)
     return
 
+  /** @deprecated */
   let type = 'normal'
   let exInfo = null
 
   const ext = {
-    admin: false,
+    rule: {
+      admin: false,
+      anchor: false
+    },
     guard: 0,
     badgeInfo: {
       badgename: '',
@@ -82,13 +86,14 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   }
 
   if (exInfo) {
-    if (ccid === instance.getStatus().roomInfo.liveId) type = 'anchor'
-    if (exInfo.guard_level === 1) type = 'guard-monthly'
-    if (exInfo.guard_level === 2) type = 'guard-annual'
-    if (chatMsg[39] === '1') type = 'admin'
+    // if (ccid === instance.getStatus().roomInfo.liveId) type = 'anchor'
+    // if (exInfo.guard_level === 1) type = 'guard-monthly'
+    // if (exInfo.guard_level === 2) type = 'guard-annual'
+    // if (chatMsg[39] === '1') type = 'admin'
 
     try {
-      ext.admin = chatMsg[39] === '1'
+      ext.rule.admin = chatMsg[39] === '1'
+      ext.rule.anchor = ccid === instance.getStatus().roomInfo.liveId
       ext.guard = Number(exInfo?.guard_level || 0)
       ext.badgeInfo.badgename = exInfo?.badgeInfo.badgename || ''
       ext.badgeInfo.level = Number(exInfo?.badgeInfo.level || 0)
@@ -97,22 +102,24 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     }
   }
 
-  const data: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
-    type: 'PLUGIN_MESSAGE',
-    data: {
-      key: uuidv4(),
-      uid: ccid,
-      avatarUrl: chatMsg[10] || '',
-      nickname: chatMsg[197],
-      messageType: 'chat',
-      userInfo: chatMsg[7],
-      message: msg,
-      type,
-      ...ext,
-    },
+  const data = {
+    key: uuidv4(),
+    uid: ccid,
+    avatarUrl: chatMsg[10] || '',
+    nickname: chatMsg[197],
+    messageType: 'chat',
+    userInfo: chatMsg[7],
+    message: msg,
+    type,
+    ...ext,
   }
 
-  send(data, PluginNames.PLUGIN_CHAT_MESSAGE, instance.uuid)
+  const socketMessage: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {
+    type: 'PLUGIN_MESSAGE',
+    data
+  }
+
+  send(socketMessage, PluginNames.PLUGIN_CHAT_MESSAGE, instance.uuid)
 }
 
 const clearChatMessageCache = (): void => {

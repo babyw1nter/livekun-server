@@ -12,7 +12,7 @@ const log = consola.withTag('modules/ticket')
 const ticketModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
   const ticketPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
     PluginNames.PLUGIN_TICKET
-  ) as IPluginConfig<'ticket'>
+  ) as IPluginConfig<PluginNames.PLUGIN_TICKET>
 
   const ccid = giftMsg.fromid.toString()
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick

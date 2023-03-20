@@ -13,7 +13,7 @@ const log = consola.withTag('modules/paid')
 const paidModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
     const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
       PluginNames.PLUGIN_PAID
-    ) as IPluginConfig<'paid'>
+    ) as IPluginConfig<PluginNames.PLUGIN_PAID>
 
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
   const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)

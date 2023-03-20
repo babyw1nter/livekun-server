@@ -20,8 +20,12 @@ interface Mock {
     message: string
     uid: number
     messageType: string
+    /** @deprecated */
     type?: string
-    admin?: boolean
+    rule?: {
+      admin: boolean
+      anchor: boolean
+    }
     guard?: number
     badgeInfo?: {
       badgename: string
