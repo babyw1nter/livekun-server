@@ -22,7 +22,7 @@ interface IBaseSocketMessageMap {
   CONNECT_RESPONSE: {
     serverVersion: string
   }
-  /** @tudo 登录 */
+  /** @todo 登录 */
   LOGIN: {
     [key: string]: unknown
   }
