@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   env: {
     node: true,
     es6: true,
@@ -9,13 +10,12 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint/eslint-plugin'],
+  extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
   },
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-  exclude: ["./node_modules", "./dist"],
   rules: {
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
