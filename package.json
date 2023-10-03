@@ -40,7 +40,6 @@
   },
   "dependencies": {
     "@hhui64/cclinkjs": "file:../cclinkjs",
-    "@hhui64/cclinkjs-room-module": "file:../cclinkjs-room-module",
     "axios": "^0.27.2",
     "config": "^3.3.9",
     "connect-redis": "^6.1.3",

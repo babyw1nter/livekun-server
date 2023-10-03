@@ -1,6 +1,6 @@
 import UserConfigManager from '../UserConfigManager'
 import { IBaseSocketMessage, send } from '../socketServer/server'
-import { GiftInterface } from '@hhui64/cclinkjs-room-module'
+import { GiftInterface } from '@hhui64/cclinkjs/dist/modules'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'

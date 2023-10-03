@@ -1,4 +1,4 @@
-import { ChatInterface } from '@hhui64/cclinkjs-room-module'
+import { ChatInterface } from '@hhui64/cclinkjs/dist/modules'
 import UserConfigManager from '../UserConfigManager'
 import { IBaseSocketMessage, send } from '../socketServer/server'
 import consola from 'consola'

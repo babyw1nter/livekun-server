@@ -2,7 +2,7 @@ import { chatMessageModule } from '../modules/chatMessage'
 import { ticketModule } from '../modules/ticket'
 import { paidModule } from '../modules/paid'
 import { CCLinkJS, ICCLinkJSOptions, ICCRecvJsonData } from '@hhui64/cclinkjs'
-import { ChatListener, GiftListener, RoomMethods, RoomInterface } from '@hhui64/cclinkjs-room-module'
+import { ChatListener, GiftListener, RoomMethods, RoomInterface } from '@hhui64/cclinkjs/dist/modules'
 import { v4 as uuidv4 } from 'uuid'
 import consola from 'consola'
 
