@@ -4,7 +4,7 @@ import config from 'config'
 import express from 'express'
 import cors from 'cors'
 import consola from 'consola'
-import redis from 'redis'
+import { createClient } from 'redis'
 import RedisStore from 'connect-redis'
 import session from 'express-session'
 import userRouter from './user'
@@ -12,11 +12,19 @@ import apiRouter from './api'
 
 const log = consola.withTag('httpServer')
 
-const port = config.get('server.port')
+const port = <number>config.get('server.port')
 
 const app = express()
-const Store = RedisStore(session)
-const redisClient = redis.createClient(config.get('redis'))
+
+const redisClient = createClient({
+  url: `redis://${config.get('redis.username')}:${config.get('redis.password')}@${config.get(
+    'redis.host'
+  )}:${config.get('redis.port')}`
+})
+redisClient.connect().catch(console.error)
+const redisStore = new RedisStore({
+  client: redisClient
+})
 
 app.set('trust proxy', 1)
 // app.use(cors())
@@ -24,16 +32,14 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(
   session({
-    store: new Store({
-      client: redisClient,
-    }),
+    store: redisStore,
     secret: 'hhui64',
     name: 'LK_USER_TOKEN',
     resave: false,
     saveUninitialized: false,
     cookie: {
       ...config.get('session.cookie')
-    },
+    }
   })
 )
 app.all('*', (req, res, next) => {
@@ -56,7 +62,7 @@ app.use((req, res, next) => {
     '/api/join',
     '/api/reset',
     '/api/control',
-    '/api/getStatus',
+    '/api/getStatus'
   ]
 
   if (requiresAuth.includes(req.path)) {
@@ -81,7 +87,7 @@ export const resWrap = <T>(
     code: code || 200,
     message: message || 'ok',
     data,
-    _t: Date.now(),
+    _t: Date.now()
   }
 }
 
