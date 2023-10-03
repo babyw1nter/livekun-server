@@ -127,14 +127,14 @@ interface IWrapData<T> {
   type: string
   data: T
   code?: number
-  timestamp?: number
+  _t?: number
 }
 
 const wrap = <T>(wrapData: IWrapData<T>): Required<IWrapData<T>> => {
   return {
     ...wrapData,
     code: wrapData.code || 200,
-    timestamp: Date.now(),
+    _t: Date.now(),
   }
 }
 

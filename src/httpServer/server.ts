@@ -2,6 +2,7 @@ import { Server } from 'node:http'
 import path from 'node:path'
 import config from 'config'
 import express from 'express'
+import cors from 'cors'
 import consola from 'consola'
 import redis from 'redis'
 import RedisStore from 'connect-redis'
@@ -18,6 +19,7 @@ const Store = RedisStore(session)
 const redisClient = redis.createClient(config.get('redis'))
 
 app.set('trust proxy', 1)
+// app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(
@@ -26,7 +28,7 @@ app.use(
       client: redisClient,
     }),
     secret: 'hhui64',
-    name: 'token',
+    name: 'LK_USER_TOKEN',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -74,12 +76,12 @@ export const resWrap = <T>(
   code?: number,
   message?: string,
   data?: T
-): { code: number; message: string; data?: T; timestamp: number } => {
+): { code: number; message: string; data?: T; _t: number } => {
   return {
     code: code || 200,
     message: message || 'ok',
     data,
-    timestamp: Date.now(),
+    _t: Date.now(),
   }
 }
 
