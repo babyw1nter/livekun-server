@@ -68,7 +68,7 @@ const decode = (data: Buffer): IBaseSocketMessage<'UNKNOWN'> => {
   } catch (error) {
     return {
       type: 'UNKNOWN',
-      data: {},
+      data: {}
     }
   }
 }
@@ -83,7 +83,7 @@ const addPluginConnection = (pluginName: string, uuid: string, connection: WebSo
     uniqueId,
     pluginName,
     uuid,
-    connection,
+    connection
   })
 }
 
@@ -122,7 +122,6 @@ const send = <K extends keyof IBaseSocketMessageMap>(
   }
 }
 
-
 interface IWrapData<T> {
   type: string
   data: T
@@ -134,14 +133,14 @@ const wrap = <T>(wrapData: IWrapData<T>): Required<IWrapData<T>> => {
   return {
     ...wrapData,
     code: wrapData.code || 200,
-    _t: Date.now(),
+    _t: Date.now()
   }
 }
 
 export default function initSocketServer(httpServer: Server): WebSocket.server {
   const wsServer = new WebSocket.server({
     httpServer,
-    autoAcceptConnections: true,
+    autoAcceptConnections: true
   })
 
   // wsServer.on('request', (request) => {
@@ -159,8 +158,8 @@ export default function initSocketServer(httpServer: Server): WebSocket.server {
         wrap(<IBaseSocketMessage<'CONNECT_RESPONSE'>>{
           type: 'CONNECT_RESPONSE',
           data: {
-            serverVersion: '1.0.0',
-          },
+            serverVersion: '1.0.0'
+          }
         })
       )
     )

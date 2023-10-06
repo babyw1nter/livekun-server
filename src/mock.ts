@@ -54,7 +54,7 @@ const getRandomTicket = () => {
   return {
     key: uuidv4(),
     ...mockData.ticketList[randomNum(0, mockData.ticketList.length - 1)],
-    money: randomNum(1, 100),
+    money: randomNum(1, 100)
   }
 }
 
@@ -71,7 +71,7 @@ const getRandomPaid = () => {
     key: uuidv4(),
     ...mockData.paidList[randomNum(0, mockData.paidList.length - 1)],
     giftImage: gift?.gif || gift?.gif4web || gift?.mgif,
-    giftIcon: gift?.icon,
+    giftIcon: gift?.icon
   }
 }
 

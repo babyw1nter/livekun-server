@@ -34,8 +34,8 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
       isJoinedRoom: false,
       roomInfo: {
         liveId: '',
-        title: '',
-      },
+        title: ''
+      }
     }
 
     // 添加 socket event
@@ -119,8 +119,8 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
       isJoinedRoom: false,
       roomInfo: {
         liveId: '',
-        title: '',
-      },
+        title: ''
+      }
     })
   }
 
@@ -174,13 +174,13 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
               isJoinedRoom: true,
               roomInfo: {
                 liveId,
-                title: title || ' 无标题',
-              },
+                title: title || ' 无标题'
+              }
             })
 
             resolve({
               liveRoomInfo: liveRoomInfo,
-              recvJsonData: res,
+              recvJsonData: res
             })
           })
           .catch((reason: Error) => {

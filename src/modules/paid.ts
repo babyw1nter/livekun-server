@@ -11,9 +11,9 @@ import { IPluginConfig, PluginNames } from '../api/plugins'
 const log = consola.withTag('modules/paid')
 
 const paidModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
-    const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
-      PluginNames.PLUGIN_PAID
-    ) as IPluginConfig<PluginNames.PLUGIN_PAID>
+  const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
+    PluginNames.PLUGIN_PAID
+  ) as IPluginConfig<PluginNames.PLUGIN_PAID>
 
   // ccid, combo, fromid/fromnick, num, saleid, toid/tonick
   const gift = GiftLoader.getGiftBySaleId(giftMsg.saleid)
@@ -56,8 +56,8 @@ const paidModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance)
       giftCount: giftMsg.num,
       giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
       giftIcon: gift?.icon,
-      comment: comment,
-    },
+      comment: comment
+    }
   }
 
   send(data, PluginNames.PLUGIN_CHAT_MESSAGE, instance.uuid)

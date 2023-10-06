@@ -4,7 +4,7 @@
 enum PluginNames {
   PLUGIN_CHAT_MESSAGE = 'chat-message',
   PLUGIN_TICKET = 'ticket',
-  PLUGIN_PAID = 'paid',
+  PLUGIN_PAID = 'paid'
 }
 
 /**
@@ -18,7 +18,7 @@ enum PluginActions {
   /** 刷新插件配置 */
   REFRESH_CONFIG = 'get-config',
   /** 清除插件内容 */
-  CLEAR = 'clear',
+  CLEAR = 'clear'
 }
 
 interface IPluginConfig<K extends keyof IPluginConfigMap> {
@@ -113,9 +113,9 @@ const defaultPluginsConfig: PluginsConfig = [
       level: [0, 9, 49, 99, 199, 249, 499],
       duration: [1, 5, 10, 15, 30, 45, 60],
       maximum: 100,
-      minMoney: 5,
+      minMoney: 5
     },
-    isDefault: true,
+    isDefault: true
   },
   {
     pluginName: PluginNames.PLUGIN_CHAT_MESSAGE,
@@ -126,44 +126,44 @@ const defaultPluginsConfig: PluginsConfig = [
         color: {
           normal: {
             nickname: '#ccc',
-            message: '#fff',
+            message: '#fff'
           },
           guard: {
             lv1: {
               nickname: '#0F9D58',
-              message: '#fff',
+              message: '#fff'
             },
             lv2: {
               nickname: '#0F9D58',
-              message: '#fff',
+              message: '#fff'
             },
             lv3: {
               nickname: '#0F9D58',
-              message: '#fff',
-            },
+              message: '#fff'
+            }
           },
           admin: {
             nickname: '#5f84f1',
-            message: '#fff',
+            message: '#fff'
           },
           anchor: {
             nickname: '#FFD600',
-            message: '#fff',
-          },
-        },
+            message: '#fff'
+          }
+        }
       },
       type: {
         ticket: true,
-        paid: true,
+        paid: true
       },
       event: {
         join: false,
         follow: false,
-        gift: false,
+        gift: false
       },
-      blacklist: [],
+      blacklist: []
     },
-    isDefault: true,
+    isDefault: true
   },
   {
     pluginName: PluginNames.PLUGIN_PAID,
@@ -174,11 +174,11 @@ const defaultPluginsConfig: PluginsConfig = [
         use: false,
         prefix: '留言：',
         giftMinMoney: 10,
-        giftWhitelist: '',
-      },
+        giftWhitelist: ''
+      }
     },
-    isDefault: true,
-  },
+    isDefault: true
+  }
 ]
 
 export { PluginNames, PluginActions, IPluginConfigMap, IPluginConfig, PluginsConfig, defaultPluginsConfig }

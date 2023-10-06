@@ -28,7 +28,7 @@ apiRouter.get('/getBroadcasts', (req, res) => {
       resWrap(200, 'ok', {
         banner: broadcasts.banner,
         broadcastsToptips: broadcasts.broadcastsToptips,
-        broadcasts: broadcasts.broadcasts,
+        broadcasts: broadcasts.broadcasts
       })
     )
   } catch (error: unknown) {
@@ -41,7 +41,7 @@ apiRouter.get('/getMockdata', (req, res) => {
     resWrap(200, 'ok', {
       ticketMockData: mockData.ticketList,
       chatMessageMockData: mockData.chatMessageList,
-      paidMockData: mockData.paidList,
+      paidMockData: mockData.paidList
     })
   )
 })
@@ -78,7 +78,7 @@ apiRouter.post('/join', async (req, res) => {
       .then(() => {
         res.json(
           resWrap(200, 'ok', {
-            status: instance.getStatus(),
+            status: instance.getStatus()
           })
         )
         log.success(uuid, '进入房间成功！', instance.getStatus().roomInfo.title)
@@ -86,7 +86,7 @@ apiRouter.post('/join', async (req, res) => {
       .catch((reason: Error) => {
         res.json(
           resWrap(10001, '进入房间失败！' + reason.message, {
-            status: instance.getStatus(),
+            status: instance.getStatus()
           })
         )
         log.error(uuid, '进入房间失败！', reason)
@@ -101,7 +101,7 @@ apiRouter.post('/join', async (req, res) => {
       .catch((reason: Error) => {
         res.json(
           resWrap(10004, '进入房间失败，等待实例就绪错误！' + reason.message, {
-            status: instance.getStatus(),
+            status: instance.getStatus()
           })
         )
       })
@@ -119,14 +119,14 @@ apiRouter.post('/reset', (req, res) => {
     .then(() => {
       res.json(
         resWrap(200, 'ok', {
-          instatus: instance.getStatus(),
+          instatus: instance.getStatus()
         })
       )
     })
     .catch((reason: Error) => {
       res.json(
         resWrap(30001, '重置失败！' + reason.message, {
-          status: instance.getStatus(),
+          status: instance.getStatus()
         })
       )
     })
@@ -141,7 +141,7 @@ apiRouter.post('/control', (req, res) => {
       send(
         {
           type: 'PLUGIN_MESSAGE',
-          data: getRandomChatMessage(),
+          data: getRandomChatMessage()
         },
         PluginNames.PLUGIN_CHAT_MESSAGE,
         uuid
@@ -151,7 +151,7 @@ apiRouter.post('/control', (req, res) => {
       send(
         {
           type: 'PLUGIN_MESSAGE',
-          data: getRandomTicket(),
+          data: getRandomTicket()
         },
         PluginNames.PLUGIN_TICKET,
         uuid
@@ -161,7 +161,7 @@ apiRouter.post('/control', (req, res) => {
       send(
         {
           type: 'PLUGIN_MESSAGE',
-          data: getRandomPaid(),
+          data: getRandomPaid()
         },
         PluginNames.PLUGIN_PAID,
         uuid
@@ -194,7 +194,7 @@ apiRouter.post('/control', (req, res) => {
   res.json(
     resWrap(200, 'ok', {
       uuid,
-      method,
+      method
     })
   )
 })

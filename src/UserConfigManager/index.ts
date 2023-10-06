@@ -40,10 +40,10 @@ class UserPluginsConfig implements IUserPluginsConfig {
   save(): this {
     const configData = {
       uuid: this.uuid,
-      pluginsConfig: this.pluginsConfig,
+      pluginsConfig: this.pluginsConfig
     }
 
-    configData.pluginsConfig.forEach(i => {
+    configData.pluginsConfig.forEach((i) => {
       if (typeof i.isDefault !== 'undefined') delete i.isDefault
     })
 

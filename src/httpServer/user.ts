@@ -28,7 +28,7 @@ class UserManager {
       )
     } catch (error) {
       UserManager.userData = {
-        users: [],
+        users: []
       }
     }
   }
@@ -70,7 +70,7 @@ userRouter.post('/login', (req, res) => {
 
     req.session.user = {
       username: user.username,
-      uuid: user.uuid,
+      uuid: user.uuid
     }
 
     // 登陆成功时，为其创建 cclinkjs 实例

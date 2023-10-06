@@ -42,14 +42,16 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   if (paidPluginConfig.pluginConfig.comment.use) {
     let _msg = msg
 
-    if (msg.slice(0, paidPluginConfig.pluginConfig.comment.prefix.length) === paidPluginConfig.pluginConfig.comment.prefix) {
+    if (
+      msg.slice(0, paidPluginConfig.pluginConfig.comment.prefix.length) === paidPluginConfig.pluginConfig.comment.prefix
+    ) {
       _msg = _msg.slice(paidPluginConfig.pluginConfig.comment.prefix.length)
 
       const cacheIndex = commentChatMsgCache.findIndex((i) => i.uid === ccid)
       const data = {
         uid: ccid,
         message: _msg,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       }
       if (cacheIndex > -1) {
         commentChatMsgCache[cacheIndex] = data
@@ -60,7 +62,10 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
   }
 
   // 若存在全站黑名单和用户插件配置黑名单中，则过滤
-  if (globalBlacklist.users.includes(ccid) || chatMessagePluginConfig.pluginConfig.blacklist.findIndex((i) => i.ccid === ccid) > -1)
+  if (
+    globalBlacklist.users.includes(ccid) ||
+    chatMessagePluginConfig.pluginConfig.blacklist.findIndex((i) => i.ccid === ccid) > -1
+  )
     return
 
   /** @deprecated */
@@ -75,8 +80,8 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     guard: 0,
     badgeInfo: {
       badgename: '',
-      level: 0,
-    },
+      level: 0
+    }
   }
 
   try {
@@ -111,7 +116,7 @@ const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSIn
     userInfo: chatMsg[7],
     message: msg,
     type,
-    ...ext,
+    ...ext
   }
 
   const socketMessage: IBaseSocketMessage<'PLUGIN_MESSAGE'> = {

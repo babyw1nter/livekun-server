@@ -40,8 +40,8 @@ const ticketModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstanc
       money: giftMoney,
       giftName: giftName,
       giftCount: giftMsg.num,
-      giftImage: gift?.gif4web || gift?.gif || gift?.mgif,
-    },
+      giftImage: gift?.gif4web || gift?.gif || gift?.mgif
+    }
   }
 
   send(data, PluginNames.PLUGIN_TICKET, instance.uuid)
