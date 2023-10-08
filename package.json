@@ -7,8 +7,9 @@
   "scripts": {
     "lint": "eslint --ext \".ts\" --ignore-path .gitignore ./src --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./dist/index.js",
-    "dev": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --rs --watch ./src,./config ./src/index.ts",
+    "start": "node --no-warnings --experimental-specifier-resolution=node ./dist/index.js",
+    "dev": "nodemon -I --watch ./src --watch ./config -e '.ts,.cjs,.mjs,.json' --exec node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm ./src/index.ts",
+    "dev:ts": "ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --rs --watch ./src,./config ./src/index.ts",
     "ts-node": "ts-node -r tsconfig-paths/register ./src/index.ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "build:tsc": "tsc -p tsconfig.json",

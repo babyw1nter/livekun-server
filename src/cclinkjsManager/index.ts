@@ -29,7 +29,7 @@ export class CCLinkJSInstance implements ICCLinkJSInstance {
 
   constructor(uuid?: string, options?: ICCLinkJSOptions) {
     this.uuid = uuid || uuidv4()
-    this.cclinkjs = new CCLinkJS(options)
+    this.cclinkjs = new CCLinkJS({ ...options })
     this.status = {
       isJoinedRoom: false,
       roomInfo: {
