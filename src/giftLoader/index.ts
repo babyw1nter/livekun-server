@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
 interface IGiftData {
   gametype_category_gifts: {
     [propName: string]: Array<{
@@ -79,8 +82,7 @@ interface IGift {
   gif4web?: string
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-export const giftData: IGiftData = require('../../data/gamegift.json')
+export const giftData: IGiftData = readFileSync(resolve(__dirname, '../../data/gamegift.json')) as unknown as IGiftData
 
 export default class GiftLoader {
   public static getGiftBySaleId(saleId: number): IGift | undefined {

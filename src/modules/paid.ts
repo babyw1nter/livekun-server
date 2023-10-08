@@ -1,6 +1,6 @@
 import UserConfigManager from '../UserConfigManager'
 import { IBaseSocketMessage, send } from '../socketServer/server'
-import { GiftInterface } from '@hhui64/cclinkjs/dist/modules'
+import { GiftInterface } from '@hhui64/cclinkjs/modules'
 import { commentChatMsgCache } from './chatMessage'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'

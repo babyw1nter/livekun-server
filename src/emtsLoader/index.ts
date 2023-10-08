@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+
 export interface IEmts {
   id: string
   tag: string
@@ -12,8 +15,7 @@ export interface IEmtsData {
   [propName: string]: IEmts
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const emtsData = require('../../data/emts.json') as IEmtsData
+const emtsData = readFileSync(resolve(__dirname, '../../data/emts.json')) as unknown as IEmtsData
 
 const emtsDataArray = Object.values(emtsData)
 
