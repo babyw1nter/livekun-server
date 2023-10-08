@@ -3,18 +3,18 @@ module.exports = {
   env: {
     node: true,
     es6: true,
-    es2021: true,
+    es2021: true
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module',
+    sourceType: 'module'
   },
   plugins: ['@typescript-eslint/eslint-plugin'],
   extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
+    SharedArrayBuffer: 'readonly'
   },
   rules: {
     'no-unused-vars': 'off',
@@ -22,5 +22,6 @@ module.exports = {
     'require-atomic-updates': 'off',
     'no-async-promise-executor': 'off',
     'no-var-requires': 'off',
-  },
+    'prettier/prettier': ['error', { endOfLine: 'auto' }]
+  }
 }
