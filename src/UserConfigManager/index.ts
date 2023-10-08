@@ -1,6 +1,6 @@
 import consola from 'consola'
 import fs from 'node:fs'
-import path from 'node:path'
+import path, { resolve } from 'node:path'
 import { defaultPluginsConfig, IPluginConfig, IPluginConfigMap, PluginNames, PluginsConfig } from '../api/plugins'
 
 const log = consola.withTag('configmanager')
@@ -28,7 +28,7 @@ class UserPluginsConfig implements IUserPluginsConfig {
   }
 
   getFilePath(): string {
-    return path.join(__dirname, '../../', 'data', 'user', 'configs', `${this.uuid}.json`)
+    return path.join(resolve(), 'data', 'user', 'configs', `${this.uuid}.json`)
   }
 
   read(): this {

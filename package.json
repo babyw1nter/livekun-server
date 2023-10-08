@@ -3,6 +3,7 @@
   "version": "1.0.0-alpha.5",
   "description": "",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint --ext \".ts\" --ignore-path .gitignore ./src --fix",
     "test": "echo \"Error: no test specified\" && exit 1",

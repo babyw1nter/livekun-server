@@ -4,7 +4,7 @@ import express from 'express'
 import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
-import path from 'node:path'
+import path, { resolve } from 'node:path'
 import { getRandomTicket, getRandomChatMessage, getRandomPaid, mockData } from '../mock'
 import { PluginNames, PluginActions } from '../api/plugins'
 
@@ -20,9 +20,7 @@ apiRouter.get('/getBroadcasts', (req, res) => {
   }
 
   try {
-    const broadcasts = JSON.parse(
-      readFileSync(path.join(__dirname, '../../', 'data', 'broadcasts.json')).toString()
-    ) as Broadcasts
+    const broadcasts = JSON.parse(readFileSync(path.join(resolve(), '/data/broadcasts.json')).toString()) as Broadcasts
 
     res.json(
       resWrap(200, 'ok', {

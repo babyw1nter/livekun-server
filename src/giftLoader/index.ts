@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import path, { resolve } from 'node:path'
 
 interface IGiftData {
   gametype_category_gifts: {
@@ -82,7 +82,7 @@ interface IGift {
   gif4web?: string
 }
 
-export const giftData: IGiftData = readFileSync(resolve(__dirname, '../../data/gamegift.json')) as unknown as IGiftData
+export const giftData: IGiftData = readFileSync(path.join(resolve(), 'data', 'gamegift.json')) as unknown as IGiftData
 
 export default class GiftLoader {
   public static getGiftBySaleId(saleId: number): IGift | undefined {

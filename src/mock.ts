@@ -1,6 +1,6 @@
 import { giftData } from './giftLoader'
 import { readFileSync } from 'node:fs'
-import path from 'node:path'
+import path, { resolve } from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
 
 const randomNum = (minNum: number, maxNum: number): number => {
@@ -48,7 +48,7 @@ interface Mock {
   }>
 }
 
-const mockData = JSON.parse(readFileSync(path.join(__dirname, '../', 'data', 'mock.json')).toString()) as Mock
+const mockData = JSON.parse(readFileSync(path.join(resolve(), '/data/mock.json')).toString()) as Mock
 
 const getRandomTicket = () => {
   return {

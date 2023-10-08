@@ -5,7 +5,7 @@ import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'
 import { readFileSync } from 'node:fs'
-import path from 'node:path'
+import path, { resolve } from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
 import { IPluginConfig, PluginNames } from '../api/plugins'
 
@@ -16,7 +16,7 @@ interface GlobalBlacklist {
 }
 
 const globalBlacklist = JSON.parse(
-  readFileSync(path.join(__dirname, '../../', 'data', 'blacklist.json')).toString()
+  readFileSync(path.join(resolve(), 'data', 'blacklist.json')).toString()
 ) as GlobalBlacklist
 
 interface ICommentChatMsgCache {

@@ -4,7 +4,7 @@ import UserConfigManager, { IUserPluginsConfig } from '../UserConfigManager'
 import { socketServer, send } from '../socketServer/server'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
-import path from 'node:path'
+import path, { resolve } from 'node:path'
 import { PluginNames, PluginActions } from '../api/plugins'
 
 interface IUser {
@@ -23,9 +23,7 @@ class UserManager {
 
   static read(): void {
     try {
-      UserManager.userData = JSON.parse(
-        readFileSync(path.join(__dirname, '../../', 'data', 'user', 'users.json')).toString()
-      )
+      UserManager.userData = JSON.parse(readFileSync(path.join(resolve(), 'data', 'user', 'users.json')).toString())
     } catch (error) {
       UserManager.userData = {
         users: []

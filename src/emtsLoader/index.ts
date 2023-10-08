@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import path, { resolve } from 'node:path'
 
 export interface IEmts {
   id: string
@@ -15,7 +15,7 @@ export interface IEmtsData {
   [propName: string]: IEmts
 }
 
-const emtsData = readFileSync(resolve(__dirname, '../../data/emts.json')) as unknown as IEmtsData
+const emtsData = readFileSync(path.join(resolve(), '/data/emts.json')) as unknown as IEmtsData
 
 const emtsDataArray = Object.values(emtsData)
 
