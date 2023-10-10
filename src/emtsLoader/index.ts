@@ -14,8 +14,8 @@ export interface IEmts {
 export interface IEmtsData {
   [propName: string]: IEmts
 }
-
-const emtsData = readFileSync(path.join(resolve(), '/data/emts.json')) as unknown as IEmtsData
+const fileData = readFileSync(path.join(resolve(), '/data/emts.json')).toString()
+export const emtsData = JSON.parse(fileData) as IEmtsData
 
 const emtsDataArray = Object.values(emtsData)
 

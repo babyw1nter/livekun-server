@@ -82,7 +82,8 @@ interface IGift {
   gif4web?: string
 }
 
-export const giftData: IGiftData = readFileSync(path.join(resolve(), 'data', 'gamegift.json')) as unknown as IGiftData
+const fileData = readFileSync(path.join(resolve(), '/data/gamegift.json')).toString()
+export const giftData: IGiftData = JSON.parse(fileData) as IGiftData
 
 export default class GiftLoader {
   public static getGiftBySaleId(saleId: number): IGift | undefined {
