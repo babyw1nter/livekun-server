@@ -48,7 +48,8 @@ interface Mock {
   }>
 }
 
-const mockData = JSON.parse(readFileSync(path.join(resolve(), '/data/mock.json')).toString()) as Mock
+const fileData = readFileSync(path.join(resolve(), '/data/mock.json')).toString()
+const mockData = JSON.parse(fileData) as Mock
 
 const getRandomTicket = () => {
   return {
