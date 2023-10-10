@@ -52,6 +52,7 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "express-validator": "^7.0.1",
+    "fastify": "^4.23.2",
     "pako": "^2.1.0",
     "redis": "^4.6.10",
     "sqlite3": "github:mapbox/node-sqlite3#593c9d498be2510d286349134537e3bf89401c4a",
