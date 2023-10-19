@@ -8,7 +8,7 @@
     "lint": "eslint --ext \".ts\" --ignore-path .gitignore ./src --fix",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --no-warnings --experimental-specifier-resolution=node ./dist/index.js",
-    "dev": "node --no-warnings --experimental-specifier-resolution=node --experimental-loader ts-node/esm --watch ./src --watch ./config ./src/index.ts",
+    "dev": "node --no-warnings --experimental-specifier-resolution=node --experimental-loader ts-node/esm --watch-path=./src --watch-path=./config ./src/index.ts",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "build:tsc": "tsc -p tsconfig.json",
     "build": "rollup -c"
