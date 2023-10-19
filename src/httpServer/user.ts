@@ -120,6 +120,7 @@ userRouter.get('/getPluginConfig', (req, res) => {
 
 userRouter.post('/setPluginConfig', (req, res) => {
   const uuid = req.session.user?.uuid as string
+
   const pluginName = req.body.pluginName as PluginNames
   const pluginConfig = req.body.pluginConfig
 
