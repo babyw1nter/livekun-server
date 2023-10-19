@@ -1,8 +1,9 @@
 .DS_Store
 node_modules
-/dist
-/web
-/.backup
+dist
+web
+.backup
+!.gitkeep
 
 /tests/e2e/videos/
 /tests/e2e/screenshots/
@@ -27,7 +28,8 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-/data/user/configs
+/data/user/users.json
+/data/user/configs/*.json
 
-/config
-!/config/default.js
+/config/*.*s
+!config/default.*s
