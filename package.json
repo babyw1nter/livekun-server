@@ -17,6 +17,7 @@
   "author": "hhui64",
   "license": "MIT",
   "dependencies": {
+    "@fastify/express": "^2.3.0",
     "@hhui64/cclinkjs": "file:../cclinkjs",
     "axios": "^1.5.1",
     "config": "^3.3.9",
@@ -50,8 +51,6 @@
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.0.3",
     "rollup": "^4.1.4",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-typescript2": "^0.36.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
