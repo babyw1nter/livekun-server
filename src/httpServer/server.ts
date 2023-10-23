@@ -1,58 +1,47 @@
-import { Server } from 'node:http'
-import path from 'node:path'
 import config from 'config'
-import express from 'express'
-import cors from 'cors'
-import consola from 'consola'
-import { createClient } from 'redis'
+import Fastify from 'fastify'
+import FastifyMiddie from '@fastify/middie'
+import FastifyCors from '@fastify/cors'
+import FastifyCookie from '@fastify/cookie'
+import FastifySession from '@fastify/session'
+import FastifyWebsocket from '@fastify/websocket'
 import RedisStore from 'connect-redis'
-import session from 'express-session'
+import Redis from 'ioredis'
+import consola from 'consola'
 import userRouter from './user'
 import apiRouter from './api'
+import addConnection from '../socketServer/server'
 
 const log = consola.withTag('httpServer')
 
-const port = <number>config.get('server.port')
-
-const app = express()
-
-const redisClient = createClient({
-  url: `redis://${config.get('redis.username')}:${config.get('redis.password')}@${config.get(
-    'redis.host'
-  )}:${config.get('redis.port')}`
-})
-redisClient.connect().catch(console.error)
 const redisStore = new RedisStore({
-  client: redisClient
+  client: new Redis(
+    `redis://${config.get('redis.username')}:${config.get('redis.password')}@${config.get('redis.host')}:${config.get(
+      'redis.port'
+    )}`
+  )
 })
 
-app.set('trust proxy', 1)
-// app.use(cors())
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(
-  session({
-    store: redisStore,
-    secret: 'hhui64',
-    name: 'LK_USER_TOKEN',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      ...config.get('session.cookie')
-    }
-  })
-)
-app.all('*', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin)
-  res.header('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization, Accept, X-Requested-With')
-  res.header('Access-Control-Allow-Methods', 'PUT,POST,GET,DELETE,OPTIONS')
-  res.header('Access-Control-Allow-Credentials', 'true')
-  // res.header('Content-Type', 'application/json; charset=utf-8')
-  res.header('X-Powered-By', 'Livekun Server')
-  if (req.method === 'OPTIONS') res.sendStatus(200)
-  else next()
+const app = Fastify({ logger: false })
+app.register(FastifyMiddie)
+app.register(FastifyCors, {
+  origin: true,
+  credentials: true
 })
-app.use((req, res, next) => {
+app.register(FastifyCookie)
+app.register(FastifySession, {
+  store: redisStore,
+  cookieName: 'LK_USER_TOKEN',
+  secret: 'z1MUVltq9tcC5B#kcaYy=n7yhcxIiYg_',
+  cookie: {
+    ...config.get('session.cookie')
+  }
+})
+app.register(FastifyWebsocket)
+app.register(async (fastify) => {
+  fastify.get('/', { websocket: true }, addConnection)
+})
+app.addHook('onRequest', (request, reply, done) => {
   // 需要鉴权的接口列表
   const requiresAuth = [
     '/user/autologin',
@@ -65,18 +54,16 @@ app.use((req, res, next) => {
     '/api/getStatus'
   ]
 
-  if (requiresAuth.includes(req.path)) {
-    if (!req.session.user) {
-      res.json(resWrap(530, 'Not logged in.'))
-      return
+  if (requiresAuth.includes(request.routeConfig.url)) {
+    if (!request.session.user) {
+      return reply.send(resWrap(530, 'Not logged in.'))
     }
   }
 
-  next()
+  done()
 })
-app.use('/user', userRouter)
-app.use('/api', apiRouter)
-// app.use('/', express.static(path.join(__dirname, '../../', 'web')))
+app.register(userRouter, { prefix: '/user' })
+app.register(apiRouter, { prefix: '/api' })
 
 export const resWrap = <T>(
   code?: number,
@@ -91,10 +78,17 @@ export const resWrap = <T>(
   }
 }
 
-export default function initHttpServer(): Server {
+export default function initHttpServer() {
   log.info(`livekun 服务端正在启动中...`)
 
-  return app.listen(port, () => {
+  const port = <number>config.get('server.port')
+
+  return app.listen({ port, host: '0.0.0.0' }, (err, address) => {
+    if (err) {
+      log.error(err)
+      process.exit(1)
+    }
+
     log.success(`livekun 服务端启动完成！正在监听端口：${port}...`)
   })
 }

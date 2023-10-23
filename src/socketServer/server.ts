@@ -1,12 +1,10 @@
-import { Server } from 'http'
-import WebSocket from 'websocket'
 import { v4 as uuidv4 } from 'uuid'
 import { PluginNames, PluginActions } from '../api/plugins'
 import consola from 'consola'
+import { SocketStream } from '@fastify/websocket'
+import { RawData } from 'ws'
 
 const log = consola.withTag('socketServer')
-
-let socketServer: WebSocket.server | null = null
 
 interface IPluginCommonMessage {
   key: string
@@ -51,7 +49,7 @@ interface IPluginConnection {
   uniqueId: string
   pluginName: string
   uuid: string
-  connection: WebSocket.connection
+  connection: SocketStream
   onError?: (err: Error) => void
   onClose?: (code: number, desc: string) => void
 }
@@ -62,7 +60,7 @@ const encode = <T>(data: T): Buffer => {
   return Buffer.from(JSON.stringify(data))
 }
 
-const decode = (data: Buffer): IBaseSocketMessage<'UNKNOWN'> => {
+const decode = (data: RawData): IBaseSocketMessage<'UNKNOWN'> => {
   try {
     return JSON.parse(data.toString('utf-8'))
   } catch (error) {
@@ -73,7 +71,7 @@ const decode = (data: Buffer): IBaseSocketMessage<'UNKNOWN'> => {
   }
 }
 
-const addPluginConnection = (pluginName: string, uuid: string, connection: WebSocket.connection) => {
+const addPluginConnection = (pluginName: string, uuid: string, connection: SocketStream) => {
   const uniqueId = uuidv4()
   const autoRemove = () => removePluginConnection(uniqueId)
   connection.on('error', () => autoRemove())
@@ -100,23 +98,23 @@ const send = <K extends keyof IBaseSocketMessageMap>(
   if (!pc.length) return
 
   if (!pluginName && !uuid) {
-    pc.forEach((c) => c.connection.sendBytes(encode(wrap(data))))
+    pc.forEach((c) => c.connection.socket.send(encode(wrap(data))))
   } else if (pluginName && !uuid) {
     pc.forEach((c) => {
       if (c.pluginName === pluginName) {
-        c.connection.sendBytes(encode(wrap(data)))
+        c.connection.socket.send(encode(wrap(data)))
       }
     })
   } else if (!pluginName && uuid) {
     pc.forEach((c) => {
       if (c.uuid === uuid) {
-        c.connection.sendBytes(encode(wrap(data)))
+        c.connection.socket.send(encode(wrap(data)))
       }
     })
   } else {
     pc.forEach((c) => {
       if (c.pluginName === pluginName && c.uuid === uuid) {
-        c.connection.sendBytes(encode(wrap(data)))
+        c.connection.socket.send(encode(wrap(data)))
       }
     })
   }
@@ -137,56 +135,45 @@ const wrap = <T>(wrapData: IWrapData<T>): Required<IWrapData<T>> => {
   }
 }
 
-export default function initSocketServer(httpServer: Server): WebSocket.server {
-  const wsServer = new WebSocket.server({
-    httpServer,
-    autoAcceptConnections: true
-  })
+export default function addConnection(connection: SocketStream) {
+  if (
+    typeof connection.socket.protocol === 'undefined' ||
+    connection.socket.protocol === '' ||
+    connection.socket.protocol.length > 128
+  ) {
+    connection.socket.close(1002)
+    return
+  }
 
-  // wsServer.on('request', (request) => {
-  //   log.info(request.httpRequest.headers)
-  // })
-
-  wsServer.on('connect', (connection) => {
-    if (typeof connection.protocol === 'undefined' || connection.protocol === '' || connection.protocol.length > 128) {
-      connection.drop(1002)
-      return
-    }
-
-    connection.sendBytes(
-      encode(
-        wrap(<IBaseSocketMessage<'CONNECT_RESPONSE'>>{
-          type: 'CONNECT_RESPONSE',
-          data: {
-            serverVersion: '1.0.0'
-          }
-        })
-      )
-    )
-
-    connection.on('message', (data) => {
-      if (data.type === 'binary') {
-        const msg = decode(data.binaryData)
-        switch (msg.type) {
-          case 'PLUGIN_CONNECT': {
-            const pluginConnect = msg as unknown as IBaseSocketMessage<'PLUGIN_CONNECT'>
-            addPluginConnection(pluginConnect.data.pluginName, pluginConnect.data.uuid, connection)
-            break
-          }
-          case 'PLUGIN_MESSAGE': {
-            break
-          }
-          default:
-          //
+  connection.socket.send(
+    encode(
+      wrap(<IBaseSocketMessage<'CONNECT_RESPONSE'>>{
+        type: 'CONNECT_RESPONSE',
+        data: {
+          serverVersion: '1.0.0'
         }
+      })
+    )
+  )
+
+  connection.socket.on('message', (data) => {
+    const msg = decode(data)
+    switch (msg.type) {
+      case 'PLUGIN_CONNECT': {
+        const pluginConnect = msg as unknown as IBaseSocketMessage<'PLUGIN_CONNECT'>
+        addPluginConnection(pluginConnect.data.pluginName, pluginConnect.data.uuid, connection)
+        break
       }
-    })
+      case 'PLUGIN_MESSAGE': {
+        break
+      }
+      default:
+      //
+    }
   })
 
-  socketServer = wsServer
-
-  return wsServer
+  return
 }
 
-export { socketServer, encode, decode, wrap, send }
+export { addConnection, encode, decode, wrap, send }
 export type { IBaseSocketMessage, IBaseSocketMessageMap, IPluginCommonMessage }

@@ -1,7 +1,6 @@
-import session from 'express-session'
-
-declare module 'express-session' {
-  export interface SessionData {
+import Fastify from 'fastify'
+declare module 'fastify' {
+  interface Session {
     user: {
       username: string
       uuid: string
