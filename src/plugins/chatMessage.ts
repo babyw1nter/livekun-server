@@ -1,4 +1,4 @@
-import { ChatInterface } from '@hhui64/cclinkjs/modules'
+import { ChatMessage } from '@hhui64/cclinkjs/plugin'
 import UserConfigManager from '../UserConfigManager'
 import { IBaseSocketMessage, send } from '../socketServer/server'
 import consola from 'consola'
@@ -26,7 +26,7 @@ interface ICommentChatMsgCache {
 }
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
-const chatMessageModule = (chatMsg: ChatInterface.IChatMsg, instance: CCLinkJSInstance): void => {
+const chatMessageModule = (chatMsg: ChatMessage, instance: CCLinkJSInstance): void => {
   const chatMessagePluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
     PluginNames.PLUGIN_CHAT_MESSAGE
   ) as IPluginConfig<PluginNames.PLUGIN_CHAT_MESSAGE>

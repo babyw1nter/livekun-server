@@ -79,41 +79,31 @@ export default async function (fastify: FastifyInstance) {
 
     log.info(uuid, '正在进入房间...', liveId)
 
-    const join = () => {
-      instance
-        .joinLiveRoom(uuid, liveId)
-        .then(() => {
-          reply.send(
-            resWrap(200, 'ok', {
-              status: instance.getStatus()
-            })
-          )
-          log.success(uuid, '进入房间成功！', instance.getStatus().roomInfo.title)
-        })
-        .catch((reason: Error) => {
-          reply.send(
-            resWrap(10001, '进入房间失败！' + reason.message, {
-              status: instance.getStatus()
-            })
-          )
-          log.error(uuid, '进入房间失败！', reason)
-        })
-    }
+    try {
+      const roomInfo = await instance.roomPlugin.joinRoom(liveId)
+      instance.setStatus({
+        isJoinedRoom: true,
+        roomInfo: {
+          liveId,
+          title: roomInfo.props.pageProps.title
+        }
+      })
 
-    // 实例未就绪时，直接执行 reset 方法重置实例，待重置完成后再执行后续操作
-    if (!instance.cclinkjs.isReady()) {
-      instance
-        .reset()
-        .then(() => join())
-        .catch((reason: Error) => {
-          reply.send(
-            resWrap(10004, '进入房间失败，等待实例就绪错误！' + reason.message, {
-              status: instance.getStatus()
-            })
-          )
+      reply.send(
+        resWrap(200, 'ok', {
+          status: instance.getStatus()
         })
-    } else {
-      join()
+      )
+
+      log.success(uuid, '进入房间成功！', roomInfo.props.pageProps.title)
+    } catch (error) {
+      reply.send(
+        resWrap(10001, '进入房间失败！' + error, {
+          status: instance.getStatus()
+        })
+      )
+
+      log.error(uuid, '进入房间失败！', error)
     }
   })
 
