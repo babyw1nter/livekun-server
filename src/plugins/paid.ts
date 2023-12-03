@@ -1,6 +1,6 @@
 import UserConfigManager from '../UserConfigManager'
 import { IBaseSocketMessage, send } from '../socketServer/server'
-import { GiftInterface } from '@hhui64/cclinkjs/modules'
+import { GiftMessage } from '@hhui64/cclinkjs/plugin'
 import { commentChatMsgCache } from './chatMessage'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'
@@ -10,7 +10,7 @@ import { IPluginConfig, PluginNames } from '../api/plugins'
 
 const log = consola.withTag('modules/paid')
 
-const paidModule = (giftMsg: GiftInterface.IGiftMsg, instance: CCLinkJSInstance): void => {
+const paidModule = (giftMsg: GiftMessage, instance: CCLinkJSInstance): void => {
   const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
     PluginNames.PLUGIN_PAID
   ) as IPluginConfig<PluginNames.PLUGIN_PAID>
