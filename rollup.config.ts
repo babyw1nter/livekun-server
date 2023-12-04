@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import glob from 'glob'
 import { fileURLToPath } from 'url'
 import { defineConfig, Plugin } from 'rollup'
 import pkg from './package.json' assert { type: 'json' }
@@ -25,7 +26,8 @@ const ts = typescript({
   tsconfig: resolve(rootDir, 'tsconfig.json'),
   tsconfigOverride: {
     compilerOptions: {
-      sourceMap: !isProd,
+      sourceMap: isProd,
+      declaration: !isProd,
       declarationMap: !isProd,
       rootDir: resolve('src')
     },
@@ -42,25 +44,25 @@ const ts = typescript({
 })
 
 export default defineConfig({
-  input: resolve(rootDir, 'src/index.ts'),
+  input: Object.fromEntries(
+    glob
+      .sync('src/**/*.ts')
+      .map((file) => [
+        path.relative('src', file.slice(0, file.length - path.extname(file).length)),
+        fileURLToPath(new URL(file, import.meta.url))
+      ])
+  ),
   output: {
     format: 'es',
     dir: distDir,
-    sourcemap: !isProd,
-    exports: 'named',
-    preserveModules: true,
-    preserveModulesRoot: 'src'
+    sourcemap: isProd
   },
   external: Object.keys(pkg.dependencies),
   plugins: [
     json({
       namedExports: false
     }),
-    nodeResolve({
-      mainFields: ['jsnext', 'preferBuiltins', 'browser'],
-      preferBuiltins: true,
-      browser: true
-    }),
+    nodeResolve(),
     commonjs({
       transformMixedEsModules: true
     }),
