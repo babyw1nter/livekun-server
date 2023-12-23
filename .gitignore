@@ -33,3 +33,6 @@ pnpm-debug.log*
 
 /config/*.*s
 !config/default.*s
+
+# Cache files
+.eslintcache
