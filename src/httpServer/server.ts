@@ -16,9 +16,9 @@ const log = consola.withTag('httpServer')
 
 const redisStore = new RedisStore({
   client: new Redis(
-    `redis://${config.get('redis.username')}:${config.get('redis.password')}@${config.get('redis.host')}:${config.get(
-      'redis.port'
-    )}`
+    `redis://${config.get('redis.username')}:${config.get(
+      'redis.password'
+    )}@${config.get('redis.host')}:${config.get('redis.port')}`
   )
 })
 

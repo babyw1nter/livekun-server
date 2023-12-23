@@ -181,4 +181,11 @@ const defaultPluginsConfig: PluginsConfig = [
   }
 ]
 
-export { PluginNames, PluginActions, IPluginConfigMap, IPluginConfig, PluginsConfig, defaultPluginsConfig }
+export {
+  PluginNames,
+  PluginActions,
+  IPluginConfigMap,
+  IPluginConfig,
+  PluginsConfig,
+  defaultPluginsConfig
+}

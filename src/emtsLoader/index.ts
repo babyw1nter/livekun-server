@@ -14,7 +14,9 @@ export interface IEmts {
 export interface IEmtsData {
   [propName: string]: IEmts
 }
-const fileData = readFileSync(path.join(resolve(), '/data/emts.json')).toString()
+const fileData = readFileSync(
+  path.join(resolve(), '/data/emts.json')
+).toString()
 export const emtsData = JSON.parse(fileData) as IEmtsData
 
 const emtsDataArray = Object.values(emtsData)
@@ -22,11 +24,18 @@ const emtsDataArray = Object.values(emtsData)
 export default class EmtsLoader {
   public static getEmts(code: string): IEmts | undefined {
     return emtsDataArray.find(
-      (e) => e.real === code || e.id + e.text + e.tag === code || e.real === `[emts]${code}[/emts]`
+      (e) =>
+        e.real === code ||
+        e.id + e.text + e.tag === code ||
+        e.real === `[emts]${code}[/emts]`
     )
   }
 
-  public static replace(str: string, replaceValue?: string, showEmts?: boolean): string {
+  public static replace(
+    str: string,
+    replaceValue?: string,
+    showEmts?: boolean
+  ): string {
     if (typeof showEmts === 'undefined') showEmts = true
     const emtsArray = str.match(/(?<=\[emts\])(.*?)(?=\[\/emts\])/g)
 
@@ -35,7 +44,10 @@ export default class EmtsLoader {
       const emts = EmtsLoader.getEmts(e)
 
       if (emts && showEmts) {
-        const regexp = new RegExp(`(\\[emts\\])(${emts.id}).*?(\\[\\/emts\\])`, 'g')
+        const regexp = new RegExp(
+          `(\\[emts\\])(${emts.id}).*?(\\[\\/emts\\])`,
+          'g'
+        )
         s = s.replace(regexp, replaceValue || emts.seeStr)
       } else {
         s = s.replace(/(\[emts\]).*?(\[\/emts\])/g, replaceValue || '[表情]')

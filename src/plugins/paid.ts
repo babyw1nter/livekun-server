@@ -28,12 +28,16 @@ const paidModule = (giftMsg: GiftMessage, instance: CCLinkJSInstance): void => {
   // 判断是否留言礼物
   if (
     paidPluginConfig.pluginConfig.comment.use &&
-    (paidPluginConfig.pluginConfig.comment.giftWhitelist.split('\n').includes(giftName) ||
+    (paidPluginConfig.pluginConfig.comment.giftWhitelist
+      .split('\n')
+      .includes(giftName) ||
       paidPluginConfig.pluginConfig.comment.giftWhitelist === '') &&
     giftMoney >= paidPluginConfig.pluginConfig.comment.giftMinMoney
   ) {
     const commentIndex = commentChatMsgCache.findIndex(
-      (i) => i.uid === giftMsg.fromid.toString() || i.uid === (giftMsg.fromccid as number).toString()
+      (i) =>
+        i.uid === giftMsg.fromid.toString() ||
+        i.uid === (giftMsg.fromccid as number).toString()
     )
 
     if (commentIndex > -1) {

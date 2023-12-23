@@ -4,7 +4,10 @@ import path, { resolve } from 'node:path'
 import { v4 as uuidv4 } from 'uuid'
 
 const randomNum = (minNum: number, maxNum: number): number => {
-  return parseInt((Math.random() * (maxNum - minNum + 1) + minNum).toString(), 10)
+  return parseInt(
+    (Math.random() * (maxNum - minNum + 1) + minNum).toString(),
+    10
+  )
 }
 
 interface Mock {
@@ -48,7 +51,9 @@ interface Mock {
   }>
 }
 
-const fileData = readFileSync(path.join(resolve(), '/data/mock.json')).toString()
+const fileData = readFileSync(
+  path.join(resolve(), '/data/mock.json')
+).toString()
 const mockData = JSON.parse(fileData) as Mock
 
 const getRandomTicket = () => {
@@ -61,7 +66,12 @@ const getRandomTicket = () => {
 
 const getRandomChatMessage = () => {
   return randomNum(0, 5)
-    ? { key: uuidv4(), ...mockData.chatMessageList[randomNum(0, mockData.chatMessageList.length - 1)] }
+    ? {
+        key: uuidv4(),
+        ...mockData.chatMessageList[
+          randomNum(0, mockData.chatMessageList.length - 1)
+        ]
+      }
     : getRandomPaid()
 }
 
@@ -76,4 +86,10 @@ const getRandomPaid = () => {
   }
 }
 
-export { randomNum, getRandomTicket, getRandomChatMessage, getRandomPaid, mockData }
+export {
+  randomNum,
+  getRandomTicket,
+  getRandomChatMessage,
+  getRandomPaid,
+  mockData
+}

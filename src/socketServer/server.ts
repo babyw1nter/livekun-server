@@ -71,7 +71,11 @@ const decode = (data: RawData): IBaseSocketMessage<'UNKNOWN'> => {
   }
 }
 
-const addPluginConnection = (pluginName: string, uuid: string, connection: SocketStream) => {
+const addPluginConnection = (
+  pluginName: string,
+  uuid: string,
+  connection: SocketStream
+) => {
   const uniqueId = uuidv4()
   const autoRemove = () => removePluginConnection(uniqueId)
   connection.on('error', () => autoRemove())
@@ -160,8 +164,13 @@ export default function addConnection(connection: SocketStream) {
     const msg = decode(data)
     switch (msg.type) {
       case 'PLUGIN_CONNECT': {
-        const pluginConnect = msg as unknown as IBaseSocketMessage<'PLUGIN_CONNECT'>
-        addPluginConnection(pluginConnect.data.pluginName, pluginConnect.data.uuid, connection)
+        const pluginConnect =
+          msg as unknown as IBaseSocketMessage<'PLUGIN_CONNECT'>
+        addPluginConnection(
+          pluginConnect.data.pluginName,
+          pluginConnect.data.uuid,
+          connection
+        )
         break
       }
       case 'PLUGIN_MESSAGE': {

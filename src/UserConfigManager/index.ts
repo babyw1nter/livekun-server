@@ -1,7 +1,13 @@
 import consola from 'consola'
 import fs from 'node:fs'
 import path, { resolve } from 'node:path'
-import { defaultPluginsConfig, IPluginConfig, IPluginConfigMap, PluginNames, PluginsConfig } from '../api/plugins'
+import {
+  defaultPluginsConfig,
+  IPluginConfig,
+  IPluginConfigMap,
+  PluginNames,
+  PluginsConfig
+} from '../api/plugins'
 
 const log = consola.withTag('configmanager')
 
@@ -32,7 +38,9 @@ class UserPluginsConfig implements IUserPluginsConfig {
   }
 
   read(): this {
-    const configData = JSON.parse(fs.readFileSync(this.getFilePath()).toString()) as IUserPluginsConfig
+    const configData = JSON.parse(
+      fs.readFileSync(this.getFilePath()).toString()
+    ) as IUserPluginsConfig
     this.pluginsConfig = configData.pluginsConfig
     return this
   }
@@ -62,13 +70,19 @@ class UserPluginsConfig implements IUserPluginsConfig {
 
   // getPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K): IPluginConfig<K> | null
   // getPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K[]): PluginsConfig
-  getPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K | K[] | string | string[]) {
+  getPluginConfig<K extends keyof IPluginConfigMap>(
+    pluginName: K | K[] | string | string[]
+  ) {
     if (Array.isArray(pluginName)) {
-      const _user = this.pluginsConfig.filter((item) => pluginName.some((i) => item.pluginName === i))
+      const _user = this.pluginsConfig.filter((item) =>
+        pluginName.some((i) => item.pluginName === i)
+      )
 
       // 如果在用户配置文件中没找到，则从默认配置中获取
       // 默认配置文件带有 `isDefault: true` 用以区分配置的来源
-      const notFindPluginName = pluginName.filter((i) => _user.findIndex((j) => j.pluginName === i) < 0)
+      const notFindPluginName = pluginName.filter(
+        (i) => _user.findIndex((j) => j.pluginName === i) < 0
+      )
       const _default = this.defaultPluginsConfig
         .filter((item) => notFindPluginName.some((i) => item.pluginName === i))
         .map((i) => ({ ...i, isDefault: true }))
@@ -83,14 +97,20 @@ class UserPluginsConfig implements IUserPluginsConfig {
     }
   }
 
-  setPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K | string, pluginConfig: IPluginConfigMap[K]) {
-    const getIndex = () => this.pluginsConfig.findIndex((i) => i.pluginName === pluginName)
+  setPluginConfig<K extends keyof IPluginConfigMap>(
+    pluginName: K | string,
+    pluginConfig: IPluginConfigMap[K]
+  ) {
+    const getIndex = () =>
+      this.pluginsConfig.findIndex((i) => i.pluginName === pluginName)
     const index = getIndex()
 
     if (index > -1) {
       this.pluginsConfig[index].pluginConfig = pluginConfig
     } else {
-      const defaultPluginConfig = this.defaultPluginsConfig.find((i) => i.pluginName === pluginName)
+      const defaultPluginConfig = this.defaultPluginsConfig.find(
+        (i) => i.pluginName === pluginName
+      )
       if (defaultPluginConfig) {
         this.pluginsConfig.push(JSON.parse(JSON.stringify(defaultPluginConfig)))
         this.pluginsConfig[getIndex()].pluginConfig = pluginConfig
@@ -99,7 +119,9 @@ class UserPluginsConfig implements IUserPluginsConfig {
   }
 
   resetPluginConfig<K extends keyof IPluginConfigMap>(pluginName: K | string) {
-    const index = this.pluginsConfig.findIndex((i) => i.pluginName === pluginName)
+    const index = this.pluginsConfig.findIndex(
+      (i) => i.pluginName === pluginName
+    )
 
     if (index > -1) {
       // 直接删除就好

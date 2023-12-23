@@ -26,8 +26,13 @@ interface ICommentChatMsgCache {
 }
 const commentChatMsgCache: Array<ICommentChatMsgCache> = []
 
-const chatMessageModule = (chatMsg: ChatMessage, instance: CCLinkJSInstance): void => {
-  const chatMessagePluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
+const chatMessageModule = (
+  chatMsg: ChatMessage,
+  instance: CCLinkJSInstance
+): void => {
+  const chatMessagePluginConfig = UserConfigManager.get(
+    instance.uuid
+  ).getPluginConfig(
     PluginNames.PLUGIN_CHAT_MESSAGE
   ) as IPluginConfig<PluginNames.PLUGIN_CHAT_MESSAGE>
   const paidPluginConfig = UserConfigManager.get(instance.uuid).getPluginConfig(
@@ -35,7 +40,10 @@ const chatMessageModule = (chatMsg: ChatMessage, instance: CCLinkJSInstance): vo
   ) as IPluginConfig<PluginNames.PLUGIN_PAID>
 
   const ccid = chatMsg[7][130].toString() as string
-  const msg = EmtsLoader.replace(chatMsg[4]).replace(/(\[img\]).*?(\[\/img\])/g, '[图片]')
+  const msg = EmtsLoader.replace(chatMsg[4]).replace(
+    /(\[img\]).*?(\[\/img\])/g,
+    '[图片]'
+  )
 
   // log.info('[💬] ', chatMsg[197] + '：' + msg)
 
@@ -43,7 +51,8 @@ const chatMessageModule = (chatMsg: ChatMessage, instance: CCLinkJSInstance): vo
     let _msg = msg
 
     if (
-      msg.slice(0, paidPluginConfig.pluginConfig.comment.prefix.length) === paidPluginConfig.pluginConfig.comment.prefix
+      msg.slice(0, paidPluginConfig.pluginConfig.comment.prefix.length) ===
+      paidPluginConfig.pluginConfig.comment.prefix
     ) {
       _msg = _msg.slice(paidPluginConfig.pluginConfig.comment.prefix.length)
 
@@ -64,7 +73,9 @@ const chatMessageModule = (chatMsg: ChatMessage, instance: CCLinkJSInstance): vo
   // 若存在全站黑名单和用户插件配置黑名单中，则过滤
   if (
     globalBlacklist.users.includes(ccid) ||
-    chatMessagePluginConfig.pluginConfig.blacklist.findIndex((i) => i.ccid === ccid) > -1
+    chatMessagePluginConfig.pluginConfig.blacklist.findIndex(
+      (i) => i.ccid === ccid
+    ) > -1
   )
     return
 
@@ -131,4 +142,9 @@ const clearChatMessageCache = (): void => {
   commentChatMsgCache.splice(0, commentChatMsgCache.length - 1)
 }
 
-export { ICommentChatMsgCache, chatMessageModule, commentChatMsgCache, clearChatMessageCache }
+export {
+  ICommentChatMsgCache,
+  chatMessageModule,
+  commentChatMsgCache,
+  clearChatMessageCache
+}

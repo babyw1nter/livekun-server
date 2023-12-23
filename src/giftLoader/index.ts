@@ -82,7 +82,9 @@ interface IGift {
   gif4web?: string
 }
 
-const fileData = readFileSync(path.join(resolve(), '/data/gamegift.json')).toString()
+const fileData = readFileSync(
+  path.join(resolve(), '/data/gamegift.json')
+).toString()
 export const giftData: IGiftData = JSON.parse(fileData) as IGiftData
 
 export default class GiftLoader {

@@ -48,7 +48,10 @@ export default defineConfig({
     glob
       .sync('src/**/*.ts')
       .map((file) => [
-        path.relative('src', file.slice(0, file.length - path.extname(file).length)),
+        path.relative(
+          'src',
+          file.slice(0, file.length - path.extname(file).length)
+        ),
         fileURLToPath(new URL(file, import.meta.url))
       ])
   ),

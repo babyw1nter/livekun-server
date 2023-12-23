@@ -82,7 +82,10 @@ export class CCLinkJSInstance extends CCLink {
       this.close()
 
       setTimeout(() => this.connect(), 500)
-      const timeout = setTimeout(() => reject(new Error('reset timeout')), 10000)
+      const timeout = setTimeout(
+        () => reject(new Error('reset timeout')),
+        10000
+      )
 
       this.once('ready', () => {
         if (timeout) {
@@ -97,7 +100,10 @@ export class CCLinkJSInstance extends CCLink {
 export default class CCLinkJSManager {
   public static cclinkjsInstances: Array<CCLinkJSInstance> = []
 
-  public static createCCLinkJS(uuid: string, options?: CCLinkOptions): CCLinkJSInstance {
+  public static createCCLinkJS(
+    uuid: string,
+    options?: CCLinkOptions
+  ): CCLinkJSInstance {
     let instance = this.getCCLinkJSInstance(uuid)
 
     if (instance) {
@@ -110,7 +116,9 @@ export default class CCLinkJSManager {
     return instance
   }
 
-  public static getCCLinkJSInstance(uuid: string): CCLinkJSInstance | undefined {
+  public static getCCLinkJSInstance(
+    uuid: string
+  ): CCLinkJSInstance | undefined {
     return CCLinkJSManager.cclinkjsInstances.find((i) => i.uuid === uuid)
   }
 

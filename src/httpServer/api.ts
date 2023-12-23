@@ -4,7 +4,12 @@ import CCLinkJSManager from '../cclinkjsManager'
 import { resWrap } from './server'
 import { readFileSync } from 'node:fs'
 import path, { resolve } from 'node:path'
-import { getRandomTicket, getRandomChatMessage, getRandomPaid, mockData } from '../mock'
+import {
+  getRandomTicket,
+  getRandomChatMessage,
+  getRandomPaid,
+  mockData
+} from '../mock'
 import { PluginNames, PluginActions } from '../api/plugins'
 import { FastifyInstance } from 'fastify/types/instance'
 
@@ -75,7 +80,9 @@ export default async function (fastify: FastifyInstance) {
       return
     }
 
-    const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) || CCLinkJSManager.createCCLinkJS(uuid)
+    const instance =
+      CCLinkJSManager.getCCLinkJSInstance(uuid) ||
+      CCLinkJSManager.createCCLinkJS(uuid)
 
     log.info(uuid, '正在进入房间...', liveId)
 
@@ -109,7 +116,9 @@ export default async function (fastify: FastifyInstance) {
 
   fastify.post('/reset', (request, reply) => {
     const uuid = request.session.user?.uuid
-    const instance = CCLinkJSManager.getCCLinkJSInstance(uuid) || CCLinkJSManager.createCCLinkJS(uuid)
+    const instance =
+      CCLinkJSManager.getCCLinkJSInstance(uuid) ||
+      CCLinkJSManager.createCCLinkJS(uuid)
 
     instance
       .reset()
@@ -169,26 +178,55 @@ export default async function (fastify: FastifyInstance) {
         )
         break
       case 'clearChatMessage':
-        send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_CHAT_MESSAGE, uuid)
+        send(
+          { type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } },
+          PluginNames.PLUGIN_CHAT_MESSAGE,
+          uuid
+        )
         break
       case 'clearTicket':
-        send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_TICKET, uuid)
+        send(
+          { type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } },
+          PluginNames.PLUGIN_TICKET,
+          uuid
+        )
         break
       case 'clearPaid':
-        send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } }, PluginNames.PLUGIN_PAID, uuid)
+        send(
+          { type: 'PLUGIN_ACTION', data: { action: PluginActions.CLEAR } },
+          PluginNames.PLUGIN_PAID,
+          uuid
+        )
         break
       case 'refreshChatMessage':
         send(
-          { type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } },
+          {
+            type: 'PLUGIN_ACTION',
+            data: { action: PluginActions.REFRESH_PAGE }
+          },
           PluginNames.PLUGIN_CHAT_MESSAGE,
           uuid
         )
         break
       case 'refreshTicket':
-        send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } }, PluginNames.PLUGIN_TICKET, uuid)
+        send(
+          {
+            type: 'PLUGIN_ACTION',
+            data: { action: PluginActions.REFRESH_PAGE }
+          },
+          PluginNames.PLUGIN_TICKET,
+          uuid
+        )
         break
       case 'refreshPaid':
-        send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_PAGE } }, PluginNames.PLUGIN_PAID, uuid)
+        send(
+          {
+            type: 'PLUGIN_ACTION',
+            data: { action: PluginActions.REFRESH_PAGE }
+          },
+          PluginNames.PLUGIN_PAID,
+          uuid
+        )
         break
     }
 

@@ -17,7 +17,11 @@ class UserManager {
 
   static read(): void {
     try {
-      UserManager.userData = JSON.parse(readFileSync(path.join(resolve(), 'data', 'user', 'users.json')).toString())
+      UserManager.userData = JSON.parse(
+        readFileSync(
+          path.join(resolve(), 'data', 'user', 'users.json')
+        ).toString()
+      )
     } catch (error) {
       UserManager.userData = {
         users: []

@@ -106,7 +106,11 @@ export default async function (fastify: FastifyInstance) {
     userConfig.save().read()
 
     // 向正在连接的插件下发更新配置请求
-    send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } }, pluginName, uuid)
+    send(
+      { type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } },
+      pluginName,
+      uuid
+    )
 
     res.send(resWrap(200, 'ok'))
   })
@@ -127,7 +131,11 @@ export default async function (fastify: FastifyInstance) {
 
     // 向正在连接的插件下发更新配置请求
 
-    send({ type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } }, pluginName, uuid)
+    send(
+      { type: 'PLUGIN_ACTION', data: { action: PluginActions.REFRESH_CONFIG } },
+      pluginName,
+      uuid
+    )
 
     res.send(resWrap(200, 'ok'))
   })
