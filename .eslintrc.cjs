@@ -22,7 +22,6 @@ module.exports = {
   },
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   rules: {
-    'prettier/prettier': ['error', { endOfLine: 'auto' }],
     'no-undef': 'off',
     'no-unref': 'off',
     'no-var-requires': 'off',
