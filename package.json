@@ -13,7 +13,20 @@
     "dev": "node --no-warnings --experimental-loader=ts-node/esm --watch-path=./src --watch-path=./config ./src/index.ts",
     "build:dev": "rollup -c --configPlugin typescript --environment BUILD:development",
     "build": "rollup -c --configPlugin typescript --environment BUILD:production",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "postinstall": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js?(x),json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint",
+      "prettier --parser=typescript --write"
+    ]
   },
   "author": "hhui64",
   "license": "MIT",
@@ -51,10 +64,12 @@
     "@typescript-eslint/parser": "^6.15.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
+    "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
     "rollup": "^4.9.1",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-typescript2": "^0.36.0",
+    "simple-git-hooks": "^2.9.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "tslib": "^2.6.2",
