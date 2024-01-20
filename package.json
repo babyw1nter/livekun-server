@@ -35,7 +35,7 @@
     "@fastify/cors": "^8.5.0",
     "@fastify/middie": "^8.3.0",
     "@fastify/session": "^10.7.0",
-    "@fastify/websocket": "^8.3.1",
+    "@fastify/websocket": "8.3.0",
     "@hhui64/cclinkjs": "file:../cclinkjs",
     "axios": "^1.6.5",
     "config": "^3.3.10",
