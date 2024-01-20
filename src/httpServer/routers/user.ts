@@ -13,7 +13,7 @@ export default async function (fastify: FastifyInstance) {
       password: string
       autologin: boolean
     }
-  }>('/login', (req, res) => {
+  }>('/login', async (req, res) => {
     const username = req.body.username
     const password = req.body.password
     const autologin = req.body.autologin
@@ -26,15 +26,18 @@ export default async function (fastify: FastifyInstance) {
     const user = UserManager.login(username, password)
 
     if (user) {
-      // 设置 session
+      // 设置 session 有效期
       if (autologin) {
         req.session.cookie.maxAge = 1296000000
       }
 
+      // 设置 session
       req.session.user = {
         username: user.username,
         uuid: user.uuid
       }
+
+      await req.session.save()
 
       // 登陆成功时，为其创建 cclinkjs 实例
       const instance = CCLinkJSManager.createCCLinkJS(user.uuid)
