@@ -1,6 +1,6 @@
 import { ChatMessage } from '@hhui64/cclinkjs/plugin'
 import UserConfigManager from '../UserConfigManager'
-import { IBaseSocketMessage, send } from '../socketServer/server'
+import { IBaseSocketMessage, send } from '../socketServer'
 import consola from 'consola'
 import EmtsLoader from '../emtsLoader'
 import { CCLinkJSInstance } from '../cclinkjsManager'

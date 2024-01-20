@@ -1,4 +1,4 @@
-import addConnection from './socketServer/server'
-import initHttpServer from './httpServer/server'
+import addConnection from './socketServer'
+import initHttpServer from './httpServer'
 
 initHttpServer()

@@ -1,7 +1,7 @@
-import { send } from '../socketServer/server'
+import { send } from '../../socketServer'
 import consola from 'consola'
-import CCLinkJSManager from '../cclinkjsManager'
-import { resWrap } from './server'
+import CCLinkJSManager from '../../cclinkjsManager'
+import { resWrap } from '..'
 import { readFileSync } from 'node:fs'
 import path, { resolve } from 'node:path'
 import {
@@ -9,8 +9,8 @@ import {
   getRandomChatMessage,
   getRandomPaid,
   mockData
-} from '../mock'
-import { PluginNames, PluginActions } from '../api/plugins'
+} from '../../mock'
+import { PluginNames, PluginActions } from '../../api/plugins'
 import { FastifyInstance } from 'fastify/types/instance'
 
 const log = consola.withTag('httpserver/api')

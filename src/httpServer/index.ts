@@ -8,9 +8,9 @@ import FastifyWebsocket from '@fastify/websocket'
 import RedisStore from 'connect-redis'
 import Redis from 'ioredis'
 import consola from 'consola'
-import userRouter from './user'
-import apiRouter from './api'
-import addConnection from '../socketServer/server'
+import userRouter from './routers/user'
+import apiRouter from './routers/api'
+import addConnection from '../socketServer'
 
 const log = consola.withTag('httpServer')
 

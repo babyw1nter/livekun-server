@@ -1,5 +1,5 @@
 import UserConfigManager from '../UserConfigManager'
-import { IBaseSocketMessage, send } from '../socketServer/server'
+import { IBaseSocketMessage, send } from '../socketServer'
 import { GiftMessage } from '@hhui64/cclinkjs/plugin'
 import consola from 'consola'
 import GiftLoader from '../giftLoader'

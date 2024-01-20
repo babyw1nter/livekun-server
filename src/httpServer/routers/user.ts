@@ -1,10 +1,10 @@
-import CCLinkJSManager from '../cclinkjsManager'
-import UserConfigManager from '../UserConfigManager'
-import { send } from '../socketServer/server'
-import { resWrap } from './server'
-import { PluginNames, PluginActions, IPluginConfigMap } from '../api/plugins'
+import CCLinkJSManager from '../../cclinkjsManager'
+import UserConfigManager from '../../UserConfigManager'
+import { send } from '../../socketServer'
+import { resWrap } from '..'
+import { PluginNames, PluginActions, IPluginConfigMap } from '../../api/plugins'
 import { FastifyInstance } from 'fastify/types/instance'
-import { UserManager } from '../UserManager'
+import { UserManager } from '../../UserManager'
 
 export default async function (fastify: FastifyInstance) {
   fastify.post<{
