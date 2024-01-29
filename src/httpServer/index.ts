@@ -10,6 +10,7 @@ import Redis from 'ioredis'
 import consola from 'consola'
 import userRouter from './routers/user'
 import apiRouter from './routers/api'
+import voiceRouter from './routers/voice'
 import addConnection from '../socketServer'
 
 const log = consola.withTag('httpServer')
@@ -64,6 +65,7 @@ app.addHook('onRequest', (request, reply, done) => {
 })
 app.register(userRouter, { prefix: '/user' })
 app.register(apiRouter, { prefix: '/api' })
+app.register(voiceRouter, { prefix: '/voice' })
 
 export const resWrap = <T>(
   code?: number,
