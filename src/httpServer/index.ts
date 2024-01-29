@@ -32,8 +32,8 @@ app.register(FastifyCors, {
 app.register(FastifyCookie)
 app.register(FastifySession, {
   store: redisStore,
-  cookieName: 'LK_USER_TOKEN',
-  secret: 'z1MUVltq9tcC5B#kcaYy=n7yhcxIiYg_',
+  cookieName: <string>config.get('session.cookieName'),
+  secret: <string>config.get('session.secret'),
   cookie: {
     ...config.get('session.cookie')
   }

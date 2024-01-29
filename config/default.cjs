@@ -10,10 +10,15 @@ module.exports = {
     password: ''
   },
   session: {
+    cookieName: 'LK_USER_TOKEN',
+    secret: '',
     cookie: {
       secure: false,
       domain: '',
       httpOnly: true
     }
+  },
+  voice: {
+    apiUrl: ''
   }
 }
