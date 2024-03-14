@@ -11,7 +11,7 @@ import consola from 'consola'
 import userRouter from './routers/user'
 import apiRouter from './routers/api'
 import voiceRouter from './routers/voice'
-import addConnection from '../socketServer'
+// import { connectionHandler } from '../socketServer'
 
 const log = consola.withTag('httpServer')
 
@@ -40,7 +40,9 @@ app.register(FastifySession, {
 })
 app.register(FastifyWebsocket)
 app.register(async (fastify) => {
-  fastify.get('/', { websocket: true }, addConnection)
+  fastify.get('/', { websocket: true }, (connection, request) => {
+    connection.socket.on()
+  })
 })
 app.addHook('onRequest', (request, reply, done) => {
   // 需要鉴权的接口列表
